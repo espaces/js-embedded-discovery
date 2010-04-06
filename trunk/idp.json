@@ -1,0 +1,109 @@
+{
+    "spid": "https://dieng.switch.ch/shibboleth",
+    "return": "https://dieng.switch.ch/Shibboleth.sso/DS?SAMLDS=1&target=https%3A%2F%2Fdieng.switch.ch%2Faai",
+    "returnIDParam": "entityID",
+    "idps": [
+       
+         {
+            "id": "https://dieng.switch.ch/idp/shibboleth",
+            "logos": [
+                {
+                    "imgsrc": "https://dieng.switch.ch/i2ds/dieng_large.png",
+                    "alttxt": "AAI Shibboleth 2.x Test IdP",
+                    "height": "45",
+                    "width": "80"
+                },
+                {
+                    "imgsrc": "https://dieng.switch.ch/i2ds/dieng_small.png",
+                    "alttxt": "AAI Shibboleth 2.x Test IdP",
+                    "height": "16",
+                    "width": "16"
+                }
+                
+            ],
+            "names": [
+                {
+                    "lang": "en",
+                    "name": "SWITCH"
+                }
+            ],
+            "descs": [
+                {
+                    "lang": "en",
+                    "desc": "SWITCH - Serving Swiss Universities"
+                }
+            ],
+            "altnames": [
+                {
+                    "lang": "en",
+                    "name": "SWITCH - Serving Swiss Universities"
+                }
+            ]
+        },
+        {
+            "id": "https://idp.edina.ac.uk/shibboleth-devel",
+            "logos": [
+                 {
+                    "imgsrc": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/edina-logo-blue-150x59.png",
+                    "alttxt": "EDINA",
+                    "height": "59",
+                    "width": "150"
+                },
+                {
+                    "imgsrc": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/edina-logo110x110.png",
+                    "alttxt": "EDINA",
+                    "height": "110",
+                    "width": "110"
+                },
+                                 {
+                    "imgsrc": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/edina-logo110x58.png",
+                    "alttxt": "EDINA",
+                    "height": "59",
+                    "width": "110"
+                },
+                                 
+                                 {
+                    "imgsrc": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/favicon.jpg",
+                    "alttxt": "EDINA",
+                    "height": "16",
+                    "width": "16"
+                }
+
+            ],
+            "names": [
+                {
+                    "lang": "en",
+                    "name": "EDINA - development"
+                }
+            ],
+            "descs": [
+                {
+                    "lang": "en",
+                    "desc": "University of Edinburgh"
+                }
+            ],
+            "altnames": [
+                {
+                    "lang": "en",
+                    "name": "University of Edinburgh"
+                }
+            ]
+        },
+        
+        {"id":"https://idp.abcol.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Aberdeen College Staff"}]},
+{"id":"https://idp.abcolstudents.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Aberdeen College Student"}]},
+{"id":"https://shibboleth.aber.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Aberystwyth University"}]},
+{"id":"https://idp.abingdon-witney.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Abingdon and Witney College"}]},
+{"id":"https://idp.accross.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Accrington & Rossendale College"}]},
+{"id":"https://idp.adamsmith.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Adam Smith College"}]},
+{"id":"https://idp.anglia.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Anglia Ruskin University"}]},
+{"id":"https://idp.anniesland.ac.uk/openathens", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Anniesland College"}]},
+{"id":"https://idp.aquinas.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Aquinas College"}]},
+{"id":"https://idp.ahds.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Arts and Humanities Data Service"}]},
+{"id":"https://idp.aib.ac.uk/openathens", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Arts University College at Bournemouth"}]},
+{"id":"https://srvshibboleth.asfc.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Ashton Sixth Form College"}]},
+{"id":"https://idp.askham-bryan.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Askham Bryan College"}]},
+{"id":"https://idp.ystrad-mynach.ac.uk/idp/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Ystrad Mynach College"}]}
+
+    ]
+}
