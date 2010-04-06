@@ -64,7 +64,7 @@ function IdPSelectUI(data, langBundles){
         }
         
         xhr.open("GET", datasource, false);
-        xhr.send();
+        xhr.send(null);
         
         if(xhr.status == 200){
             var jsonData = xhr.responseText;
@@ -100,11 +100,11 @@ function IdPSelectUI(data, langBundles){
         var preferredIdPDIV = buildDiv('preferredIdP');
 
         var introTxt = document.createTextNode(getLocalizedMessage("idpPreferred.label")); 
-        containerDIV.appendChild(introTxt);
+        preferredIdPDIV.appendChild(introTxt);
 
         var preferredIdPs = getPreferredIdPs();
-        for(var i = 0 ; i < I2DSConfig.numOfButtons && i < preferredIdPs.length; i++){
-            var button = composePreferredIdPButton(jsonObj, preferredIdPs[i]);
+        for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
+            var button = composePreferredIdPButton(preferredIdPs[i]);
             preferredIdPDIV.appendChild(button);
         }
         
@@ -260,7 +260,7 @@ function IdPSelectUI(data, langBundles){
             //TODO error
         }
         
-        var message = langBundle[messageId];
+        var message = langBundles[messageId];
         if(!message){
             //TODO error
         }
@@ -280,13 +280,13 @@ function IdPSelectUI(data, langBundles){
         
         // populate start of array with preselected IdPs
         if(preferredIdP){
-            for(int i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
+            for(var i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
                 idps[i] = preferredIdP[i];
                 offset++;
             }
         }
 
-        var userSelectedIdPs = getUserPreferredIdPs;
+        var userSelectedIdPs = retrieveUserSelectedIdPs();
         for (var i = offset, j=0; i < userSelectedIdPs.length && i < maxPreferredIdPs; i++, j++){
             idps[i] = userSelectedIdPs[j];
         }
@@ -328,7 +328,7 @@ function IdPSelectUI(data, langBundles){
        @param {Array} idps idps selected by the user
     */
     function saveUserSelectedIdPs(idps){
-        for(int i=0; i < idps.length; i++){
+        for(var i=0; i < idps.length; i++){
             idps[i] = base64Encode(idps[i]);
         }
         
