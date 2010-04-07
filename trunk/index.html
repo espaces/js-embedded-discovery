@@ -11,7 +11,7 @@
 <body>
 	<div id="idpselect">
 	</div>
-	
+
 	<!-- Load languages script -->
 	<script src="idpselect.js" type="text/javascript" language="javascript"></script>
 
@@ -19,7 +19,10 @@
 	<script src="json.js" type="text/javascript" language="javascript"></script>
 	<!-- Load languages script -->
 
-	<script src="idpselect.config.js" type="text/javascript" language="javascript"></script>
+	<script>
+          var idpselect = new IdPSelectUI();
+          idpselect.draw();
+        </script>
 
 </body>
 </html>
