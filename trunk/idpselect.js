@@ -1,18 +1,74 @@
 /** @class IdP Selector UI */
-function IdPSelectUI(data, langBundles){
-    var datasource = data.datasource;
-    var defaultLanguage = data.defaultLangauge || "en";
-    var preferredIdP = data.preferredIdP;
-    var maxPreferredIdPs = data.maxPreferredIdPs || 3;
-    var helpUrl = data.helpUrl;
-    var samlIdPCookieTTL = data.samlIdPCookieTTL;
-    
-    var langBundles = langBundles
-    
-        var spData;
+function IdPSelectUI(){
+    //
+    // The following are parameters
+    //
+    this.dataSource = 'idp.json';
+    this.defaultLanguage = 'en';
+    this.preferredIdP = '';
+    this.maxPreferredIdPs = 3;
+    this.helpURL = '';
+    this.samlIdPCookieTTL = null;
+    this.langBundles = {
+    'en': {
+        'fatal.divMissing': 'Supplied Div is not present in the DOM',
+        'fatal.noXMLHttpRequest': 'Browser does not support XMLHttpRequest, unable to load IdP selection data',
+        'error.noData': '',
+        'error.noIdPSelectDiv': '',
+
+        'idpPreferred.label': 'Use a preferred selection',
+        
+        'idpEntry.label': 'Or enter your organization\'s name',
+        
+        'idpList.label': 'Or select your organization from the list below',
+        'idpList.defaultOptionLabel': 'Please select your organization...',
+
+        'submitButton.label': 'Continue',
+        }
+    };
+
+    //
+    // module locals
+    //
+    var spData;
     var idpData;
-    
-    var base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var base64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+    var lang;
+    var defaultLang;
+    var langBundle;
+    var defaultLangBundle;
+
+    var preferredIdP;
+    var maxPreferredIdPs;
+    var helpURL;
+    var samlIdPCookieTTL;
+
+    var setupLocals = function (parent) {
+        //
+        // Copy parameters in
+        //
+        preferredIdP = parent.preferredIdP;
+        maxPreferredIdPs = parent.maxPreferredIdPs;
+        helpURL = parent.helpURL;
+        samlIdPCookieTTL = parent.samlIdPCookieTTL;
+
+        lang = Navigator.userLanguage || parent.defaultLanguage;
+        defaultLang = parent.defaultLanguage;
+        langBundle = parent.langBundles[lang];
+        defaultLangBundle = parent.langBundles[parent.defaultLanguage];
+
+        //
+        // Setup Language bundles
+        //
+        if (!defaultLangBundle) {
+            fatal('No languages work');
+            return;
+        }
+        if (!langBundle) {
+            debug('No language support for ' + lang);
+        }
+    }
     
     // *************************************
     // Public functions
@@ -22,12 +78,13 @@ function IdPSelectUI(data, langBundles){
        Draws the IdP Selector UI on the screen.  This is the main
        method for the IdPSelectUI class.
     */
-    this.draw = function(langPrecedence){
-        load();
+    this.draw = function(){
+        setupLocals(this);
+        load(this.dataSource);
         
-        var idpSelectDiv = document.getElementById("idpselect");
-        if(idpSelectDiv == null){
-            alert(getLocalizedMessage);
+        var idpSelectDiv = document.getElementById('idpselect');
+        if(!idpSelectDiv){
+            fatal(getLocalizedMessage('fatal.divMissing'));
             return;
         }
         
@@ -57,21 +114,25 @@ function IdPSelectUI(data, langBundles){
        document can not be loaded from the source.  This function will
        passed the {@link XMLHttpRequest} used to request the JSON data.
     */
-    var load = function(failureCallback){
+    var load = function(dataSource){
         var xhr = new XMLHttpRequest();
         if(xhr == null){
             //TODO
         }
         
-        xhr.open("GET", datasource, false);
-        xhr.send(null);
+        xhr.open('GET', dataSource, false);
+        xhr.overrideMimeType('application/json');
+        xhr.send();
         
         if(xhr.status == 200){
             var jsonData = xhr.responseText;
             if(jsonData == ''){
                 //TODO error
             }
+
+            var fre = JSON;
             idpData = JSON.parse(jsonData);
+
         }else{
             failureCallback(xhr);
         }
@@ -89,6 +150,43 @@ function IdPSelectUI(data, langBundles){
         containerDiv.appendChild(buildIdPDropDownListTile());
         return containerDiv;
     }
+
+    /**
+      Builds a form ready for the IdP selection
+      We just need to add the 'input' statements and a selector
+      
+      @return (Element) a suitably configured form
+    */
+    
+    var buildIdPSelectForm = function() {
+        var form = document.createElement('form');
+        form.setAttribute('action',idpData['return']);
+        form.setAttribute('method','GET');
+        return form;
+    }
+
+    /**
+      Builds a button for the provided IdP
+
+      @param (Object) The Idp
+      
+      @return (Element) preselector for the IdP
+    */
+    var composePreferredIdPButton = function(idp) {
+
+        var aval = document.createElement('a');
+        var retString = idpData.returnIDParam + '=' + idp.id;
+        var retVal = idpData['return'];
+        if (retVal.indexOf('?') == -1) {
+            retString = '?' + retString;
+        } else {
+            retString = '&' + retString;
+        }
+        aval.setAttribute('href', retVal + retString);
+        aval.appendChild(document.createTextNode(getLocalName(idp)));
+        
+        return aval;
+    }
     
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
@@ -99,15 +197,17 @@ function IdPSelectUI(data, langBundles){
     var buildPreferredIdPTile = function(){
         var preferredIdPDIV = buildDiv('preferredIdP');
 
-        var introTxt = document.createTextNode(getLocalizedMessage("idpPreferred.label")); 
+        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
         preferredIdPDIV.appendChild(introTxt);
 
         var preferredIdPs = getPreferredIdPs();
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
-            var button = composePreferredIdPButton(preferredIdPs[i]);
-            preferredIdPDIV.appendChild(button);
+            if (preferredIdPs[i]) {
+                var button = composePreferredIdPButton(preferredIdPs[i]);
+                preferredIdPDIV.appendChild(button);
+            }
         }
-        
+
         return preferredIdPDIV
     }
     
@@ -122,12 +222,12 @@ function IdPSelectUI(data, langBundles){
         
         var idpEntryDiv = buildDiv('idpEntry');
 
-        var enterOrgLabel = buildLabel(idpInputId, getLocalizedMessage("idpEntry.label"));
-        idpEntryDiv.appendChild(entrOrgLabel);
+        var enterOrgLabel = buildLabel(idpInputId, getLocalizedMessage('idpEntry.label'));
+        idpEntryDiv.appendChild(enterOrgLabel);
         
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.setAttribute('id', idpInput);
+        input.setAttribute('id', idpInputId);
         idpEntryDiv.appendChild(input);
         
         var selectOrSearchInput = document.createElement('input');
@@ -135,9 +235,11 @@ function IdPSelectUI(data, langBundles){
         selectOrSearchInput.setAttribute('name', 'action');
         selectOrSearchInput.setAttribute('value', 'search');
         selectOrSearchInput.setAttribute('type', 'hidden');
-        idpEntryDIV.appendChild(selectOrSearchInput);
+        idpEntryDiv.appendChild(selectOrSearchInput);
         
         //TODO link to switch to drop down list tile
+
+        return idpEntryDiv
     }
     
     /**
@@ -150,26 +252,32 @@ function IdPSelectUI(data, langBundles){
         var idpSelectId = 'idpSelect';
         
         var listDiv = buildDiv('idplist', 'display:none');
+        var listDiv = buildDiv('idplist');
         
-        var selectOrgLabel = buildLabel(idpSelectId, getLocalizedMessage("idpList.label"));
+        var selectOrgLabel = buildLabel(idpSelectId, getLocalizedMessage('idpList.label'));
         listDiv.appendChild(selectOrgLabel);
         
         var idpSelect = document.createElement('select');
         idpSelect.setAttribute('id', idpSelectId);
         listDiv.appendChild(idpSelect);
         
-        var idpOption = buildSelectOption('-', getLocalizedMessage("idpList.defaultOptionLabel"));
+        var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
         idpOption.setAttribute('selected', 'selected');
         idpSelect.appendChild(idpOption);
     
         var idp;
-        for(var i=0; i<idpData.length; i++){
-            idp = idpData[i];
+        for(var i=0; i<idpData.idps.length; i++){
+            idp = idpData.idps[i];
             // TODO select name by language
-            idpOption = buildSelectOption(idp.id, IdPSelect.Util.getLocalized(idp.names, lang))
+            idpOption = buildSelectOption(idp.id, getLocalizedName(idp))
                 idpSelect.appendChild(idpOption);
         }
-        
+
+        var form = buildIdPSelectForm();
+        form.appendChild(idpSelect);
+        form.appendChild(buildContinueButton());
+        listDiv.appendChild(form);
+
         //TODO link to switch to search-as-you-type entry tile
         
         return listDiv;
@@ -184,11 +292,11 @@ function IdPSelectUI(data, langBundles){
         var button  = document.createElement('button');
         button.setAttribute('id', 'button');
         button.setAttribute('type', 'submit');
-        button.appendChild(document.createTextNode(getLocalizedMessage("submitButton.label")));
+        button.appendChild(document.createTextNode(getLocalizedMessage('submitButton.label')));
         
         //TODO check input on submit
 
-        return continueINPUT;
+        return button;
     }
     
     /**
@@ -213,7 +321,7 @@ function IdPSelectUI(data, langBundles){
        @param {String} value value of the option when selected
        @param {String} label displayed label of the option
     */
-    var buildSelectOption = function(value, label){
+    var buildSelectOption = function(value, text){
         var option = document.createElement('option');
         option.setAttribute('value', value);
         option.appendChild(document.createTextNode(text));
@@ -229,10 +337,10 @@ function IdPSelectUI(data, langBundles){
 
        @return {Element} the label element
     */
-    var buildLabel = function(target, label) {
+    var buildLabel = function(target, text) {
         var label = document.createElement('label');
         label.setAttribute('for', target);
-        label.appendChild(document.createTextNode(label));
+        label.appendChild(document.createTextNode(text));
         return label;
     }
 
@@ -242,31 +350,48 @@ function IdPSelectUI(data, langBundles){
        time.
 
        @param {String} messageId ID of the message to retrieve
+
+       @return (String) the message
     */
     var getLocalizedMessage = function(messageId){
-        var langBundle;
-        if(typeof preferredLangauge == 'Array'){
-            for(n in lang){
-                if(langBundles[n]){
-                    langBundle = n;
-                    break;
-                }
-            }
-        }else if(typeof lang == 'String'){
-            langBundle = langBundles[lang];
-        }
 
-        if(!langBundle){
-            //TODO error
-        }
-        
-        var message = langBundles[messageId];
+        var message = langBundle[messageId];
         if(!message){
-            //TODO error
+            message = defaultLangBundle[messageId];
+        }
+        if(!message){
+            fatal('Missing message for ' + messageId);
         }
         
         return message;
-    }    
+    }
+
+    /**
+       Returns the localized name information for the provided idp
+
+       @param (Object) an idp.  This should have an array 'names' with sub
+        elements 'lang' and 'name'.
+
+       @return (String) The localized name
+    */
+
+    var getLocalizedName = function(idp){
+
+        for (i in idp.names) {
+            if (idp.names[i].lang == lang) {
+                return idp.names[i].name;
+            }
+        }
+        for (i in idp.names) {
+            if (idp.names[i].lang == defaultLang) {
+                return idp.names[i].name;
+            }
+        }
+
+        error('No Name in either language for ' + idp.id);
+        return 'unknown';
+    }
+
     
     /**
        Gets the preferred IdPs.  The first elements in the array will
@@ -312,7 +437,7 @@ function IdPSelectUI(data, langBundles){
             }
                 
             if ( '_saml_idp' == cookieParts[0].replace(/^\s+|\s+$/g, '') ) {
-                cookieValues = cookieParts[1].replace(/^\s+|\s+$/g, '').split("+");
+                cookieValues = cookieParts[1].replace(/^\s+|\s+$/g, '').split('+');
                 for(var value in cookieValues){
                     userSelectedIdPs[userSelectedIdPs.length] = base64Decode(value);
                 }
@@ -339,8 +464,8 @@ function IdPSelectUI(data, langBundles){
             expireDate = new Date(now.getTime + cookieTTL);
         }
         
-        document.cookie="_saml_idp" + "=" + idps.join("+") +
-            ((expireDate==null) ? "" : "; expires=" + expireDate.toUTCString());
+        document.cookie='_saml_idp' + '=' + idps.join('+') +
+            ((expireDate==null) ? '' : '; expires=' + expireDate.toUTCString());
     }
     
     /**
@@ -351,7 +476,7 @@ function IdPSelectUI(data, langBundles){
        @return {String} base64 encoded string
     */
     var base64Encode = function(input) {
-        var output = "", c1, c2, c3, e1, e2, e3, e4;
+        var output = '', c1, c2, c3, e1, e2, e3, e4;
 
         for ( var i = 0; i < input.length; ) {
             c1 = input.charCodeAt(i++);
@@ -383,12 +508,12 @@ function IdPSelectUI(data, langBundles){
        @return {String} base64 decoded string
     */
     var base64Decode = function(input) {
-        var output = "", chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+        var output = '', chr1, chr2, chr3, enc1, enc2, enc3, enc4;
         var i = 0;
 
         // Remove all characters that are not A-Z, a-z, 0-9, +, /, or =
         var base64test = /[^A-Za-z0-9\+\/\=]/g;
-        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
 
         do {
             enc1 = base64chars.indexOf(input.charAt(i++));
@@ -409,11 +534,28 @@ function IdPSelectUI(data, langBundles){
                 output = output + String.fromCharCode(chr3);
             }
 
-            chr1 = chr2 = chr3 = "";
-            enc1 = enc2 = enc3 = enc4 = "";
+            chr1 = chr2 = chr3 = '';
+            enc1 = enc2 = enc3 = enc4 = '';
 
         } while (i < input.length);
 
         return output;
+    }
+
+    /**
+       Error Handling.  we'll keep it separate with a view to eventual exbedding into log4js
+    */
+
+    var error = function(message) {
+        alert('DISCO-UI: ' + message);
+    }
+
+    var fatal = function(message) {
+        alert('FATAL - DISCO UI:' + message);
+    }
+
+    var debug = function() {
+        //
+        // Nothing
     }
 }
