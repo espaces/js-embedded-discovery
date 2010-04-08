@@ -43,33 +43,8 @@ function IdPSelectUI(){
     var maxPreferredIdPs;
     var helpURL;
     var samlIdPCookieTTL;
+    var userSelectedIdPs;
 
-    var setupLocals = function (parent) {
-        //
-        // Copy parameters in
-        //
-        preferredIdP = parent.preferredIdP;
-        maxPreferredIdPs = parent.maxPreferredIdPs;
-        helpURL = parent.helpURL;
-        samlIdPCookieTTL = parent.samlIdPCookieTTL;
-
-        lang = Navigator.userLanguage || parent.defaultLanguage;
-        defaultLang = parent.defaultLanguage;
-        langBundle = parent.langBundles[lang];
-        defaultLangBundle = parent.langBundles[parent.defaultLanguage];
-
-        //
-        // Setup Language bundles
-        //
-        if (!defaultLangBundle) {
-            fatal('No languages work');
-            return;
-        }
-        if (!langBundle) {
-            debug('No language support for ' + lang);
-        }
-    }
-    
     // *************************************
     // Public functions
     // *************************************
@@ -104,7 +79,42 @@ function IdPSelectUI(){
     
     // *************************************
     // Private functions
+    //
+    // Data Manipulation
+    //
     // *************************************
+
+    /**
+       Copies the "parameters" in the function into namesspace local
+       variables.  This means most of the work is done outside the
+       IdPSelectUI object
+    */
+
+    var setupLocals = function (parent) {
+        //
+        // Copy parameters in
+        //
+        preferredIdP = parent.preferredIdP;
+        maxPreferredIdPs = parent.maxPreferredIdPs;
+        helpURL = parent.helpURL;
+        samlIdPCookieTTL = parent.samlIdPCookieTTL;
+
+        lang = Navigator.userLanguage || parent.defaultLanguage;
+        defaultLang = parent.defaultLanguage;
+        langBundle = parent.langBundles[lang];
+        defaultLangBundle = parent.langBundles[parent.defaultLanguage];
+
+        //
+        // Setup Language bundles
+        //
+        if (!defaultLangBundle) {
+            fatal('No languages work');
+            return;
+        }
+        if (!langBundle) {
+            debug('No language support for ' + lang);
+        }
+    }
     
     /**
        Loads the data used by the IdP selection UI.  Data is loaded 
@@ -137,6 +147,31 @@ function IdPSelectUI(){
             failureCallback(xhr);
         }
     }
+
+    /**
+       Returns the idp object with the given name.
+
+       @param (String) the name we are interested in
+       @returns (Object) the IdP we care about
+    */
+
+    var getIdPFor = function(idpName) {
+
+        for (var i = 0; i < idpData.idps.length; i++) {
+            if (idpData.idps[i].id == idpName) {
+                return idpData.idps[i];
+            }
+        }
+        return null;
+    }
+
+
+    // *************************************
+    // Private functions
+    //
+    // GUI Manipulation
+    //
+    // *************************************
     
     /**
        Builds the IdP selection UI.
@@ -183,7 +218,7 @@ function IdPSelectUI(){
             retString = '&' + retString;
         }
         aval.setAttribute('href', retVal + retString);
-        aval.appendChild(document.createTextNode(getLocalName(idp)));
+        aval.appendChild(document.createTextNode(getLocalizedName(idp)));
         
         return aval;
     }
@@ -218,20 +253,18 @@ function IdPSelectUI(){
        @return {Element} IdP entry UI tile
     */
     var buildIdPEntryTile = function() {
-        var idpInputId = 'idpInput';
-        
         var idpEntryDiv = buildDiv('idpEntry');
 
-        var enterOrgLabel = buildLabel(idpInputId, getLocalizedMessage('idpEntry.label'));
+        var enterOrgLabel = buildLabel('idpEntry', getLocalizedMessage('idpEntry.label'));
         idpEntryDiv.appendChild(enterOrgLabel);
         
         var input = document.createElement('input');
         input.setAttribute('type', 'text');
-        input.setAttribute('id', idpInputId);
+        setID(input, 'idpInput');
         idpEntryDiv.appendChild(input);
         
         var selectOrSearchInput = document.createElement('input');
-        selectOrSearchInput.setAttribute('id', 'selectOrSearchHiddenInput');
+        setID(selectOrSearchInput, 'selectOrSearchHiddenInput');
         selectOrSearchInput.setAttribute('name', 'action');
         selectOrSearchInput.setAttribute('value', 'search');
         selectOrSearchInput.setAttribute('type', 'hidden');
@@ -249,16 +282,15 @@ function IdPSelectUI(){
        @return {Element} IdP drop down selection UI tile
     */
     var buildIdPDropDownListTile = function() {
-        var idpSelectId = 'idpSelect';
-        
         var listDiv = buildDiv('idplist', 'display:none');
         var listDiv = buildDiv('idplist');
         
-        var selectOrgLabel = buildLabel(idpSelectId, getLocalizedMessage('idpList.label'));
+        var selectOrgLabel = buildLabel('idplist', getLocalizedMessage('idpList.label'));
         listDiv.appendChild(selectOrgLabel);
         
         var idpSelect = document.createElement('select');
-        idpSelect.setAttribute('id', idpSelectId);
+        setID(idpSelect, 'idpSelect');
+        idpSelect.setAttribute('name', idpData.returnIDParam);
         listDiv.appendChild(idpSelect);
         
         var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
@@ -268,9 +300,8 @@ function IdPSelectUI(){
         var idp;
         for(var i=0; i<idpData.idps.length; i++){
             idp = idpData.idps[i];
-            // TODO select name by language
-            idpOption = buildSelectOption(idp.id, getLocalizedName(idp))
-                idpSelect.appendChild(idpOption);
+            idpOption = buildSelectOption(idp.id, getLocalizedName(idp));
+            idpSelect.appendChild(idpOption);
         }
 
         var form = buildIdPSelectForm();
@@ -290,12 +321,10 @@ function IdPSelectUI(){
     */
     var buildContinueButton = function() {
         var button  = document.createElement('button');
-        button.setAttribute('id', 'button');
+        setID(button, 'button');
         button.setAttribute('type', 'submit');
         button.appendChild(document.createTextNode(getLocalizedMessage('submitButton.label')));
-        
-        //TODO check input on submit
-
+        button.onclick = submitIdP;
         return button;
     }
     
@@ -339,10 +368,75 @@ function IdPSelectUI(){
     */
     var buildLabel = function(target, text) {
         var label = document.createElement('label');
-        label.setAttribute('for', target);
+        label.setAttribute('for', 'idpsel' + target);
         label.appendChild(document.createTextNode(text));
         return label;
     }
+
+    /**
+       Sets the attribute 'id' on the provided object
+       We do it through this function so we have a single
+       point where we can prepend a value
+       
+       @param (Object) The [DOM] Object we want to set the attribute on
+       @param (String) The Id we want to set
+    */
+
+    var setID = function(obj, name) {
+
+        obj.setAttribute('id', 'idpsel' + name);
+    }
+
+    /**
+       Returns the DOM object with the specified id.  We abstract
+       through a function to allow us to prepend to the name
+       
+       @param (String) the (unprepended) id we want
+    */
+    var locateElement = function(name) {
+        return document.getElementById('idpsel'+name);
+    }
+
+    // *************************************
+    // Private functions
+    //
+    // GUI actions.  Note that there is an element of closure going on
+    // here since these names are invisible outside this module.
+    // 
+    //
+    // *************************************
+
+    /**
+       Base helper function for when an IdP is selected
+    */
+
+    var selectIdP = function(idP) {
+
+        updateSelectedIdPs(idP);
+        saveUserSelectedIdPs(userSelectedIdPs);
+    }
+
+    /**
+       Called when the form we used for manual selection happens
+    */
+
+    var submitIdP = function() {
+        var selector = locateElement('idpSelect');
+        var selectedIdP = selector.options[selector.selectedIndex].value;
+        selectIdP(selectedIdP);
+    }
+        
+    /**
+       Helper function for when the IdP is in a form
+    */
+
+
+    // *************************************
+    // Private functions
+    //
+    // Localization handling
+    //
+    // *************************************
 
     /**
        Gets a localized string from the given language pack.  This
@@ -393,6 +487,13 @@ function IdPSelectUI(){
     }
 
     
+    // *************************************
+    // Private functions
+    //
+    // Cookie and preferred IdP Handling
+    //
+    // *************************************
+
     /**
        Gets the preferred IdPs.  The first elements in the array will
        be the preselected preferred IdPs.  The following elements will
@@ -406,16 +507,46 @@ function IdPSelectUI(){
         // populate start of array with preselected IdPs
         if(preferredIdP){
             for(var i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
-                idps[i] = preferredIdP[i];
+                idps[i] = getIdPFor(preferredIdP[i]);
                 offset++;
             }
         }
 
-        var userSelectedIdPs = retrieveUserSelectedIdPs();
+        userSelectedIdPs = retrieveUserSelectedIdPs();
         for (var i = offset, j=0; i < userSelectedIdPs.length && i < maxPreferredIdPs; i++, j++){
-            idps[i] = userSelectedIdPs[j];
+            idps[i] = getIdPFor(userSelectedIdPs[j]);
         }
         return idps;
+    }
+
+    /**
+       Update the userSelectedIdPs list with the new value.
+
+       @param (String) the newly selected IdP
+    */
+    var updateSelectedIdPs = function(newIdP) {
+
+        var i = 0;
+        for (i = 0; i < userSelectedIdPs.length; i++) {
+            if (userSelectedIdPs[i] == newIdP) {
+                break;
+            }
+        }
+        if (userSelectedIdPs.length != i) {
+            //
+            // it was already there
+            //
+
+            var older = userSelectedIdPs.splice(i);
+            //
+            // older is everything to the 'right' of the idp
+            // userSelectedIdPs is the up to and including
+            //
+            userSelectedIdPs.pop(); // get rid of the old one)
+            userSelectedIdPs.concat(older); // strich them together
+        }
+        userSelectedIdPs.unshift(newIdP);
+        return;
     }
     
     /**
@@ -427,19 +558,19 @@ function IdPSelectUI(){
         var userSelectedIdPs = new Array();
         
         var cookies = document.cookie.split( ';' );
-        var cookieParts;
-        var cookieValues;
-        for (var cookie in cookies) {
-            cookieParts = cookie.split( '=' );
+        for (var i = 0; i < cookies.length; i++) {
+            //
+            // Do not use split '=' is valid in Base64 encoding!
+            //
+            var cookie = cookies[i];
+            var splitPoint = cookie.indexOf( '=' );
+            var cookieName = cookie.substring(0, splitPoint);
+            var cookieValues = cookie.substring(splitPoint+1);
                                 
-            if(cookieParts.length != 1){
-                return null;
-            }
-                
-            if ( '_saml_idp' == cookieParts[0].replace(/^\s+|\s+$/g, '') ) {
-                cookieValues = cookieParts[1].replace(/^\s+|\s+$/g, '').split('+');
-                for(var value in cookieValues){
-                    userSelectedIdPs[userSelectedIdPs.length] = base64Decode(value);
+            if ( '_saml_idp' == cookieName.replace(/^\s+|\s+$/g, '') ) {
+                cookieValues = cookieValues.replace(/^\s+|\s+$/g, '').split('+');
+                for(var i=0; i< cookieValues.length; i++){
+                    userSelectedIdPs.push(base64Decode(cookieValues[i]));
                 }
             }
         }
@@ -542,8 +673,15 @@ function IdPSelectUI(){
         return output;
     }
 
+    // *************************************
+    // Private functions
+    //
+    // Error Handling.  we'll keep it separate with a view to eventual
+    //                  exbedding into log4js
+    //
+    // *************************************
     /**
-       Error Handling.  we'll keep it separate with a view to eventual exbedding into log4js
+       
     */
 
     var error = function(message) {
