@@ -8,7 +8,7 @@ function IdPSelectUI(){
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
     this.helpURL = '';
-    this.samlIdPCookieTTL = null;
+    this.samlIdPCookieTTL = 730; // days
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -22,6 +22,8 @@ function IdPSelectUI(){
         
         'idpList.label': 'Or select your organization from the list below',
         'idpList.defaultOptionLabel': 'Please select your organization...',
+        'idpList.showList' : 'Allow me to pick from a list',
+        'idpList.showSearch' : 'Allow me to specify the site',
 
         'submitButton.label': 'Continue',
         }
@@ -44,6 +46,12 @@ function IdPSelectUI(){
     var helpURL;
     var samlIdPCookieTTL;
     var userSelectedIdPs;
+    //
+    // Anchors used inside autofunctions
+    //
+    var idpEntryDiv;
+    var idpListDiv;
+    var idpSelect;
 
     // *************************************
     // Public functions
@@ -152,7 +160,7 @@ function IdPSelectUI(){
        Returns the idp object with the given name.
 
        @param (String) the name we are interested in
-       @returns (Object) the IdP we care about
+       @return (Object) the IdP we care about
     */
 
     var getIdPFor = function(idpName) {
@@ -165,6 +173,26 @@ function IdPSelectUI(){
         return null;
     }
 
+    /**
+       Returns a suitable image from the given IdP
+       
+       @param (Object) The IdP
+       @return Object) a DOM object suitable for insertion
+       
+       TODO - rather more careful selection
+    */
+
+    var getImageForIdP = function(idp) {
+
+        if (null == idp.logos || 0 == idp.logos.length) {
+            return null;
+        }
+        var img = document.createElement('img');
+        img.setAttribute('src', idp.logos[0].imgsrc);
+        img.setAttribute('alt', idp.logos[0].alttxt);
+        return img;
+    }
+
 
     // *************************************
     // Private functions
@@ -175,6 +203,8 @@ function IdPSelectUI(){
     
     /**
        Builds the IdP selection UI.
+
+       Three divs. PreferredIdPTime, EntryTile and DropdownTile
       
        @return {Element} IdP selector UI
     */
@@ -187,31 +217,27 @@ function IdPSelectUI(){
     }
 
     /**
-      Builds a form ready for the IdP selection
-      We just need to add the 'input' statements and a selector
-      
-      @return (Element) a suitably configured form
-    */
-    
-    var buildIdPSelectForm = function() {
-        var form = document.createElement('form');
-        form.setAttribute('action',idpData['return']);
-        form.setAttribute('method','GET');
-        return form;
-    }
-
-    /**
       Builds a button for the provided IdP
+        <div class="preferredIdP">
+          <a href="XYX" onclock=setparm('ABCID')>
+            XYX Text
+            <img src="https:\\xyc.gif"> <!-- optional -->
+          </a>
+        </div>
 
       @param (Object) The Idp
       
       @return (Element) preselector for the IdP
     */
     var composePreferredIdPButton = function(idp) {
-
+        //
+        // Button looks line this
+        //
+        var div = buildDiv('preferredIdP','preferredIdPClass');
         var aval = document.createElement('a');
         var retString = idpData.returnIDParam + '=' + idp.id;
         var retVal = idpData['return'];
+        var img = getImageForIdP(idp);
         if (retVal.indexOf('?') == -1) {
             retString = '?' + retString;
         } else {
@@ -219,13 +245,23 @@ function IdPSelectUI(){
         }
         aval.setAttribute('href', retVal + retString);
         aval.appendChild(document.createTextNode(getLocalizedName(idp)));
+        aval.onclick = function () {selectIdP(idp.id);};
+        if (img != null) {
+            aval.appendChild(img);
+        }
+        div.appendChild(aval);
         
-        return aval;
+        return div;
     }
     
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
        IdP buttons)
+
+       <div id="preferredIdP">
+          <div> [see comprosePreferredIdPButton </div>
+          [repeated]
+       </div>
       
        @return {Element} preferred IdP selection UI
     */
@@ -253,7 +289,7 @@ function IdPSelectUI(){
        @return {Element} IdP entry UI tile
     */
     var buildIdPEntryTile = function() {
-        var idpEntryDiv = buildDiv('idpEntry');
+        idpEntryDiv = buildDiv('idpEntry');
 
         var enterOrgLabel = buildLabel('idpEntry', getLocalizedMessage('idpEntry.label'));
         idpEntryDiv.appendChild(enterOrgLabel);
@@ -267,8 +303,18 @@ function IdPSelectUI(){
         setID(selectOrSearchInput, 'selectOrSearchHiddenInput');
         selectOrSearchInput.setAttribute('name', 'action');
         selectOrSearchInput.setAttribute('value', 'search');
-        selectOrSearchInput.setAttribute('type', 'hidden');
+        selectOrSearchInput.setAttribute('type', 'submit');
         idpEntryDiv.appendChild(selectOrSearchInput);
+
+        var a = document.createElement('a');
+        a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
+        a.setAttribute('href','#');
+        a.onclick = function() { 
+            idpEntryDiv.style.display='none';
+            idpListDiv.style.display='inline';};
+        idpEntryDiv.appendChild(a);
+                                              
+
         
         //TODO link to switch to drop down list tile
 
@@ -278,23 +324,35 @@ function IdPSelectUI(){
     /**
        Builds the drop down list containing all the IdPs from which a
        user may choose.
-      
+
+       <div id="idplist">
+          <label for="idplist">idpList.label</label>
+          <form action="URL from IDP Data" method="GET">
+          <select name="param from IdP data">
+             <option value="EntityID">Localized Entity Name</option>
+             [...]
+          </select>
+          <input type="submit/>
+       </div>
+        
        @return {Element} IdP drop down selection UI tile
     */
     var buildIdPDropDownListTile = function() {
-        var listDiv = buildDiv('idplist', 'display:none');
-        var listDiv = buildDiv('idplist');
+        idpListDiv = buildDiv('idplist', 'display:none');
         
         var selectOrgLabel = buildLabel('idplist', getLocalizedMessage('idpList.label'));
-        listDiv.appendChild(selectOrgLabel);
+        idpListDiv.appendChild(selectOrgLabel);
         
-        var idpSelect = document.createElement('select');
-        setID(idpSelect, 'idpSelect');
+        idpSelect = document.createElement('select');
+        setID(idpSelect, 'idpSelector');
         idpSelect.setAttribute('name', idpData.returnIDParam);
-        listDiv.appendChild(idpSelect);
+        idpListDiv.appendChild(idpSelect);
         
         var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
         idpOption.setAttribute('selected', 'selected');
+        //
+        // TODO what to do if this 'IdP' is selected?
+        //
         idpSelect.appendChild(idpOption);
     
         var idp;
@@ -304,14 +362,25 @@ function IdPSelectUI(){
             idpSelect.appendChild(idpOption);
         }
 
-        var form = buildIdPSelectForm();
+        var form = document.createElement('form');
+        form.setAttribute('action',idpData['return']);
+        form.setAttribute('method','GET');
         form.appendChild(idpSelect);
         form.appendChild(buildContinueButton());
-        listDiv.appendChild(form);
+        idpListDiv.appendChild(form);
 
-        //TODO link to switch to search-as-you-type entry tile
+        //
+        // The switcher
+        //
+        var a = document.createElement('a');
+        a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showSearch')));
+        a.setAttribute('href','#');
+        a.onclick = function() { 
+            idpEntryDiv.style.display='inline';
+            idpListDiv.style.display='none';};
+        idpListDiv.appendChild(a);
         
-        return listDiv;
+        return idpListDiv;
     }
     
     /**
@@ -324,7 +393,7 @@ function IdPSelectUI(){
         setID(button, 'button');
         button.setAttribute('type', 'submit');
         button.appendChild(document.createTextNode(getLocalizedMessage('submitButton.label')));
-        button.onclick = submitIdP;
+        button.onclick = function() {selectIdP(idpSelect.options[idpSelect.selectedIndex].value);}
         return button;
     }
     
@@ -416,16 +485,6 @@ function IdPSelectUI(){
         saveUserSelectedIdPs(userSelectedIdPs);
     }
 
-    /**
-       Called when the form we used for manual selection happens
-    */
-
-    var submitIdP = function() {
-        var selector = locateElement('idpSelect');
-        var selectedIdP = selector.options[selector.selectedIndex].value;
-        selectIdP(selectedIdP);
-    }
-        
     /**
        Helper function for when the IdP is in a form
     */
@@ -542,8 +601,8 @@ function IdPSelectUI(){
             // older is everything to the 'right' of the idp
             // userSelectedIdPs is the up to and including
             //
-            userSelectedIdPs.pop(); // get rid of the old one)
-            userSelectedIdPs.concat(older); // strich them together
+            older.shift(); // get rid of the old one)
+            userSelectedIdPs = userSelectedIdPs.concat(older); // strich them together
         }
         userSelectedIdPs.unshift(newIdP);
         return;
@@ -592,7 +651,7 @@ function IdPSelectUI(){
         if(samlIdPCookieTTL){
             var now = new Date();
             cookieTTL = samlIdPCookieTTL * 24 * 60 * 60 * 1000;
-            expireDate = new Date(now.getTime + cookieTTL);
+            expireDate = new Date(now.getTime() + cookieTTL);
         }
         
         document.cookie='_saml_idp' + '=' + idps.join('+') +
