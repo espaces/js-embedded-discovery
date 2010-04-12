@@ -4,6 +4,7 @@ function IdPSelectUI(){
     // The following are parameters
     //
     this.dataSource = 'idp.json';
+    this.insertAtDiv = 'idpselect';
     this.defaultLanguage = 'en';
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
@@ -52,6 +53,8 @@ function IdPSelectUI(){
     var idpEntryDiv;
     var idpListDiv;
     var idpSelect;
+    
+    var idPrefix = 'idpSelect';
 
     // *************************************
     // Public functions
@@ -65,7 +68,7 @@ function IdPSelectUI(){
         setupLocals(this);
         load(this.dataSource);
         
-        var idpSelectDiv = document.getElementById('idpselect');
+        var idpSelectDiv = document.getElementById(this.insertAtDiv);
         if(!idpSelectDiv){
             fatal(getLocalizedMessage('fatal.divMissing'));
             return;
@@ -75,14 +78,6 @@ function IdPSelectUI(){
         idpSelectDiv.appendChild(idpSelector);
         
         //TODO focus on IdP input
-    }
-    
-    /**
-       Switches displayed UI between the IdP Entry (text field) and IdP
-       Drop Down List tiles.
-    */
-    this.switchIdPSelectionView = function(){
-        //TODO
     }
     
     // *************************************
@@ -209,7 +204,7 @@ function IdPSelectUI(){
        @return {Element} IdP selector UI
     */
     var buildIdPSelector = function(){
-        var containerDiv = buildDiv('container');
+        var containerDiv = buildDiv('IdPSelector');
         containerDiv.appendChild(buildPreferredIdPTile());
         containerDiv.appendChild(buildIdPEntryTile());
         containerDiv.appendChild(buildIdPDropDownListTile());
@@ -225,15 +220,12 @@ function IdPSelectUI(){
           </a>
         </div>
 
-      @param (Object) The Idp
+      @param (Object) The IdP
       
       @return (Element) preselector for the IdP
     */
-    var composePreferredIdPButton = function(idp) {
-        //
-        // Button looks line this
-        //
-        var div = buildDiv('preferredIdP','preferredIdPClass');
+    var composePreferredIdPButton = function(idp, uniq) {
+        var div = buildDiv('PreferredIdPButton'+uniq,'preferredIdPClass');
         var aval = document.createElement('a');
         var retString = idpData.returnIDParam + '=' + idp.id;
         var retVal = idpData['return'];
@@ -266,7 +258,7 @@ function IdPSelectUI(){
        @return {Element} preferred IdP selection UI
     */
     var buildPreferredIdPTile = function(){
-        var preferredIdPDIV = buildDiv('preferredIdP');
+        var preferredIdPDIV = buildDiv('PreferredIdPTile');
 
         var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
         preferredIdPDIV.appendChild(introTxt);
@@ -274,7 +266,7 @@ function IdPSelectUI(){
         var preferredIdPs = getPreferredIdPs();
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
-                var button = composePreferredIdPButton(preferredIdPs[i]);
+                var button = composePreferredIdPButton(preferredIdPs[i],i);
                 preferredIdPDIV.appendChild(button);
             }
         }
@@ -289,9 +281,9 @@ function IdPSelectUI(){
        @return {Element} IdP entry UI tile
     */
     var buildIdPEntryTile = function() {
-        idpEntryDiv = buildDiv('idpEntry');
+        idpEntryDiv = buildDiv('IdPEntryTile');
 
-        var enterOrgLabel = buildLabel('idpEntry', getLocalizedMessage('idpEntry.label'));
+        var enterOrgLabel = buildLabel('IdPEntryTile', getLocalizedMessage('idpEntry.label'));
         idpEntryDiv.appendChild(enterOrgLabel);
         
         var input = document.createElement('input');
@@ -338,7 +330,7 @@ function IdPSelectUI(){
        @return {Element} IdP drop down selection UI tile
     */
     var buildIdPDropDownListTile = function() {
-        idpListDiv = buildDiv('idplist', 'display:none');
+        idpListDiv = buildDiv('IdPListTile', 'display:none');
         
         var selectOrgLabel = buildLabel('idplist', getLocalizedMessage('idpList.label'));
         idpListDiv.appendChild(selectOrgLabel);
@@ -406,7 +398,7 @@ function IdPSelectUI(){
     */
     var buildDiv = function(id, style){
         var div = document.createElement('div');
-        div.setAttribute('id', id);
+        setID(div, id);
         if(style !== ''){
             div.setAttribute('style', style);
         }
@@ -437,7 +429,7 @@ function IdPSelectUI(){
     */
     var buildLabel = function(target, text) {
         var label = document.createElement('label');
-        label.setAttribute('for', 'idpsel' + target);
+        label.setAttribute('for', idPrefix + target);
         label.appendChild(document.createTextNode(text));
         return label;
     }
@@ -453,7 +445,7 @@ function IdPSelectUI(){
 
     var setID = function(obj, name) {
 
-        obj.setAttribute('id', 'idpsel' + name);
+        obj.setAttribute('id', idPrefix + name);
     }
 
     /**
@@ -463,7 +455,7 @@ function IdPSelectUI(){
        @param (String) the (unprepended) id we want
     */
     var locateElement = function(name) {
-        return document.getElementById('idpsel'+name);
+        return document.getElementById(idPrefix + name);
     }
 
     // *************************************
