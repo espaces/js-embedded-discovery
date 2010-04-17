@@ -50,6 +50,7 @@ TypeAheadControl.prototype.draw = function() {
         if (!event) {
             event = window.event;
         }
+        var target;
         if (event.target){
             target = event.target;
         }
