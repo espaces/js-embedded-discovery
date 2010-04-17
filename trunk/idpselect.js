@@ -4,11 +4,12 @@ function IdPSelectUI(){
     // The following are parameters
     //
     this.dataSource = 'idp.json';
-    this.insertAtDiv = 'idpselect';
+    this.insertAtDiv = 'idpSelect';
     this.defaultLanguage = 'en';
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
-    this.helpURL = '';
+    this.helpURL = '';           // TODO
+    this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // days
     this.langBundles = {
     'en': {
@@ -42,10 +43,18 @@ function IdPSelectUI(){
     var langBundle;
     var defaultLangBundle;
 
+    //
+    // Parameters passed into our closure
+    //
     var preferredIdP;
     var maxPreferredIdPs;
     var helpURL;
+    var ie6Hack;
     var samlIdPCookieTTL;
+
+    //
+    // The cookie contents
+    //
     var userSelectedIdPs;
     //
     // Anchors used inside autofunctions
@@ -54,7 +63,11 @@ function IdPSelectUI(){
     var idpListDiv;
     var idpSelect;
     
+    //
+    // local configuration
+    //
     var idPrefix = 'idpSelect';
+    var dropDownControl;
 
     // *************************************
     // Public functions
@@ -77,6 +90,7 @@ function IdPSelectUI(){
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
         
+        dropDownControl.draw();
         //TODO focus on IdP input
     }
     
@@ -100,9 +114,14 @@ function IdPSelectUI(){
         preferredIdP = parent.preferredIdP;
         maxPreferredIdPs = parent.maxPreferredIdPs;
         helpURL = parent.helpURL;
+        ie6Hack = parent.ie6Hack;
         samlIdPCookieTTL = parent.samlIdPCookieTTL;
 
-        lang = Navigator.userLanguage || parent.defaultLanguage;
+        if (typeof Navigator == 'undefined') {
+            lang = "en";
+        } else {
+            lang = Navigator.userLanguage || parent.defaultLanguage;
+        }
         defaultLang = parent.defaultLanguage;
         langBundle = parent.langBundles[lang];
         defaultLangBundle = parent.langBundles[parent.defaultLanguage];
@@ -134,7 +153,9 @@ function IdPSelectUI(){
         }
         
         xhr.open('GET', dataSource, false);
-        xhr.overrideMimeType('application/json');
+        if (typeof xhr.overrideMimeType == 'function') {
+            xhr.overrideMimeType('application/json');
+        }
         xhr.send();
         
         if(xhr.status == 200){
@@ -183,8 +204,8 @@ function IdPSelectUI(){
             return null;
         }
         var img = document.createElement('img');
-        img.setAttribute('src', idp.logos[0].imgsrc);
-        img.setAttribute('alt', idp.logos[0].alttxt);
+        img.src = idp.logos[0].imgsrc;
+        img.alt = idp.logos[0].alttxt;
         return img;
     }
 
@@ -213,8 +234,8 @@ function IdPSelectUI(){
 
     /**
       Builds a button for the provided IdP
-        <div class="preferredIdP">
-          <a href="XYX" onclock=setparm('ABCID')>
+        <div class=prefix+"PreferredIdPButton"+uniq>
+          <a href="XYX" onclick=setparm('ABCID')>
             XYX Text
             <img src="https:\\xyc.gif"> <!-- optional -->
           </a>
@@ -235,9 +256,11 @@ function IdPSelectUI(){
         } else {
             retString = '&' + retString;
         }
-        aval.setAttribute('href', retVal + retString);
+        aval.href = retVal + retString;
         aval.appendChild(document.createTextNode(getLocalizedName(idp)));
-        aval.onclick = function () {selectIdP(idp.id);};
+        aval.onclick = function () {
+            selectIdP(idp.id);
+        };
         if (img != null) {
             aval.appendChild(img);
         }
@@ -250,7 +273,7 @@ function IdPSelectUI(){
        Builds the preferred IdP selection UI (top half of the UI w/ the
        IdP buttons)
 
-       <div id="preferredIdP">
+       <div id=prefix+"PreferredIdPTile">
           <div> [see comprosePreferredIdPButton </div>
           [repeated]
        </div>
@@ -277,36 +300,62 @@ function IdPSelectUI(){
     /**
        Build the manual IdP Entry tile (bottom half of UI with
        search-as-you-type field).
+
+       <div id = prefix+"IdPEntryTile">
+         <form>
+           <input type="text", id=prefix+"IdPSelectInput/> // select text box
+           <input type="hidden" /> param to send
+           <input type="submit" />
+           
       
        @return {Element} IdP entry UI tile
     */
     var buildIdPEntryTile = function() {
+
         idpEntryDiv = buildDiv('IdPEntryTile');
 
         var enterOrgLabel = buildLabel('IdPEntryTile', getLocalizedMessage('idpEntry.label'));
         idpEntryDiv.appendChild(enterOrgLabel);
+
+        var form = document.createElement('form');
+        idpEntryDiv.appendChild(form);
+
+        form.action = idpData['return'];
+        form.method = 'GET';
         
-        var input = document.createElement('input');
-        input.setAttribute('type', 'text');
-        setID(input, 'idpInput');
-        idpEntryDiv.appendChild(input);
-        
-        var selectOrSearchInput = document.createElement('input');
-        setID(selectOrSearchInput, 'selectOrSearchHiddenInput');
-        selectOrSearchInput.setAttribute('name', 'action');
-        selectOrSearchInput.setAttribute('value', 'search');
-        selectOrSearchInput.setAttribute('type', 'submit');
-        idpEntryDiv.appendChild(selectOrSearchInput);
+        var textInput = document.createElement('input');
+        form.appendChild(textInput);
+
+        textInput.type='text';
+        setID(textInput, 'IdPSelectInput');
+
+        var hidden = document.createElement('input');
+        hidden.setAttribute('type', 'hidden');
+        form.appendChild(hidden);
+
+        hidden.name = idpData.returnIDParam;
+        hidden.value='-';
+
+
+        var button = buildContinueButton();
+        form.appendChild(button)
+
+        button.disabled = true;
+        button.onclick = function() {
+            selectIdp(hidden.value);
+        };
+
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, ie6Hack);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
-        a.setAttribute('href','#');
+        a.href = '#';
         a.onclick = function() { 
             idpEntryDiv.style.display='none';
-            idpListDiv.style.display='inline';};
+            idpListDiv.style.display='inline';
+        };
         idpEntryDiv.appendChild(a);
                                               
-
         
         //TODO link to switch to drop down list tile
 
@@ -317,7 +366,7 @@ function IdPSelectUI(){
        Builds the drop down list containing all the IdPs from which a
        user may choose.
 
-       <div id="idplist">
+       <div id=prefix+"IdPListTile">
           <label for="idplist">idpList.label</label>
           <form action="URL from IDP Data" method="GET">
           <select name="param from IdP data">
@@ -330,18 +379,19 @@ function IdPSelectUI(){
        @return {Element} IdP drop down selection UI tile
     */
     var buildIdPDropDownListTile = function() {
-        idpListDiv = buildDiv('IdPListTile', 'display:none');
+        idpListDiv = buildDiv('IdPListTile');
+        idpListDiv.style.display = 'none';
         
         var selectOrgLabel = buildLabel('idplist', getLocalizedMessage('idpList.label'));
         idpListDiv.appendChild(selectOrgLabel);
         
         idpSelect = document.createElement('select');
         setID(idpSelect, 'idpSelector');
-        idpSelect.setAttribute('name', idpData.returnIDParam);
+        idpSelect.name = idpData.returnIDParam;
         idpListDiv.appendChild(idpSelect);
         
         var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
-        idpOption.setAttribute('selected', 'selected');
+        idpOption.selected = true;
         //
         // TODO what to do if this 'IdP' is selected?
         //
@@ -355,10 +405,16 @@ function IdPSelectUI(){
         }
 
         var form = document.createElement('form');
-        form.setAttribute('action',idpData['return']);
-        form.setAttribute('method','GET');
+        form.action = idpData['return'];
+        form.method = 'GET';
         form.appendChild(idpSelect);
-        form.appendChild(buildContinueButton());
+
+        var button = buildContinueButton();
+        button.onclick = function() {
+            selectIdP(idpSelect.options[idpSelect.selectedIndex].value);
+        };
+        form.appendChild(button);
+
         idpListDiv.appendChild(form);
 
         //
@@ -366,7 +422,7 @@ function IdPSelectUI(){
         //
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showSearch')));
-        a.setAttribute('href','#');
+        a.href = '#';
         a.onclick = function() { 
             idpEntryDiv.style.display='inline';
             idpListDiv.style.display='none';};
@@ -382,10 +438,9 @@ function IdPSelectUI(){
     */
     var buildContinueButton = function() {
         var button  = document.createElement('button');
-        setID(button, 'button');
         button.setAttribute('type', 'submit');
+        setID(button, 'Button');
         button.appendChild(document.createTextNode(getLocalizedMessage('submitButton.label')));
-        button.onclick = function() {selectIdP(idpSelect.options[idpSelect.selectedIndex].value);}
         return button;
     }
     
@@ -393,14 +448,15 @@ function IdPSelectUI(){
        Creates a div element whose id attribute is set to the given ID.
       
        @param {String} id ID for the created div element
-       @param {String} [style] style of the created div element
+       @param {String} [class] class of the created div element
        @return {Element} DOM 'div' element with an 'id' attribute
     */
-    var buildDiv = function(id, style){
+    var buildDiv = function(id, whichClass){
         var div = document.createElement('div');
         setID(div, id);
-        if(style !== ''){
-            div.setAttribute('style', style);
+        if(whichClass !== ''){
+
+            div.setAttribute('className', whichClass);
         }
         return div;
     }
@@ -413,7 +469,7 @@ function IdPSelectUI(){
     */
     var buildSelectOption = function(value, text){
         var option = document.createElement('option');
-        option.setAttribute('value', value);
+        option.value = value;
         option.appendChild(document.createTextNode(text));
         return option;
     }
@@ -444,8 +500,7 @@ function IdPSelectUI(){
     */
 
     var setID = function(obj, name) {
-
-        obj.setAttribute('id', idPrefix + name);
+        obj.id = idPrefix + name;
     }
 
     /**
@@ -472,7 +527,6 @@ function IdPSelectUI(){
     */
 
     var selectIdP = function(idP) {
-
         updateSelectedIdPs(idP);
         saveUserSelectedIdPs(userSelectedIdPs);
     }
