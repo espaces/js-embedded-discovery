@@ -1,4 +1,3 @@
-
 function TypeAheadControl(jsonObj, box, orig, submit, ie6hack)
 {
     //
@@ -15,21 +14,10 @@ function TypeAheadControl(jsonObj, box, orig, submit, ie6hack)
 
 TypeAheadControl.prototype.draw = function() {
 
-    /*
     //
-    // Setup the lowercase names
+    // Make a closure on this so that the embedded functions
+    // get access to it.
     //
-    var i = 0;
-    while (i < list.length) {
-    if (null == list[i]) {
-    list.length = i;
-    break;
-    }
-    list[i][2] = list[i][0].toLowerCase();
-    i++;
-    }
-    */
-
     var myThis = this;
    
     //
@@ -58,26 +46,26 @@ TypeAheadControl.prototype.draw = function() {
             target = event.srcElement;
         }
         myThis.select(target);
-    }
+    };
    
     this.dropDown.onmousedown = function(event) {
         if (-1 != myThis.dropDown.current) {
             myThis.textBox.value = myThis.results[myThis.dropDown.current][0];
         }
-    }
+    };
 
     //
     // Add the listeners to the text box
     //
     this.textBox.onkeyup = function(event) {
         //
-        // get window even if needed
+        // get window event if needed (because of browser oddities)
         //
         if (!event) {
             event = window.event;
         }
         myThis.handleKeyUp(event);
-    }
+    };
 
     this.textBox.onkeydown = function(event) {
         if (!event) {
@@ -85,17 +73,18 @@ TypeAheadControl.prototype.draw = function() {
         }
 
         myThis.handleKeyDown(event);
-    }
+    };
 
     this.textBox.onblur = function() {
         myThis.hideDrop();
-    }
+    };
 
     this.textBox.onfocus = function() {
         myThis.handleChange();
-    }
+    };
 
-}
+};
+
 //
 // Given a name return the first maxresults, or all possibles
 //
@@ -103,16 +92,19 @@ TypeAheadControl.prototype.getPossible = function(name) {
     var possibles = [];
     var inIndex = 0;
     var outIndex = 0;
-    name = name.toLowerCase();
     var strIndex = 0;
     var str;
     var ostr;
+
+    name = name.toLowerCase();
         
     while (outIndex <= this.maxResults && inIndex < this.elementList.length) {
         var hit = false;
         var i;
-                
+
+        //
         // Check names
+        //
         i = 0;
         while (!hit && this.elementList[inIndex].names[i]){
             if (this.elementList[inIndex].names[i].name.toLowerCase().indexOf(name) != -1) {
@@ -120,8 +112,10 @@ TypeAheadControl.prototype.getPossible = function(name) {
             }
             i++;
         }
-                
+
+        //
         // Check altnames
+        //
         i = 0;
         while (!hit && this.elementList[inIndex].altnames[i]){
             if (this.elementList[inIndex].altnames[i].name.toLowerCase().indexOf(name) != -1) {
@@ -129,14 +123,16 @@ TypeAheadControl.prototype.getPossible = function(name) {
             }
             i++;
         }
-                
+
+        //
         // Check entityID
+        //
         if (this.elementList[inIndex].id.toLowerCase().indexOf(name) != -1) {
             hit = true;
         }
                 
         if (hit) {
-            possibles[outIndex] = new Array(this.elementList[inIndex].names[0].name, this.elementList[inIndex].id);
+            possibles[outIndex] = [this.elementList[inIndex].names[0].name, this.elementList[inIndex].id];
             outIndex ++;
         }
                 
@@ -144,7 +140,7 @@ TypeAheadControl.prototype.getPossible = function(name) {
     }
     
     return possibles;
-}
+};
 
 TypeAheadControl.prototype.handleKeyUp = function(event) {
     var key = event.keyCode;
@@ -161,7 +157,7 @@ TypeAheadControl.prototype.handleKeyUp = function(event) {
         //
         this.handleChange();
     }
-}
+};
  
 TypeAheadControl.prototype.handleKeyDown = function(event) {
 
@@ -179,7 +175,7 @@ TypeAheadControl.prototype.handleKeyDown = function(event) {
         //
         this.downSelect();
     }
-} 
+};
 
 TypeAheadControl.prototype.hideDrop = function() {
     var i = 0;
@@ -193,8 +189,13 @@ TypeAheadControl.prototype.hideDrop = function() {
 
     if (-1 == this.dropDown.current) {
         this.doUnselected();
+    } else {
+        //
+        // and the value for the Server
+        //
+        this.textBox.value = this.results[this.dropDown.current][0];
     }
-}
+};
 
 TypeAheadControl.prototype.showDrop = function() {
     var i = 0;
@@ -205,16 +206,16 @@ TypeAheadControl.prototype.showDrop = function() {
         }
     }
     this.dropDown.style.visibility = 'visible';
-}
+};
 
 
 TypeAheadControl.prototype.doSelected = function() {
     this.submit.disabled = false;
-}
+};
 
 TypeAheadControl.prototype.doUnselected = function() {
     this.submit.disabled = true;
-}
+};
 
 TypeAheadControl.prototype.handleChange = function() {
 
@@ -237,7 +238,7 @@ TypeAheadControl.prototype.handleChange = function() {
             this.doUnselected();
         }
     }
-}
+};
 
 //
 // A lot of the stuff below comes from 
@@ -260,7 +261,7 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
     this.dropDown.style.left = off[0] + 'px';
     this.dropDown.style.top = off[1] + 'px';
     this.showDrop();
-}
+};
 
 TypeAheadControl.prototype.getXY = function() {
 
@@ -280,7 +281,7 @@ TypeAheadControl.prototype.getXY = function() {
     sumY += node.offsetTop;
 
     return [sumX, sumY];
-}
+};
 
 TypeAheadControl.prototype.select = function(selected) {
     var i = 0;
@@ -343,7 +344,7 @@ TypeAheadControl.prototype.downSelect = function() {
             this.origin.value = this.results[this.dropDown.current][1];
         }
     }
-}
+};
 
 
 TypeAheadControl.prototype.upSelect = function() {
@@ -365,4 +366,4 @@ TypeAheadControl.prototype.upSelect = function() {
             this.doSelected();
             this.origin.value = this.results[this.dropDown.current][1];
         }
-}
+};

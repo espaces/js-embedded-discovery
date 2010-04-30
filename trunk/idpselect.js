@@ -1,16 +1,17 @@
 /** @class IdP Selector UI */
 function IdPSelectUI(){
     //
-    // The following are parameters
+    // The following are parameters - see setupLocals to where there are
+    // made into global (to the module) variables.
     //
     this.dataSource = 'idp.json';
     this.insertAtDiv = 'idpSelect';
     this.defaultLanguage = 'en';
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
-    this.helpURL = '';           // TODO
+    this.helpURL = '';
     this.ie6Hack = null;
-    this.samlIdPCookieTTL = 730; // days
+    this.samlIdPCookieTTL = 730; // in days
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -26,15 +27,14 @@ function IdPSelectUI(){
         'idpList.defaultOptionLabel': 'Please select your organization...',
         'idpList.showList' : 'Allow me to pick from a list',
         'idpList.showSearch' : 'Allow me to specify the site',
-
         'submitButton.label': 'Continue',
+        'helpText': 'Help'
         }
     };
 
     //
     // module locals
     //
-    var spData;
     var idpData;
     var base64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
@@ -62,6 +62,7 @@ function IdPSelectUI(){
     var idpEntryDiv;
     var idpListDiv;
     var idpSelect;
+    var listButton;
     
     //
     // local configuration
@@ -89,10 +90,8 @@ function IdPSelectUI(){
         
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
-        
         dropDownControl.draw();
-        //TODO focus on IdP input
-    }
+    } ;
     
     // *************************************
     // Private functions
@@ -136,7 +135,7 @@ function IdPSelectUI(){
         if (!langBundle) {
             debug('No language support for ' + lang);
         }
-    }
+    };
     
     /**
        Loads the data used by the IdP selection UI.  Data is loaded 
@@ -148,10 +147,13 @@ function IdPSelectUI(){
     */
     var load = function(dataSource){
         var xhr = new XMLHttpRequest();
-        if(xhr == null){
-            //TODO
+        if(xhr === null){
+            fatal('No XMLHttpRequest');
         }
-        
+
+        //
+        // Grab the data
+        //
         xhr.open('GET', dataSource, false);
         if (typeof xhr.overrideMimeType == 'function') {
             xhr.overrideMimeType('application/json');
@@ -159,18 +161,25 @@ function IdPSelectUI(){
         xhr.send();
         
         if(xhr.status == 200){
+            //
+            // 200 means we got it OK from as web source
+            // if locally loading its 0.  Go figure
+            //
             var jsonData = xhr.responseText;
             if(jsonData == ''){
-                //TODO error
+                fatal('No data!');
             }
 
-            var fre = JSON;
+            //
+            // Parse it
+            //
+
             idpData = JSON.parse(jsonData);
 
         }else{
-            failureCallback(xhr);
+            fatal('Could not download data from ' + dataSource);
         }
-    }
+    };
 
     /**
        Returns the idp object with the given name.
@@ -187,7 +196,7 @@ function IdPSelectUI(){
             }
         }
         return null;
-    }
+    };
 
     /**
        Returns a suitable image from the given IdP
@@ -200,15 +209,14 @@ function IdPSelectUI(){
 
     var getImageForIdP = function(idp) {
 
-        if (null == idp.logos || 0 == idp.logos.length) {
+        if (null === idp.logos || 0 === idp.logos.length) {
             return null;
         }
         var img = document.createElement('img');
         img.src = idp.logos[0].imgsrc;
         img.alt = idp.logos[0].alttxt;
         return img;
-    }
-
+    };
 
     // *************************************
     // Private functions
@@ -229,8 +237,9 @@ function IdPSelectUI(){
         containerDiv.appendChild(buildPreferredIdPTile());
         containerDiv.appendChild(buildIdPEntryTile());
         containerDiv.appendChild(buildIdPDropDownListTile());
+        containerDiv.appendChild(buildHelpText());
         return containerDiv;
-    }
+    };
 
     /**
       Builds a button for the provided IdP
@@ -245,6 +254,7 @@ function IdPSelectUI(){
       
       @return (Element) preselector for the IdP
     */
+
     var composePreferredIdPButton = function(idp, uniq) {
         var div = buildDiv('PreferredIdPButton'+uniq,'preferredIdPClass');
         var aval = document.createElement('a');
@@ -261,13 +271,13 @@ function IdPSelectUI(){
         aval.onclick = function () {
             selectIdP(idp.id);
         };
-        if (img != null) {
+        if (img !== null) {
             aval.appendChild(img);
         }
         div.appendChild(aval);
         
         return div;
-    }
+    };
     
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
@@ -294,8 +304,8 @@ function IdPSelectUI(){
             }
         }
 
-        return preferredIdPDIV
-    }
+        return preferredIdPDIV;
+    };
     
     /**
        Build the manual IdP Entry tile (bottom half of UI with
@@ -322,6 +332,7 @@ function IdPSelectUI(){
 
         form.action = idpData['return'];
         form.method = 'GET';
+        form.setAttribute('autocomplete', 'OFF');
         
         var textInput = document.createElement('input');
         form.appendChild(textInput);
@@ -336,13 +347,22 @@ function IdPSelectUI(){
         hidden.name = idpData.returnIDParam;
         hidden.value='-';
 
-
-        var button = buildContinueButton();
-        form.appendChild(button)
-
+        var button = buildContinueButton('Select');
         button.disabled = true;
-        button.onclick = function() {
-            selectIdp(hidden.value);
+        form.appendChild(button);
+        
+        form.onsubmit = function () {
+            //
+            // Make sure we cannot ask for garbage
+            //
+            if (null === hidden.value || 0 == hidden.value.length || '-' == hidden.value) {
+                return false;
+            }
+            //
+            // And always ask for the cookie to be updated before we continue
+            //
+            selectIdP(hidden.value);
+            return true;
         };
 
         dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, ie6Hack);
@@ -353,14 +373,12 @@ function IdPSelectUI(){
         a.onclick = function() { 
             idpEntryDiv.style.display='none';
             idpListDiv.style.display='inline';
+            listButton.focus();
         };
         idpEntryDiv.appendChild(a);
                                               
-        
-        //TODO link to switch to drop down list tile
-
-        return idpEntryDiv
-    }
+        return idpEntryDiv;
+    };
     
     /**
        Builds the drop down list containing all the IdPs from which a
@@ -392,9 +410,7 @@ function IdPSelectUI(){
         
         var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
         idpOption.selected = true;
-        //
-        // TODO what to do if this 'IdP' is selected?
-        //
+
         idpSelect.appendChild(idpOption);
     
         var idp;
@@ -407,12 +423,25 @@ function IdPSelectUI(){
         var form = document.createElement('form');
         form.action = idpData['return'];
         form.method = 'GET';
+        form.setAttribute('autocomplete', 'OFF');
         form.appendChild(idpSelect);
 
-        var button = buildContinueButton();
-        button.onclick = function() {
+        form.onsubmit = function () {
+            //
+            // The first entery isn't selectable
+            //
+            if (idpSelect.selectedIndex < 1) {
+                return false;
+            }
+            //
+            // otherwise update the cookie
+            //
             selectIdP(idpSelect.options[idpSelect.selectedIndex].value);
+            return true;
         };
+
+        var button = buildContinueButton('List');
+        listButton = button;
         form.appendChild(button);
 
         idpListDiv.appendChild(form);
@@ -425,23 +454,36 @@ function IdPSelectUI(){
         a.href = '#';
         a.onclick = function() { 
             idpEntryDiv.style.display='inline';
-            idpListDiv.style.display='none';};
+            idpListDiv.style.display='none';
+        };
         idpListDiv.appendChild(a);
         
         return idpListDiv;
-    }
-    
+    };
+
     /**
        Builds the 'continue' button used to submit the IdP selection.
       
        @return {Element} HTML button used to submit the IdP selection
     */
-    var buildContinueButton = function() {
-        var button  = document.createElement('button');
+    var buildContinueButton = function(which) {
+        var button  = document.createElement('input');
         button.setAttribute('type', 'submit');
-        setID(button, 'Button');
-        button.appendChild(document.createTextNode(getLocalizedMessage('submitButton.label')));
+        button.value = getLocalizedMessage('submitButton.label');
+        setID(button, which + 'Button');
+
         return button;
+    };
+
+    /**
+       Builds an aref to point to the helpURL
+    */
+
+    var buildHelpText = function() {
+        var aval = document.createElement('a');
+        aval.href = helpURL;
+        aval.appendChild(document.createTextNode(getLocalizedMessage('helpText')));
+        return aval;
     }
     
     /**
@@ -459,7 +501,7 @@ function IdPSelectUI(){
             div.setAttribute('className', whichClass);
         }
         return div;
-    }
+    };
     
     /**
        Builds an HTML select option element
@@ -472,7 +514,7 @@ function IdPSelectUI(){
         option.value = value;
         option.appendChild(document.createTextNode(text));
         return option;
-    }
+    };
     
     /**
        Builds an HTML label element.
@@ -488,7 +530,7 @@ function IdPSelectUI(){
         label.setAttribute('for', idPrefix + target);
         label.appendChild(document.createTextNode(text));
         return label;
-    }
+    };
 
     /**
        Sets the attribute 'id' on the provided object
@@ -501,7 +543,7 @@ function IdPSelectUI(){
 
     var setID = function(obj, name) {
         obj.id = idPrefix + name;
-    }
+    };
 
     /**
        Returns the DOM object with the specified id.  We abstract
@@ -511,7 +553,7 @@ function IdPSelectUI(){
     */
     var locateElement = function(name) {
         return document.getElementById(idPrefix + name);
-    }
+    };
 
     // *************************************
     // Private functions
@@ -529,7 +571,7 @@ function IdPSelectUI(){
     var selectIdP = function(idP) {
         updateSelectedIdPs(idP);
         saveUserSelectedIdPs(userSelectedIdPs);
-    }
+    };
 
     /**
        Helper function for when the IdP is in a form
@@ -563,7 +605,7 @@ function IdPSelectUI(){
         }
         
         return message;
-    }
+    };
 
     /**
        Returns the localized name information for the provided idp
@@ -575,6 +617,7 @@ function IdPSelectUI(){
     */
 
     var getLocalizedName = function(idp){
+        var i;
 
         for (i in idp.names) {
             if (idp.names[i].lang == lang) {
@@ -589,7 +632,7 @@ function IdPSelectUI(){
 
         error('No Name in either language for ' + idp.id);
         return 'unknown';
-    }
+    };
 
     
     // *************************************
@@ -608,21 +651,28 @@ function IdPSelectUI(){
     var getPreferredIdPs = function(){
         var idps = new Array(maxPreferredIdPs);
         var offset = 0;
-        
+        var i;
+        var j;
+
+        //
         // populate start of array with preselected IdPs
+        //
         if(preferredIdP){
-            for(var i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
+            for(i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
                 idps[i] = getIdPFor(preferredIdP[i]);
                 offset++;
             }
         }
-
+        
+        //
+        // And then the cookie based ones
+        //
         userSelectedIdPs = retrieveUserSelectedIdPs();
-        for (var i = offset, j=0; i < userSelectedIdPs.length && i < maxPreferredIdPs; i++, j++){
+        for (i = offset, j=0; i < userSelectedIdPs.length && i < maxPreferredIdPs; i++, j++){
             idps[i] = getIdPFor(userSelectedIdPs[j]);
         }
         return idps;
-    }
+    };
 
     /**
        Update the userSelectedIdPs list with the new value.
@@ -632,16 +682,19 @@ function IdPSelectUI(){
     var updateSelectedIdPs = function(newIdP) {
 
         var i = 0;
+        //
+        // previously there?
+        //
         for (i = 0; i < userSelectedIdPs.length; i++) {
             if (userSelectedIdPs[i] == newIdP) {
                 break;
             }
         }
         if (userSelectedIdPs.length != i) {
-            //
-            // it was already there
-            //
 
+            //
+            // it was already there, so remove it.
+            //
             var older = userSelectedIdPs.splice(i);
             //
             // older is everything to the 'right' of the idp
@@ -650,9 +703,13 @@ function IdPSelectUI(){
             older.shift(); // get rid of the old one)
             userSelectedIdPs = userSelectedIdPs.concat(older); // strich them together
         }
+
+        //
+        // And shove it in at the top
+        //
         userSelectedIdPs.unshift(newIdP);
         return;
-    }
+    };
     
     /**
        Gets the IdP previously selected by the user.
@@ -661,11 +718,13 @@ function IdPSelectUI(){
     */
     var retrieveUserSelectedIdPs = function(){
         var userSelectedIdPs = new Array();
-        
-        var cookies = document.cookie.split( ';' );
-        for (var i = 0; i < cookies.length; i++) {
+        var i, j;
+        var cookies;
+
+        cookies = document.cookie.split( ';' );
+        for (i = 0; i < cookies.length; i++) {
             //
-            // Do not use split '=' is valid in Base64 encoding!
+            // Do not use split('='), '=' is valid in Base64 encoding!
             //
             var cookie = cookies[i];
             var splitPoint = cookie.indexOf( '=' );
@@ -674,21 +733,21 @@ function IdPSelectUI(){
                                 
             if ( '_saml_idp' == cookieName.replace(/^\s+|\s+$/g, '') ) {
                 cookieValues = cookieValues.replace(/^\s+|\s+$/g, '').split('+');
-                for(var i=0; i< cookieValues.length; i++){
-                    userSelectedIdPs.push(base64Decode(cookieValues[i]));
+                for(j=0; j< cookieValues.length; j++){
+                    userSelectedIdPs.push(base64Decode(cookieValues[j]));
                 }
             }
         }
 
         return userSelectedIdPs;
-    }
+    };
     
     /**
        Saves the IdPs selected by the user.
       
        @param {Array} idps idps selected by the user
     */
-    function saveUserSelectedIdPs(idps){
+    var saveUserSelectedIdPs = function(idps){
         for(var i=0; i < idps.length; i++){
             idps[i] = base64Encode(idps[i]);
         }
@@ -701,8 +760,8 @@ function IdPSelectUI(){
         }
         
         document.cookie='_saml_idp' + '=' + idps.join('+') +
-            ((expireDate==null) ? '' : '; expires=' + expireDate.toUTCString());
-    }
+            ((expireDate===null) ? '' : '; expires=' + expireDate.toUTCString());
+    };
     
     /**
        Base64 encodes the given string.
@@ -727,14 +786,14 @@ function IdPSelectUI(){
             } else if (isNaN(c3)){
                 e4 = 64;
             }
-            output += base64chars.charAt(e1) 
-                + base64chars.charAt(e2) 
-                + base64chars.charAt(e3) 
-                + base64chars.charAt(e4);
+            output += base64chars.charAt(e1) +
+                base64chars.charAt(e2) +
+                base64chars.charAt(e3) + 
+                base64chars.charAt(e4);
         }
 
         return output;
-    }
+    };
     
     /**
        Base64 decodes the given string.
@@ -776,7 +835,7 @@ function IdPSelectUI(){
         } while (i < input.length);
 
         return output;
-    }
+    };
 
     // *************************************
     // Private functions
@@ -791,14 +850,14 @@ function IdPSelectUI(){
 
     var error = function(message) {
         alert('DISCO-UI: ' + message);
-    }
+    };
 
     var fatal = function(message) {
         alert('FATAL - DISCO UI:' + message);
-    }
+    };
 
     var debug = function() {
         //
         // Nothing
-    }
+    };
 }
