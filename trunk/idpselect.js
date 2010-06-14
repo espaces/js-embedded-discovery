@@ -233,7 +233,7 @@ function IdPSelectUI(){
        @return {Element} IdP selector UI
     */
     var buildIdPSelector = function(){
-        var containerDiv = buildDiv('IdPSelector');
+        var containerDiv = buildDiv('IdPSelector', 'IdPSelect');
         containerDiv.appendChild(buildPreferredIdPTile());
         containerDiv.appendChild(buildIdPEntryTile());
         containerDiv.appendChild(buildIdPDropDownListTile());
@@ -245,8 +245,8 @@ function IdPSelectUI(){
       Builds a button for the provided IdP
         <div class=prefix+"PreferredIdPButton"+uniq>
           <a href="XYX" onclick=setparm('ABCID')>
-            XYX Text
             <img src="https:\\xyc.gif"> <!-- optional -->
+            XYX Text
           </a>
         </div>
 
@@ -267,7 +267,6 @@ function IdPSelectUI(){
             retString = '&' + retString;
         }
         aval.href = retVal + retString;
-        aval.appendChild(document.createTextNode(getLocalizedName(idp)));
         aval.onclick = function () {
             selectIdP(idp.id);
         };
@@ -275,6 +274,7 @@ function IdPSelectUI(){
             aval.appendChild(img);
         }
         div.appendChild(aval);
+        aval.appendChild(document.createTextNode(getLocalizedName(idp)));
         
         return div;
     };
@@ -498,7 +498,7 @@ function IdPSelectUI(){
         setID(div, id);
         if(whichClass !== ''){
 
-            div.setAttribute('className', whichClass);
+            div.setAttribute('class', whichClass);
         }
         return div;
     };

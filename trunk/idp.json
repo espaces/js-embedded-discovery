@@ -1,6 +1,6 @@
 {
-    "spid": "https://dieng.switch.ch/shibboleth",
-    "return": "https://dieng.switch.ch/Shibboleth.sso/DS?SAMLDS=1&target=https%3A%2F%2Fdieng.switch.ch%2Faai",
+    "spid": "https://sh2testsp1.iay.org.uk/shibboleth",
+    "return": "https://sh2testsp1.iay.org.uk/Shibboleth.sso/DS?SAMLDS=1&target=https://sh2testsp1.iay.org.uk/secure/printenv.cgi",
     "returnIDParam": "entityID",
     "idps": [
        

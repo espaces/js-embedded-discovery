@@ -1,0 +1,74 @@
+/* Top level is idpSelectIdPSelector */
+div.IdPSelect
+{
+    width: 500px;
+	text-align: left;
+	background-color: #FFFFFF;
+	border: 2px #A40000 solid;
+	padding: 10px;
+    color:#112233;
+}
+
+/* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
+div.IdPSelect #idpSelectPreferredIdPTile
+{
+	padding-top: 10px;
+	width: 100%;
+}
+
+/*  The preselections are in this class */
+div.IdPSelect .preferredIdPClass
+{
+    width: 30%;
+    float: left;
+}
+
+/*  The preselections are in this class */
+div.IdPSelect .preferredIdPClass a:hover
+{
+    border-style: solid;
+    border-width: 1px;
+}
+
+div.IdPSelect .preferredIdPClass img
+{
+    max-width: 95%;
+}
+
+
+#idpSelectIdPEntryTile
+{
+    color:#334455;
+}
+
+#idpSelectIdPListTile
+{
+    color:#445566;
+}
+
+
+/*
+ * drop down stuff
+ */
+
+div.idpSelectDropDown {
+    -moz-box-sizing: border-box;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: small;
+    box-sizing: border-box;
+    border: 1px solid black;
+    z-index: 6;
+    position: absolute;   
+}
+
+div.idpSelectDropDown div {
+    background-color: white;
+    cursor: default;
+    padding: 0px 3px;
+}
+
+div.idpSelectDropDown div.idpSelectCurrent {
+    background-color: #3366cc;
+    color: white;
+}
+/* END */
