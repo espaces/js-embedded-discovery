@@ -2,46 +2,80 @@
 div.IdPSelect
 {
     width: 500px;
-	text-align: left;
-	background-color: #FFFFFF;
-	border: 2px #A40000 solid;
-	padding: 10px;
+    text-align: left;
+    background-color: #FFFFFF;
+    border: 2px #A40000 solid;
+    padding: 10px;
     color:#112233;
 }
 
 /* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
+
+/*
+ * The preferred IdP tile (if present) has a specified height, so we can fit the preselected 
+ * IdPs in thete
+ */
 div.IdPSelect #idpSelectPreferredIdPTile
 {
 	padding-top: 10px;
 	width: 100%;
+        height: 86px;
 }
 
 /*  The preselections are in this class */
-div.IdPSelect .preferredIdPClass
+div.IdPSelect div.preferredIdPButton
 {
-    width: 30%;
+    margin: 2px;
+    width: 32%;
+    heigth: 95%;
     float: left;
 }
 
-/*  The preselections are in this class */
-div.IdPSelect .preferredIdPClass a:hover
+div.IdPSelect div.preferredIdPButton img
 {
-    border-style: solid;
-    border-width: 1px;
-}
-
-div.IdPSelect .preferredIdPClass img
-{
+    display: inline;
     max-width: 95%;
+    max-height: 80%;
+    margin-top: 3px ;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #ffffff;
+}
+
+/*  The preselections are in this class */
+div.IdPSelect div.preferredIdPButton a
+{
+    border: 1px solid #ff0000;
+    float: left;
+    width: 95%;
+    
+}
+div.IdPSelect div.preferredIdPButton a:visited 
+{
+    border: 1px solid #00ff00;
+}
+
+div.IdPSelect div.preferredIdPButton a:hover 
+{
+    border: 1px solid #0000ff;
+}
+
+div.IdPSelect div.preferredIdPButton a div
+{
+  text-align: center;
+  font-weight: normal;
+  max-width: 95%;
+  max-height: 20%;
+  margin: 2px;
 }
 
 
-#idpSelectIdPEntryTile
+div.IdPSelect #idpSelectIdPEntryTile
 {
     color:#334455;
 }
 
-#idpSelectIdPListTile
+div.IdPSelect #idpSelectIdPListTile
 {
     color:#445566;
 }
@@ -51,7 +85,7 @@ div.IdPSelect .preferredIdPClass img
  * drop down stuff
  */
 
-div.idpSelectDropDown {
+ div.idpSelectDropDown {
     -moz-box-sizing: border-box;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: small;
@@ -67,7 +101,7 @@ div.idpSelectDropDown div {
     padding: 0px 3px;
 }
 
-div.idpSelectDropDown div.idpSelectCurrent {
+ div.idpSelectDropDown div.idpSelectCurrent {
     background-color: #3366cc;
     color: white;
 }

@@ -234,8 +234,8 @@ function IdPSelectUI(){
     */
     var buildIdPSelector = function(){
         var containerDiv = buildDiv('IdPSelector', 'IdPSelect');
-        containerDiv.appendChild(buildPreferredIdPTile());
-        containerDiv.appendChild(buildIdPEntryTile());
+        buildPreferredIdPTile(containerDiv);
+        buildIdPEntryTile(containerDiv);
         containerDiv.appendChild(buildIdPDropDownListTile());
         containerDiv.appendChild(buildHelpText());
         return containerDiv;
@@ -243,8 +243,9 @@ function IdPSelectUI(){
 
     /**
       Builds a button for the provided IdP
-        <div class=prefix+"PreferredIdPButton"+uniq>
+        <div id=prefix+"PreferredIdPButton"+uniq class="preferredIdPButton">
           <a href="XYX" onclick=setparm('ABCID')>
+            <div class=
             <img src="https:\\xyc.gif"> <!-- optional -->
             XYX Text
           </a>
@@ -256,7 +257,7 @@ function IdPSelectUI(){
     */
 
     var composePreferredIdPButton = function(idp, uniq) {
-        var div = buildDiv('PreferredIdPButton'+uniq,'preferredIdPClass');
+        var div = buildDiv('PreferredIdPButton'+uniq,'preferredIdPButton');
         var aval = document.createElement('a');
         var retString = idpData.returnIDParam + '=' + idp.id;
         var retVal = idpData['return'];
@@ -270,11 +271,18 @@ function IdPSelectUI(){
         aval.onclick = function () {
             selectIdP(idp.id);
         };
+            var flin=buildDiv('flibble','flobbe');
         if (img !== null) {
-            aval.appendChild(img);
+            flin.appendChild(img);
         }
+            aval.appendChild(flin);
+
         div.appendChild(aval);
-        aval.appendChild(document.createTextNode(getLocalizedName(idp)));
+
+        var nameDiv = buildDiv('PreferredIdPName'+uniq,'preferredIdPName');
+        nameDiv.appendChild(document.createTextNode(getLocalizedName(idp)));
+        aval.appendChild(nameDiv);
+       
         
         return div;
     };
@@ -290,13 +298,18 @@ function IdPSelectUI(){
       
        @return {Element} preferred IdP selection UI
     */
-    var buildPreferredIdPTile = function(){
-        var preferredIdPDIV = buildDiv('PreferredIdPTile');
-
-        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
-        preferredIdPDIV.appendChild(introTxt);
+    var buildPreferredIdPTile = function(parentDiv){
 
         var preferredIdPs = getPreferredIdPs();
+        if (0 == preferredIdPs.length) {
+            return;
+        }
+
+        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
+        parentDiv.appendChild(introTxt);
+
+        var preferredIdPDIV = buildDiv('PreferredIdPTile');
+
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
                 var button = composePreferredIdPButton(preferredIdPs[i],i);
@@ -304,7 +317,7 @@ function IdPSelectUI(){
             }
         }
 
-        return preferredIdPDIV;
+        parentDiv.appendChild(preferredIdPDIV);
     };
     
     /**
@@ -320,12 +333,13 @@ function IdPSelectUI(){
       
        @return {Element} IdP entry UI tile
     */
-    var buildIdPEntryTile = function() {
+    var buildIdPEntryTile = function(parentDiv) {
 
         idpEntryDiv = buildDiv('IdPEntryTile');
 
-        var enterOrgLabel = buildLabel('IdPEntryTile', getLocalizedMessage('idpEntry.label'));
-        idpEntryDiv.appendChild(enterOrgLabel);
+        var enterOrg = document.createElement('p');
+        enterOrg.appendChild(document.createTextNode(getLocalizedMessage('idpEntry.label')));
+        parentDiv.appendChild(enterOrg);
 
         var form = document.createElement('form');
         idpEntryDiv.appendChild(form);
@@ -377,7 +391,7 @@ function IdPSelectUI(){
         };
         idpEntryDiv.appendChild(a);
                                               
-        return idpEntryDiv;
+        parentDiv.appendChild(idpEntryDiv);
     };
     
     /**
@@ -400,8 +414,10 @@ function IdPSelectUI(){
         idpListDiv = buildDiv('IdPListTile');
         idpListDiv.style.display = 'none';
         
-        var selectOrgLabel = buildLabel('idplist', getLocalizedMessage('idpList.label'));
-        idpListDiv.appendChild(selectOrgLabel);
+        var selectOrg = document.createElement('p');
+        selectOrg.appendChild(document.createTextNode(getLocalizedMessage('idpList.label')));
+
+        idpListDiv.appendChild(selectOrg);
         
         idpSelect = document.createElement('select');
         setID(idpSelect, 'idpSelector');
@@ -516,22 +532,6 @@ function IdPSelectUI(){
         return option;
     };
     
-    /**
-       Builds an HTML label element.
-
-       @param {String} target the id of the HTML element with which
-       this label is associated
-       @param {String} label the textual content of the label element
-
-       @return {Element} the label element
-    */
-    var buildLabel = function(target, text) {
-        var label = document.createElement('label');
-        label.setAttribute('for', idPrefix + target);
-        label.appendChild(document.createTextNode(text));
-        return label;
-    };
-
     /**
        Sets the attribute 'id' on the provided object
        We do it through this function so we have a single
