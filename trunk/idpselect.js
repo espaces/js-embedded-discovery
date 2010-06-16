@@ -12,6 +12,7 @@ function IdPSelectUI(){
     this.helpURL = '';
     this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // in days
+    this.defaultLogo = 'flyingpiglogo.jpg';
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -28,7 +29,8 @@ function IdPSelectUI(){
         'idpList.showList' : 'Allow me to pick from a list',
         'idpList.showSearch' : 'Allow me to specify the site',
         'submitButton.label': 'Continue',
-        'helpText': 'Help'
+        'helpText': 'Help',
+        'defaultLogoAlt' : 'DefaultLogo'
         }
     };
 
@@ -42,6 +44,7 @@ function IdPSelectUI(){
     var defaultLang;
     var langBundle;
     var defaultLangBundle;
+    var defaultLogo;
 
     //
     // Parameters passed into our closure
@@ -115,6 +118,7 @@ function IdPSelectUI(){
         helpURL = parent.helpURL;
         ie6Hack = parent.ie6Hack;
         samlIdPCookieTTL = parent.samlIdPCookieTTL;
+        defaultLogo = parent.defaultLogo;
 
         if (typeof Navigator == 'undefined') {
             lang = "en";
@@ -209,12 +213,14 @@ function IdPSelectUI(){
 
     var getImageForIdP = function(idp) {
 
-        if (null === idp.logos || 0 === idp.logos.length) {
-            return null;
-        }
         var img = document.createElement('img');
-        img.src = idp.logos[0].imgsrc;
-        img.alt = idp.logos[0].alttxt;
+        if (null === idp.logos || 0 === idp.logos.length) {
+            img.src = defaultLogo;
+            img.alt = getLocalizedMessage('defaultLogoAlt');
+        } else {
+            img.src = idp.logos[0].imgsrc;
+            img.alt = idp.logos[0].alttxt;
+        }
         return img;
     };
 
@@ -236,8 +242,8 @@ function IdPSelectUI(){
         var containerDiv = buildDiv('IdPSelector', 'IdPSelect');
         buildPreferredIdPTile(containerDiv);
         buildIdPEntryTile(containerDiv);
-        containerDiv.appendChild(buildIdPDropDownListTile());
-        containerDiv.appendChild(buildHelpText());
+        buildIdPDropDownListTile(containerDiv);
+        buildHelpText(containerDiv);
         return containerDiv;
     };
 
@@ -271,19 +277,15 @@ function IdPSelectUI(){
         aval.onclick = function () {
             selectIdP(idp.id);
         };
-            var flin=buildDiv('flibble','flobbe');
-        if (img !== null) {
-            flin.appendChild(img);
-        }
-            aval.appendChild(flin);
-
-        div.appendChild(aval);
+        var imgDiv=buildDiv('PreferredIdPImg'+uniq,'preferredIdPImg');
+        imgDiv.appendChild(img);
+        aval.appendChild(imgDiv);
 
         var nameDiv = buildDiv('PreferredIdPName'+uniq,'preferredIdPName');
         nameDiv.appendChild(document.createTextNode(getLocalizedName(idp)));
         aval.appendChild(nameDiv);
-       
-        
+
+        div.appendChild(aval);
         return div;
     };
     
@@ -305,10 +307,12 @@ function IdPSelectUI(){
             return;
         }
 
-        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
-        parentDiv.appendChild(introTxt);
-
         var preferredIdPDIV = buildDiv('PreferredIdPTile');
+
+        var preferredIdPtext = buildDiv('PreferredIdPText');
+        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
+        preferredIdPtext.appendChild(introTxt);
+        preferredIdPDIV.appendChild(preferredIdPtext);
 
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
@@ -336,10 +340,7 @@ function IdPSelectUI(){
     var buildIdPEntryTile = function(parentDiv) {
 
         idpEntryDiv = buildDiv('IdPEntryTile');
-
-        var enterOrg = document.createElement('p');
-        enterOrg.appendChild(document.createTextNode(getLocalizedMessage('idpEntry.label')));
-        parentDiv.appendChild(enterOrg);
+        idpEntryDiv.appendChild(document.createTextNode(getLocalizedMessage('idpEntry.label')));
 
         var form = document.createElement('form');
         idpEntryDiv.appendChild(form);
@@ -410,15 +411,11 @@ function IdPSelectUI(){
         
        @return {Element} IdP drop down selection UI tile
     */
-    var buildIdPDropDownListTile = function() {
+    var buildIdPDropDownListTile = function(parentDiv) {
         idpListDiv = buildDiv('IdPListTile');
         idpListDiv.style.display = 'none';
-        
-        var selectOrg = document.createElement('p');
-        selectOrg.appendChild(document.createTextNode(getLocalizedMessage('idpList.label')));
+        idpListDiv.appendChild(document.createTextNode(getLocalizedMessage('idpList.label')));
 
-        idpListDiv.appendChild(selectOrg);
-        
         idpSelect = document.createElement('select');
         setID(idpSelect, 'idpSelector');
         idpSelect.name = idpData.returnIDParam;
@@ -474,7 +471,7 @@ function IdPSelectUI(){
         };
         idpListDiv.appendChild(a);
         
-        return idpListDiv;
+        parentDiv.appendChild(idpListDiv);
     };
 
     /**
@@ -495,11 +492,11 @@ function IdPSelectUI(){
        Builds an aref to point to the helpURL
     */
 
-    var buildHelpText = function() {
+    var buildHelpText = function(containerDiv) {
         var aval = document.createElement('a');
         aval.href = helpURL;
         aval.appendChild(document.createTextNode(getLocalizedMessage('helpText')));
-        return aval;
+        containerDiv.appendChild(aval);
     }
     
     /**
@@ -734,7 +731,13 @@ function IdPSelectUI(){
             if ( '_saml_idp' == cookieName.replace(/^\s+|\s+$/g, '') ) {
                 cookieValues = cookieValues.replace(/^\s+|\s+$/g, '').split('+');
                 for(j=0; j< cookieValues.length; j++){
-                    userSelectedIdPs.push(base64Decode(cookieValues[j]));
+                    if (0 == cookieValues[j].length) {
+                        continue;
+                    }
+                    var dec = base64Decode(cookieValues[j]);
+                    if (dec.length > 0) {
+                        userSelectedIdPs.push(dec);
+                    }
                 }
             }
         }
@@ -748,8 +751,11 @@ function IdPSelectUI(){
        @param {Array} idps idps selected by the user
     */
     var saveUserSelectedIdPs = function(idps){
+        var cookieData = new Array();
         for(var i=0; i < idps.length; i++){
-            idps[i] = base64Encode(idps[i]);
+            if (idps[i].length > 0) {
+                cookieData.push(base64Encode(idps[i]));
+            }
         }
         
         var expireDate = null;
@@ -759,7 +765,7 @@ function IdPSelectUI(){
             expireDate = new Date(now.getTime() + cookieTTL);
         }
         
-        document.cookie='_saml_idp' + '=' + idps.join('+') +
+        document.cookie='_saml_idp' + '=' + cookieData.join('+') +
             ((expireDate===null) ? '' : '; expires=' + expireDate.toUTCString());
     };
     
