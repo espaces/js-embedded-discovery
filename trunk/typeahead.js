@@ -1,4 +1,4 @@
-function TypeAheadControl(jsonObj, box, orig, submit, ie6hack)
+function TypeAheadControl(jsonObj, box, orig, submit, maxchars, ie6hack)
 {
     //
     // Squirrel away the parameters we were given
@@ -10,6 +10,7 @@ function TypeAheadControl(jsonObj, box, orig, submit, ie6hack)
     this.results = 0;
     this.maxResults = 35;
     this.ie6hack = ie6hack;
+    this.maxchars = maxchars;
 }
 
 TypeAheadControl.prototype.draw = function() {
@@ -252,7 +253,11 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
     var div;
     while (i < list.length) {
         div = document.createElement('div');
-        div.appendChild(document.createTextNode(list[i][0]));
+        var str = list[i][0];
+        if (str.length > this.maxchars) {
+            str = str.substring(0, this.maxchars);
+        }
+        div.appendChild(document.createTextNode(str));
         //      div.style.zIndex = '1000';
         this.dropDown.appendChild(div);
         i++;

@@ -100,7 +100,7 @@
 {"id":"https://idp.anniesland.ac.uk/openathens", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Anniesland College"}]},
 {"id":"https://idp.aquinas.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Aquinas College"}]},
 {"id":"https://idp.ahds.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Arts and Humanities Data Service"}]},
-{"id":"https://idp.aib.ac.uk/openathens", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Arts University College at Bournemouth"}]},
+{"id":"https://idp.aib.ac.uk/openathens", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Arts University College at Bournemouth YYY @@@ XXX YYY XXX TTT XXX XXX XXX XXX"}]},
 {"id":"https://srvshibboleth.asfc.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Ashton Sixth Form College"}]},
 {"id":"https://idp.askham-bryan.ac.uk/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Askham Bryan College"}]},
 {"id":"https://idp.ystrad-mynach.ac.uk/idp/shibboleth", "logos":[], "descs":[], "altnames":[], "names":[{"lang":"en","name":"Ystrad Mynach College"}]}

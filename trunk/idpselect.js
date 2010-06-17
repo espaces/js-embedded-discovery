@@ -9,6 +9,8 @@ function IdPSelectUI(){
     this.defaultLanguage = 'en';
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
+    this.maxIdPCharsButton = 43;
+    this.maxIdPCharsDropDown = 65;
     this.helpURL = '';
     this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // in days
@@ -54,6 +56,8 @@ function IdPSelectUI(){
     var helpURL;
     var ie6Hack;
     var samlIdPCookieTTL;
+    var maxIdPCharsDropDown;
+    var maxIdPCharsButton;
 
     //
     // The cookie contents
@@ -119,6 +123,8 @@ function IdPSelectUI(){
         ie6Hack = parent.ie6Hack;
         samlIdPCookieTTL = parent.samlIdPCookieTTL;
         defaultLogo = parent.defaultLogo;
+        maxIdPCharsButton =  parent.maxIdPCharsButton;
+        maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
 
         if (typeof Navigator == 'undefined') {
             lang = "en";
@@ -282,7 +288,11 @@ function IdPSelectUI(){
         aval.appendChild(imgDiv);
 
         var nameDiv = buildDiv('PreferredIdPName'+uniq,'preferredIdPName');
-        nameDiv.appendChild(document.createTextNode(getLocalizedName(idp)));
+        var nameStr = getLocalizedName(idp);
+        if (nameStr.length > maxIdPCharsButton) {
+            nameStr = nameStr.substring(0, maxIdPCharsButton);
+        }
+        nameDiv.appendChild(document.createTextNode(nameStr));
         aval.appendChild(nameDiv);
 
         div.appendChild(aval);
@@ -380,7 +390,7 @@ function IdPSelectUI(){
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, ie6Hack);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, ie6Hack);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
@@ -525,6 +535,9 @@ function IdPSelectUI(){
     var buildSelectOption = function(value, text){
         var option = document.createElement('option');
         option.value = value;
+        if (text.length > maxIdPCharsDropDown) {
+            text = text.substring(0, maxIdPCharsDropDown);
+        }
         option.appendChild(document.createTextNode(text));
         return option;
     };
