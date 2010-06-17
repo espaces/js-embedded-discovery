@@ -74,23 +74,33 @@ div.IdPSelect div.preferredIdPName
   text-align: center;
   font-weight: normal;
   max-width: 95%;
-  height: 40px;       /* Specify max height to allow two lines.  The Javascript ontrolls
-                       * the max length of the stringd (it seems like you should be able
-                       * to do this from css ?4
+  height: 40px;       /* Specify max height to allow two lines.  The 
+                       * Javascript controlls the max length of the
+                       * srings (although it seems like you should be able
+                       * to do this from css ?)
                        */
 }
 
-div.IdPSelect #idpSelectIdPEntryTile
+/* 
+ * Arrange to have the dropdown/list aref on the left and the 
+ * help button on the right 
+ */
+
+div.IdPSelect a.IdpDropDownToggle
 {
+    display: inline-block;
+    width: 80%;
 }
 
-div.IdPSelect #idpSelectIdPListTile
+div.IdPSelect a.HelpButton
 {
+    display: inline-block;
+    text-align: right;
+    width: 20%;
 }
 
-
-/*
- * drop down stuff - see the associated javascript for reference
+/**
+ * Drop down (incremental search) stuff - see the associated javascript for reference
  */
 
  div.idpSelectDropDown {

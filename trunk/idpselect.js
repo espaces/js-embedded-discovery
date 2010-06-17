@@ -10,7 +10,7 @@ function IdPSelectUI(){
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
     this.maxIdPCharsButton = 43;
-    this.maxIdPCharsDropDown = 65;
+    this.maxIdPCharsDropDown = 58;
     this.helpURL = '';
     this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // in days
@@ -249,7 +249,6 @@ function IdPSelectUI(){
         buildPreferredIdPTile(containerDiv);
         buildIdPEntryTile(containerDiv);
         buildIdPDropDownListTile(containerDiv);
-        buildHelpText(containerDiv);
         return containerDiv;
     };
 
@@ -333,7 +332,7 @@ function IdPSelectUI(){
 
         parentDiv.appendChild(preferredIdPDIV);
     };
-    
+
     /**
        Build the manual IdP Entry tile (bottom half of UI with
        search-as-you-type field).
@@ -395,12 +394,14 @@ function IdPSelectUI(){
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
         a.href = '#';
+        a.setAttribute('class', 'IdpDropDownToggle');
         a.onclick = function() { 
             idpEntryDiv.style.display='none';
             idpListDiv.style.display='inline';
             listButton.focus();
         };
         idpEntryDiv.appendChild(a);
+        buildHelpText(idpEntryDiv);
                                               
         parentDiv.appendChild(idpEntryDiv);
     };
@@ -475,12 +476,14 @@ function IdPSelectUI(){
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showSearch')));
         a.href = '#';
+        a.setAttribute('class', 'IdpDropDownToggle');
         a.onclick = function() { 
             idpEntryDiv.style.display='inline';
             idpListDiv.style.display='none';
         };
         idpListDiv.appendChild(a);
-        
+        buildHelpText(idpListDiv);
+
         parentDiv.appendChild(idpListDiv);
     };
 
@@ -506,6 +509,7 @@ function IdPSelectUI(){
         var aval = document.createElement('a');
         aval.href = helpURL;
         aval.appendChild(document.createTextNode(getLocalizedMessage('helpText')));
+        aval.setAttribute('class', 'HelpButton');
         containerDiv.appendChild(aval);
     }
     
