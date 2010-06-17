@@ -10,61 +10,63 @@ div.IdPSelect
 
 /* Next down are the idpSelectPreferredIdPTile, idpSelectIdPEntryTile & idpSelectIdPListTile */
 
-/*
- * The preferred IdP tile (if present) has a specified height, so we can fit the preselected 
- * IdPs in thete
+/** 
+ * The preferred IdP tile (if present) has a specified height, so
+ * we can fit the preselected * IdPs in there
  */
 div.IdPSelect #idpSelectPreferredIdPTile
 {
-	width: 100%;
-        height: 86px;
 }
 
-/*  The preselections are in this class */
+/***
+ *  The preselect buttons
+*/
 div.IdPSelect div.preferredIdPButton
 {
-    margin: 2px;
-    width: 32%;
-    heigth: 86px;
+    margin: 3px;
+    width: 160px;  /* Make absolute because 3 of these must fit inside 
+                      div.IdPSelect{width} with not much each side. */
     float: left;
 }
 
-div.IdPSelect div.preferredIdPButton img
-{
-    display: block;
-    max-width: 95%;
-    max-height: 80px;
-    margin-top: 3px ;
-    margin-bottom: 3px ;
-    border: solid 0px #000000;
-    margin-left: auto;
-    margin-right: auto;
-
-}
-
-/*  The preselections are in this class */
+/*
+ *  Make the entire box look like a hyperlink
+ */
 div.IdPSelect div.preferredIdPButton a
 {
-    border: 1px solid #ff0000;
+    border: 1px solid black;
     float: left;
-    width: 95%;
+    width: 99%; /* Need a specified width otherwise we'll fir the contents which we don't want because they have auto margins */
     
 }
 div.IdPSelect div.preferredIdPButton a:visited 
 {
-    border: 1px solid #00ff00;
+    border: 1px solid #551a8b; /* Mozilla 'visted' colour.  Can we not inherit this? */
 }
 
 div.IdPSelect div.preferredIdPButton a:hover 
 {
-    border: 1px solid #0000ff;
+    border: 1px solid #0000ee;  /* Mozilla hyperlink colour */
 }
 
 div.IdPSelect div.preferredIdPImg
 {
-  max-width: 95%;
-  height: 86px;
+/*  max-width: 95%; */
+  height: 86px; /* We need the absolute height to force all buttons to the same size */
   margin: 2px;
+}
+
+div.IdPSelect div.preferredIdPButton img
+{
+    display: block;    /* Block display to allow auto centring *.
+    max-width: 95%;    /* Specify max to allow scaling, percent does work */
+    max-height: 80px;  /* Specify max to allow scaling, percent doesn't work */
+    margin-top: 3px ;
+    margin-bottom: 3px ;
+    border: solid 0px #000000;  /* Strip any embellishments the brower may give us */
+    margin-left: auto; /* Auto centring */
+    margin-right: auto;  /* Auto centring */
+
 }
 
 div.IdPSelect div.preferredIdPName
@@ -72,7 +74,10 @@ div.IdPSelect div.preferredIdPName
   text-align: center;
   font-weight: normal;
   max-width: 95%;
-  height: 40px;
+  height: 40px;       /* Specify max height to allow two lines.  The Javascript ontrolls
+                       * the max length of the stringd (it seems like you should be able
+                       * to do this from css ?4
+                       */
 }
 
 div.IdPSelect #idpSelectIdPEntryTile
@@ -85,7 +90,7 @@ div.IdPSelect #idpSelectIdPListTile
 
 
 /*
- * drop down stuff
+ * drop down stuff - see the associated javascript for reference
  */
 
  div.idpSelectDropDown {
