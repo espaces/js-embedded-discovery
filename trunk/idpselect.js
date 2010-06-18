@@ -11,7 +11,7 @@ function IdPSelectUI(){
     this.maxPreferredIdPs = 3;
     this.maxIdPCharsButton = 43;
     this.maxIdPCharsDropDown = 58;
-    this.helpURL = '';
+    this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
     this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // in days
     this.defaultLogo = 'flyingpiglogo.jpg';
@@ -23,10 +23,10 @@ function IdPSelectUI(){
         'error.noIdPSelectDiv': '',
 
         'idpPreferred.label': 'Use a preferred selection',
-        
         'idpEntry.label': 'Or enter your organization\'s name',
-        
+        'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
         'idpList.label': 'Or select your organization from the list below',
+        'idpList.NoPreferred.label': 'Select your organization from the list below',
         'idpList.defaultOptionLabel': 'Please select your organization...',
         'idpList.showList' : 'Allow me to pick from a list',
         'idpList.showSearch' : 'Allow me to specify the site',
@@ -246,9 +246,10 @@ function IdPSelectUI(){
     */
     var buildIdPSelector = function(){
         var containerDiv = buildDiv('IdPSelector', 'IdPSelect');
-        buildPreferredIdPTile(containerDiv);
-        buildIdPEntryTile(containerDiv);
-        buildIdPDropDownListTile(containerDiv);
+        var preferredTileExists;
+        preferredTileExists = buildPreferredIdPTile(containerDiv);
+        buildIdPEntryTile(containerDiv, preferredTileExists);
+        buildIdPDropDownListTile(containerDiv, preferredTileExists);
         return containerDiv;
     };
 
@@ -297,6 +298,17 @@ function IdPSelectUI(){
         div.appendChild(aval);
         return div;
     };
+
+    /**
+     * Builds and populated a text Div
+     */
+    var buildTextDiv = function(parent, divName, textId)
+    {
+        var div  = buildDiv(divName, 'textDiv');
+        var introTxt = document.createTextNode(getLocalizedMessage(textId)); 
+        div.appendChild(introTxt);
+        parent.appendChild(div);
+    }
     
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
@@ -313,15 +325,12 @@ function IdPSelectUI(){
 
         var preferredIdPs = getPreferredIdPs();
         if (0 == preferredIdPs.length) {
-            return;
+            return false;
         }
 
         var preferredIdPDIV = buildDiv('PreferredIdPTile');
 
-        var preferredIdPtext = buildDiv('PreferredIdPText');
-        var introTxt = document.createTextNode(getLocalizedMessage('idpPreferred.label')); 
-        preferredIdPtext.appendChild(introTxt);
-        preferredIdPDIV.appendChild(preferredIdPtext);
+        buildTextDiv(preferredIdPDIV, 'PreferredIdPText', 'idpPreferred.label');
 
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
@@ -331,6 +340,7 @@ function IdPSelectUI(){
         }
 
         parentDiv.appendChild(preferredIdPDIV);
+        return true;
     };
 
     /**
@@ -346,10 +356,15 @@ function IdPSelectUI(){
       
        @return {Element} IdP entry UI tile
     */
-    var buildIdPEntryTile = function(parentDiv) {
+    var buildIdPEntryTile = function(parentDiv, preferredTile) {
 
         idpEntryDiv = buildDiv('IdPEntryTile');
-        idpEntryDiv.appendChild(document.createTextNode(getLocalizedMessage('idpEntry.label')));
+
+        if (preferredTile) {
+            buildTextDiv(idpEntryDiv, 'EntryDiv', 'idpEntry.label');
+        } else {
+            buildTextDiv(idpEntryDiv, 'EntryDiv', 'idpEntry.NoPreferred.label');
+        }
 
         var form = document.createElement('form');
         idpEntryDiv.appendChild(form);
@@ -359,6 +374,7 @@ function IdPSelectUI(){
         form.setAttribute('autocomplete', 'OFF');
         
         var textInput = document.createElement('input');
+        textInput.setAttribute('size', maxIdPCharsDropDown);
         form.appendChild(textInput);
 
         textInput.type='text';
@@ -422,10 +438,15 @@ function IdPSelectUI(){
         
        @return {Element} IdP drop down selection UI tile
     */
-    var buildIdPDropDownListTile = function(parentDiv) {
+    var buildIdPDropDownListTile = function(parentDiv, preferredTile) {
         idpListDiv = buildDiv('IdPListTile');
         idpListDiv.style.display = 'none';
-        idpListDiv.appendChild(document.createTextNode(getLocalizedMessage('idpList.label')));
+
+        if (preferredTile) {
+            buildTextDiv(idpListDiv, 'EntryDiv', 'idpList.label');
+        } else {
+            buildTextDiv(idpListDiv, 'EntryDiv', 'idpList.NoPreferred.label');
+        }
 
         idpSelect = document.createElement('select');
         setID(idpSelect, 'idpSelector');
@@ -663,7 +684,7 @@ function IdPSelectUI(){
        will be no larger than the maximum number of preferred IdPs.
     */
     var getPreferredIdPs = function(){
-        var idps = new Array(maxPreferredIdPs);
+        var idps = new Array();
         var offset = 0;
         var i;
         var j;
@@ -683,7 +704,7 @@ function IdPSelectUI(){
         //
         userSelectedIdPs = retrieveUserSelectedIdPs();
         for (i = offset, j=0; i < userSelectedIdPs.length && i < maxPreferredIdPs; i++, j++){
-            idps[i] = getIdPFor(userSelectedIdPs[j]);
+            idps.push(getIdPFor(userSelectedIdPs[j]));
         }
         return idps;
     };

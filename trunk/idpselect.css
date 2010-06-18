@@ -16,11 +16,14 @@ div.IdPSelect
  */
 div.IdPSelect #idpSelectPreferredIdPTile
 {
+    height:163px; /* Force the height so that the  selector box
+                   * goes below when there is only one preslect 
+                   */
 }
 
 /***
  *  The preselect buttons
-*/
+ */
 div.IdPSelect div.preferredIdPButton
 {
     margin: 3px;
@@ -49,6 +52,10 @@ div.IdPSelect div.preferredIdPButton a:hover
     border: 1px solid #0000ee;  /* Mozilla hyperlink colour */
 }
 
+div.IdPSelect div.textDiv{
+    height: 24px; /* Add some height to separate the text from the boxes */
+}
+
 div.IdPSelect div.preferredIdPImg
 {
 /*  max-width: 95%; */
@@ -58,7 +65,7 @@ div.IdPSelect div.preferredIdPImg
 
 div.IdPSelect div.preferredIdPButton img
 {
-    display: block;    /* Block display to allow auto centring *.
+    display: block;    /* Block display to allow auto centring */
     max-width: 95%;    /* Specify max to allow scaling, percent does work */
     max-height: 80px;  /* Specify max to allow scaling, percent doesn't work */
     margin-top: 3px ;
