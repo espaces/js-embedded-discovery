@@ -15,6 +15,8 @@ function IdPSelectUI(){
     this.ie6Hack = null;
     this.samlIdPCookieTTL = 730; // in days
     this.defaultLogo = 'flyingpiglogo.jpg';
+    this.defaultLogoWidth = 90;
+    this.defaultLogoHeight = 80 ;
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -47,6 +49,8 @@ function IdPSelectUI(){
     var langBundle;
     var defaultLangBundle;
     var defaultLogo;
+    var defaultLogoWidth;
+    var defaultLogoHeight;
 
     //
     // Parameters passed into our closure
@@ -123,6 +127,8 @@ function IdPSelectUI(){
         ie6Hack = parent.ie6Hack;
         samlIdPCookieTTL = parent.samlIdPCookieTTL;
         defaultLogo = parent.defaultLogo;
+        defaultLogoWidth = parent.defaultLogoWidth;
+        defaultLogoHeight = parent.defaultLogoHeight;
         maxIdPCharsButton =  parent.maxIdPCharsButton;
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
 
@@ -222,10 +228,19 @@ function IdPSelectUI(){
         var img = document.createElement('img');
         if (null === idp.logos || 0 === idp.logos.length) {
             img.src = defaultLogo;
+            img.width = defaultLogoWidth;
+            img.height = defaultLogoHeight;
             img.alt = getLocalizedMessage('defaultLogoAlt');
         } else {
             img.src = idp.logos[0].imgsrc;
             img.alt = idp.logos[0].alttxt;
+            if (null != idp.logos[0].width) {
+                img.setAttribute('width', idp.logos[0].width);
+            }
+            if (null != idp.logos[0].height) {
+                img.setAttribute('height', idp.logos[0].height);
+            }
+        return img;
         }
         return img;
     };
@@ -725,6 +740,14 @@ function IdPSelectUI(){
                 break;
             }
         }
+
+        if (0 == i) {
+            //
+            // At the head - no work needed
+            //
+            return;
+        }
+
         if (userSelectedIdPs.length != i) {
 
             //

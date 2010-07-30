@@ -66,7 +66,7 @@ div.IdPSelect div.preferredIdPImg
 div.IdPSelect div.preferredIdPButton img
 {
     display: block;    /* Block display to allow auto centring */
-    max-width: 95%;    /* Specify max to allow scaling, percent does work */
+    max-width:  154px; /* Specify max to allow scaling, percent does work */
     max-height: 80px;  /* Specify max to allow scaling, percent doesn't work */
     margin-top: 3px ;
     margin-bottom: 3px ;
