@@ -79,6 +79,7 @@ function IdPSelectUI(){
     // local configuration
     //
     var idPrefix = 'idpSelect';
+    var classPrefix = 'IdPSelect';
     var dropDownControl;
 
     // *************************************
@@ -240,7 +241,6 @@ function IdPSelectUI(){
             if (null != idp.logos[0].height) {
                 img.setAttribute('height', idp.logos[0].height);
             }
-        return img;
         }
         return img;
     };
@@ -260,7 +260,7 @@ function IdPSelectUI(){
        @return {Element} IdP selector UI
     */
     var buildIdPSelector = function(){
-        var containerDiv = buildDiv('IdPSelector', 'IdPSelect');
+        var containerDiv = buildDiv('IdPSelector', '');
         var preferredTileExists;
         preferredTileExists = buildPreferredIdPTile(containerDiv);
         buildIdPEntryTile(containerDiv, preferredTileExists);
@@ -284,7 +284,7 @@ function IdPSelectUI(){
     */
 
     var composePreferredIdPButton = function(idp, uniq) {
-        var div = buildDiv('PreferredIdPButton'+uniq,'preferredIdPButton');
+        var div = buildDiv('PreferredIdPButton'+uniq, 'PreferredIdPButton');
         var aval = document.createElement('a');
         var retString = idpData.returnIDParam + '=' + idp.id;
         var retVal = idpData['return'];
@@ -298,11 +298,11 @@ function IdPSelectUI(){
         aval.onclick = function () {
             selectIdP(idp.id);
         };
-        var imgDiv=buildDiv('PreferredIdPImg'+uniq,'preferredIdPImg');
+        var imgDiv=buildDiv('PreferredIdPImg'+uniq, 'PreferredIdPImg');
         imgDiv.appendChild(img);
         aval.appendChild(imgDiv);
 
-        var nameDiv = buildDiv('PreferredIdPName'+uniq,'preferredIdPName');
+        var nameDiv = buildDiv('PreferredIdPName'+uniq, 'PreferredIdPName');
         var nameStr = getLocalizedName(idp);
         if (nameStr.length > maxIdPCharsButton) {
             nameStr = nameStr.substring(0, maxIdPCharsButton);
@@ -319,7 +319,7 @@ function IdPSelectUI(){
      */
     var buildTextDiv = function(parent, divName, textId)
     {
-        var div  = buildDiv(divName, 'textDiv');
+        var div  = buildDiv(divName, 'TextDiv');
         var introTxt = document.createTextNode(getLocalizedMessage(textId)); 
         div.appendChild(introTxt);
         parent.appendChild(div);
@@ -389,11 +389,10 @@ function IdPSelectUI(){
         form.setAttribute('autocomplete', 'OFF');
         
         var textInput = document.createElement('input');
-        textInput.setAttribute('size', maxIdPCharsDropDown);
         form.appendChild(textInput);
 
         textInput.type='text';
-        setID(textInput, 'IdPSelectInput');
+        setID(textInput, 'Input');
 
         var hidden = document.createElement('input');
         hidden.setAttribute('type', 'hidden');
@@ -425,7 +424,7 @@ function IdPSelectUI(){
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
         a.href = '#';
-        a.setAttribute('class', 'IdpDropDownToggle');
+        setClass(a, 'DropDownToggle');
         a.onclick = function() { 
             idpEntryDiv.style.display='none';
             idpListDiv.style.display='inline';
@@ -464,7 +463,7 @@ function IdPSelectUI(){
         }
 
         idpSelect = document.createElement('select');
-        setID(idpSelect, 'idpSelector');
+        setID(idpSelect, 'Selector');
         idpSelect.name = idpData.returnIDParam;
         idpListDiv.appendChild(idpSelect);
         
@@ -512,7 +511,7 @@ function IdPSelectUI(){
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showSearch')));
         a.href = '#';
-        a.setAttribute('class', 'IdpDropDownToggle');
+        setClass(a, 'DropDownToggle');
         a.onclick = function() { 
             idpEntryDiv.style.display='inline';
             idpListDiv.style.display='none';
@@ -545,7 +544,7 @@ function IdPSelectUI(){
         var aval = document.createElement('a');
         aval.href = helpURL;
         aval.appendChild(document.createTextNode(getLocalizedMessage('helpText')));
-        aval.setAttribute('class', 'HelpButton');
+        setClass(aval, 'HelpButton');
         containerDiv.appendChild(aval);
     }
     
@@ -559,9 +558,9 @@ function IdPSelectUI(){
     var buildDiv = function(id, whichClass){
         var div = document.createElement('div');
         setID(div, id);
-        if(whichClass !== ''){
+        if(undefined != whichClass) {
 
-            div.setAttribute('class', whichClass);
+            setClass(div, whichClass);
         }
         return div;
     };
@@ -595,6 +594,10 @@ function IdPSelectUI(){
         obj.id = idPrefix + name;
     };
 
+    var setClass = function(obj, name) {
+        obj.setAttribute('class', classPrefix + name);
+    }
+
     /**
        Returns the DOM object with the specified id.  We abstract
        through a function to allow us to prepend to the name
@@ -622,11 +625,6 @@ function IdPSelectUI(){
         updateSelectedIdPs(idP);
         saveUserSelectedIdPs(userSelectedIdPs);
     };
-
-    /**
-       Helper function for when the IdP is in a form
-    */
-
 
     // *************************************
     // Private functions
@@ -731,41 +729,28 @@ function IdPSelectUI(){
     */
     var updateSelectedIdPs = function(newIdP) {
 
-        var i = 0;
         //
-        // previously there?
+        // We cannot use split since it does not appear to
+        // work as per spec on ie8.
         //
-        for (i = 0; i < userSelectedIdPs.length; i++) {
-            if (userSelectedIdPs[i] == newIdP) {
-                break;
+        var newList = [];
+
+        //
+        // iterate through the list copying everything but the old
+        // name
+        //
+        while (0 != userSelectedIdPs.length) {
+            var what = userSelectedIdPs.pop();
+            if (what != newIdP) {
+                newList.unshift(what);
             }
-        }
-
-        if (0 == i) {
-            //
-            // At the head - no work needed
-            //
-            return;
-        }
-
-        if (userSelectedIdPs.length != i) {
-
-            //
-            // it was already there, so remove it.
-            //
-            var older = userSelectedIdPs.splice(i);
-            //
-            // older is everything to the 'right' of the idp
-            // userSelectedIdPs is the up to and including
-            //
-            older.shift(); // get rid of the old one)
-            userSelectedIdPs = userSelectedIdPs.concat(older); // strich them together
         }
 
         //
         // And shove it in at the top
         //
-        userSelectedIdPs.unshift(newIdP);
+        newList.unshift(newIdP);
+        userSelectedIdPs = newList;
         return;
     };
     

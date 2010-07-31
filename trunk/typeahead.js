@@ -25,7 +25,7 @@ TypeAheadControl.prototype.draw = function() {
     // Set up the 'dropDown'
     //
     this.dropDown = document.createElement('div');
-    this.dropDown.className = 'idpSelectDropDown';
+    this.dropDown.className = 'IdPSelectDropDown';
     this.dropDown.style.visibility = 'hidden';
 
     this.dropDown.style.width = this.textBox.offsetWidth;
@@ -299,7 +299,7 @@ TypeAheadControl.prototype.select = function(selected) {
             //
             // Highlight it
             //
-            node.className = 'idpSelectCurrent';
+            node.className = 'IdPSelectCurrent';
             //
             // turn on the button
             //
@@ -328,7 +328,7 @@ TypeAheadControl.prototype.downSelect = function() {
             // mimic a select()
             //
             this.dropDown.current = 0;
-            this.dropDown.childNodes[0].className = 'idpSelectCurrent';
+            this.dropDown.childNodes[0].className = 'IdPSelectCurrent';
             this.doSelected();
             this.origin.value = this.results[0][1];
 
@@ -344,7 +344,7 @@ TypeAheadControl.prototype.downSelect = function() {
             //
             // and 'select'
             //
-            this.dropDown.childNodes[this.dropDown.current].className = 'idpSelectCurrent';
+            this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
             this.doSelected();
             this.origin.value = this.results[this.dropDown.current][1];
         }
@@ -367,7 +367,7 @@ TypeAheadControl.prototype.upSelect = function() {
             //
             // and 'select'
             //
-            this.dropDown.childNodes[this.dropDown.current].className = 'idpSelectCurrent';
+            this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
             this.doSelected();
             this.origin.value = this.results[this.dropDown.current][1];
         }

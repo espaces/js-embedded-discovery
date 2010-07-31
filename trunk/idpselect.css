@@ -14,7 +14,7 @@ div.IdPSelect
  * The preferred IdP tile (if present) has a specified height, so
  * we can fit the preselected * IdPs in there
  */
-div.IdPSelect #idpSelectPreferredIdPTile
+#idpSelectPreferredIdPTile
 {
     height:163px; /* Force the height so that the  selector box
                    * goes below when there is only one preslect 
@@ -24,46 +24,54 @@ div.IdPSelect #idpSelectPreferredIdPTile
 /***
  *  The preselect buttons
  */
-div.IdPSelect div.preferredIdPButton
+div.IdPSelectPreferredIdPButton
 {
     margin: 3px;
     width: 160px;  /* Make absolute because 3 of these must fit inside 
                       div.IdPSelect{width} with not much each side. */
     float: left;
+    font-size: smaller;
 }
 
 /*
  *  Make the entire box look like a hyperlink
  */
-div.IdPSelect div.preferredIdPButton a
+div.IdPSelectPreferredIdPButton a
 {
-    border: 1px solid black;
+    padding: 1px;  /* Leave space for the hover line */
     float: left;
     width: 99%; /* Need a specified width otherwise we'll fir the contents which we don't want because they have auto margins */
     
 }
-div.IdPSelect div.preferredIdPButton a:visited 
+div.IdPSelectPreferredIdPButton a:link 
 {
-    border: 1px solid #551a8b; /* Mozilla 'visted' colour.  Can we not inherit this? */
+    text-decoration: none;
 }
 
-div.IdPSelect div.preferredIdPButton a:hover 
+div.IdPSelectPreferredIdPButton a:visited 
 {
+    text-decoration: none;
+}
+
+div.IdPSelectPreferredIdPButton a:hover 
+{
+    text-decoration: underline;
     border: 1px solid #0000ee;  /* Mozilla hyperlink colour */
+    padding: 0;
 }
 
-div.IdPSelect div.textDiv{
+div.IdPSelectTextDiv{
     height: 24px; /* Add some height to separate the text from the boxes */
 }
 
-div.IdPSelect div.preferredIdPImg
+div.IdPSelectPreferredIdPImg
 {
 /*  max-width: 95%; */
   height: 86px; /* We need the absolute height to force all buttons to the same size */
   margin: 2px;
 }
 
-div.IdPSelect div.preferredIdPButton img
+div.IdPSelectPreferredIdPButton img
 {
     display: block;    /* Block display to allow auto centring */
     max-width:  154px; /* Specify max to allow scaling, percent does work */
@@ -76,16 +84,32 @@ div.IdPSelect div.preferredIdPButton img
 
 }
 
-div.IdPSelect div.preferredIdPName
+div.IdPSelectPreferredIdPName
 {
   text-align: center;
   font-weight: normal;
   max-width: 95%;
-  height: 40px;       /* Specify max height to allow two lines.  The 
+  height: 35px;       /* Specify max height to allow two lines.  The 
                        * Javascript controlls the max length of the
-                       * srings (although it seems like you should be able
-                       * to do this from css ?)
+                       * strings 
                        */
+}
+
+/*
+ * Force the size of the selectors and the buttons
+ */
+#idpSelectInput, #idpSelectSelector
+{
+    width: 415px;
+}
+#idpSelectSelectButton, #idpSelectListButton
+{
+    margin-left: 5px;
+}
+#idpSelectSelectButton
+{
+    padding-left: 2px;
+    passing-right: 2px;
 }
 
 /* 
@@ -93,13 +117,13 @@ div.IdPSelect div.preferredIdPName
  * help button on the right 
  */
 
-div.IdPSelect a.IdpDropDownToggle
+a.IdPSelectDropDownToggle
 {
     display: inline-block;
     width: 80%;
 }
 
-div.IdPSelect a.HelpButton
+a.IdPSelectHelpButton
 {
     display: inline-block;
     text-align: right;
@@ -110,7 +134,7 @@ div.IdPSelect a.HelpButton
  * Drop down (incremental search) stuff - see the associated javascript for reference
  */
 
- div.idpSelectDropDown {
+div.IdPSelectDropDown {
     -moz-box-sizing: border-box;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: small;
@@ -120,13 +144,13 @@ div.IdPSelect a.HelpButton
     position: absolute;   
 }
 
-div.idpSelectDropDown div {
+div.IdPSelectDropDown div {
     background-color: white;
     cursor: default;
     padding: 0px 3px;
 }
 
- div.idpSelectDropDown div.idpSelectCurrent {
+ div.IdPSelectDropDown div.IdPSelectCurrent {
     background-color: #3366cc;
     color: white;
 }
