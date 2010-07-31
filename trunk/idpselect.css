@@ -1,7 +1,7 @@
 /* Top level is idpSelectIdPSelector */
 div.IdPSelect
 {
-    width: 500px;
+    width: 395px; /*500px;*/
     text-align: left;
     background-color: #FFFFFF;
     border: 2px #A40000 solid;
@@ -16,7 +16,7 @@ div.IdPSelect
  */
 #idpSelectPreferredIdPTile
 {
-    height:163px; /* Force the height so that the  selector box
+    height:160px; /* Force the height so that the  selector box
                    * goes below when there is only one preslect 
                    */
 }
@@ -27,7 +27,7 @@ div.IdPSelect
 div.IdPSelectPreferredIdPButton
 {
     margin: 3px;
-    width: 160px;  /* Make absolute because 3 of these must fit inside 
+    width: 120px;  /* Make absolute because 3 of these must fit inside 
                       div.IdPSelect{width} with not much each side. */
     float: left;
     font-size: smaller;
@@ -67,15 +67,15 @@ div.IdPSelectTextDiv{
 div.IdPSelectPreferredIdPImg
 {
 /*  max-width: 95%; */
-  height: 86px; /* We need the absolute height to force all buttons to the same size */
+  height: 69px; /* We need the absolute height to force all buttons to the same size */
   margin: 2px;
 }
 
 div.IdPSelectPreferredIdPButton img
 {
     display: block;    /* Block display to allow auto centring */
-    max-width:  154px; /* Specify max to allow scaling, percent does work */
-    max-height: 80px;  /* Specify max to allow scaling, percent doesn't work */
+    max-width:  114px; /* Specify max to allow scaling, percent does work */
+    max-height: 64px;  /* Specify max to allow scaling, percent doesn't work */
     margin-top: 3px ;
     margin-bottom: 3px ;
     border: solid 0px #000000;  /* Strip any embellishments the brower may give us */
@@ -89,7 +89,7 @@ div.IdPSelectPreferredIdPName
   text-align: center;
   font-weight: normal;
   max-width: 95%;
-  height: 35px;       /* Specify max height to allow two lines.  The 
+  height: 52px;       /* Specify max height to allow three lines.  The 
                        * Javascript controlls the max length of the
                        * strings 
                        */
@@ -100,11 +100,22 @@ div.IdPSelectPreferredIdPName
  */
 #idpSelectInput, #idpSelectSelector
 {
-    width: 415px;
+    width: 80%;
+}
+/*
+ * For some reason a <select> width includes the border and an
+ * <input> doesn't hence we have to force a margin onto the <select>
+ */
+#idpSelectSelector
+{
+    margin-left: 2px;
+    margin-right: 2px;
+
 }
 #idpSelectSelectButton, #idpSelectListButton
 {
     margin-left: 5px;
+    width: 16%;
 }
 #idpSelectSelectButton
 {
