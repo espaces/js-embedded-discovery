@@ -1,7 +1,7 @@
 /* Top level is idpSelectIdPSelector */
-div.IdPSelect
+#idpSelectIdPSelector
 {
-    width: 395px; /*500px;*/
+    width: 389px;
     text-align: left;
     background-color: #FFFFFF;
     border: 2px #A40000 solid;
@@ -30,7 +30,6 @@ div.IdPSelectPreferredIdPButton
     width: 120px;  /* Make absolute because 3 of these must fit inside 
                       div.IdPSelect{width} with not much each side. */
     float: left;
-    font-size: smaller;
 }
 
 /*
@@ -38,28 +37,12 @@ div.IdPSelectPreferredIdPButton
  */
 div.IdPSelectPreferredIdPButton a
 {
-    padding: 1px;  /* Leave space for the hover line */
     float: left;
-    width: 99%; /* Need a specified width otherwise we'll fir the contents which we don't want because they have auto margins */
+    width: 99%; /* Need a specified width otherwise we'll fit
+                   the contents which we don't want because
+                   they have auto margins */
     
 }
-div.IdPSelectPreferredIdPButton a:link 
-{
-    text-decoration: none;
-}
-
-div.IdPSelectPreferredIdPButton a:visited 
-{
-    text-decoration: none;
-}
-
-div.IdPSelectPreferredIdPButton a:hover 
-{
-    text-decoration: underline;
-    border: 1px solid #0000ee;  /* Mozilla hyperlink colour */
-    padding: 0;
-}
-
 div.IdPSelectTextDiv{
     height: 24px; /* Add some height to separate the text from the boxes */
 }
@@ -67,8 +50,8 @@ div.IdPSelectTextDiv{
 div.IdPSelectPreferredIdPImg
 {
 /*  max-width: 95%; */
-  height: 69px; /* We need the absolute height to force all buttons to the same size */
-  margin: 2px;
+    height: 69px; /* We need the absolute height to force all buttons to the same size */
+    margin: 2px;
 }
 
 div.IdPSelectPreferredIdPButton img
@@ -84,15 +67,16 @@ div.IdPSelectPreferredIdPButton img
 
 }
 
-div.IdPSelectPreferredIdPName
+div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
 {
-  text-align: center;
-  font-weight: normal;
-  max-width: 95%;
-  height: 52px;       /* Specify max height to allow three lines.  The 
-                       * Javascript controlls the max length of the
-                       * strings 
-                       */
+    text-align: center;
+    font-size: smaller;
+    font-weight: normal;
+    max-width: 95%;
+    height: 52px;       /* Specify max height to allow three lines.  The 
+                         * Javascript controlls the max length of the
+                         * strings 
+                         */
 }
 
 /*
@@ -122,6 +106,26 @@ div.IdPSelectPreferredIdPName
     padding-left: 2px;
     passing-right: 2px;
 }
+
+/*
+ * change underlining of HREFS
+ */
+#idpSelectIdPSelector a:link 
+{
+    text-decoration: none;
+}
+
+#idpSelectIdPSelector a:visited 
+{
+    text-decoration: none;
+}
+
+#idpSelectIdPSelector a:hover 
+{
+    text-decoration: underline;
+}
+
+
 
 /* 
  * Arrange to have the dropdown/list aref on the left and the 

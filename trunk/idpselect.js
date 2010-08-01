@@ -24,7 +24,7 @@ function IdPSelectUI(){
         'error.noData': '',
         'error.noIdPSelectDiv': '',
 
-        'idpPreferred.label': 'Use a preferred selection',
+        'idpPreferred.label': 'Use a preferred selection:',
         'idpEntry.label': 'Or enter your organization\'s name',
         'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
         'idpList.label': 'Or select your organization from the list below',
@@ -260,7 +260,7 @@ function IdPSelectUI(){
        @return {Element} IdP selector UI
     */
     var buildIdPSelector = function(){
-        var containerDiv = buildDiv('IdPSelector', '');
+        var containerDiv = buildDiv('IdPSelector');
         var preferredTileExists;
         preferredTileExists = buildPreferredIdPTile(containerDiv);
         buildIdPEntryTile(containerDiv, preferredTileExists);
@@ -270,7 +270,7 @@ function IdPSelectUI(){
 
     /**
       Builds a button for the provided IdP
-        <div id=prefix+"PreferredIdPButton"+uniq class="preferredIdPButton">
+        <div class="preferredIdPButton">
           <a href="XYX" onclick=setparm('ABCID')>
             <div class=
             <img src="https:\\xyc.gif"> <!-- optional -->
@@ -284,7 +284,7 @@ function IdPSelectUI(){
     */
 
     var composePreferredIdPButton = function(idp, uniq) {
-        var div = buildDiv('PreferredIdPButton'+uniq, 'PreferredIdPButton');
+        var div = buildDiv(undefined, 'PreferredIdPButton');
         var aval = document.createElement('a');
         var retString = idpData.returnIDParam + '=' + idp.id;
         var retVal = idpData['return'];
@@ -298,11 +298,11 @@ function IdPSelectUI(){
         aval.onclick = function () {
             selectIdP(idp.id);
         };
-        var imgDiv=buildDiv('PreferredIdPImg'+uniq, 'PreferredIdPImg');
+        var imgDiv=buildDiv(undefined, 'PreferredIdPImg');
         imgDiv.appendChild(img);
         aval.appendChild(imgDiv);
 
-        var nameDiv = buildDiv('PreferredIdPName'+uniq, 'PreferredIdPName');
+        var nameDiv = buildDiv(undefined, 'TextDiv');
         var nameStr = getLocalizedName(idp);
         if (nameStr.length > maxIdPCharsButton) {
             nameStr = nameStr.substring(0, maxIdPCharsButton);
@@ -317,9 +317,9 @@ function IdPSelectUI(){
     /**
      * Builds and populated a text Div
      */
-    var buildTextDiv = function(parent, divName, textId)
+    var buildTextDiv = function(parent, textId)
     {
-        var div  = buildDiv(divName, 'TextDiv');
+        var div  = buildDiv(undefined, 'TextDiv');
         var introTxt = document.createTextNode(getLocalizedMessage(textId)); 
         div.appendChild(introTxt);
         parent.appendChild(div);
@@ -345,7 +345,7 @@ function IdPSelectUI(){
 
         var preferredIdPDIV = buildDiv('PreferredIdPTile');
 
-        buildTextDiv(preferredIdPDIV, 'PreferredIdPText', 'idpPreferred.label');
+        buildTextDiv(preferredIdPDIV, 'idpPreferred.label');
 
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
@@ -376,9 +376,9 @@ function IdPSelectUI(){
         idpEntryDiv = buildDiv('IdPEntryTile');
 
         if (preferredTile) {
-            buildTextDiv(idpEntryDiv, 'EntryDiv', 'idpEntry.label');
+            buildTextDiv(idpEntryDiv, 'idpEntry.label');
         } else {
-            buildTextDiv(idpEntryDiv, 'EntryDiv', 'idpEntry.NoPreferred.label');
+            buildTextDiv(idpEntryDiv, 'idpEntry.NoPreferred.label');
         }
 
         var form = document.createElement('form');
@@ -457,9 +457,9 @@ function IdPSelectUI(){
         idpListDiv.style.display = 'none';
 
         if (preferredTile) {
-            buildTextDiv(idpListDiv, 'EntryDiv', 'idpList.label');
+            buildTextDiv(idpListDiv, 'idpList.label');
         } else {
-            buildTextDiv(idpListDiv, 'EntryDiv', 'idpList.NoPreferred.label');
+            buildTextDiv(idpListDiv, 'idpList.NoPreferred.label');
         }
 
         idpSelect = document.createElement('select');
@@ -557,7 +557,9 @@ function IdPSelectUI(){
     */
     var buildDiv = function(id, whichClass){
         var div = document.createElement('div');
-        setID(div, id);
+        if (undefined != id) {
+            setID(div, id);
+        }
         if(undefined != whichClass) {
 
             setClass(div, whichClass);

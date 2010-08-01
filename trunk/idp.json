@@ -40,6 +40,35 @@
                 }
             ]
         },
+         {
+            "id": "https://Google.com/google",
+            "logos": [
+                {
+                    "imgsrc": "http://staging.kantarainitiative.org/ulx-mockup-v4/images/icon-google.png",
+                    "alttxt": "Google",
+                    "height": "39",
+                    "width": "71"
+                },
+            ],
+            "names": [
+                {
+                    "lang": "en",
+                    "name": "Google"
+                }
+            ],
+            "descs": [
+                {
+                    "lang": "en",
+                    "desc": "Do no evil (or so they tell us)"
+                }
+            ],
+            "altnames": [
+                {
+                    "lang": "en",
+                    "name": "Google - Serving Swiss Universities"
+                }
+            ]
+        },
         {
             "id": "https://idp.edina.ac.uk/shibboleth-devel",
             "logos": [
