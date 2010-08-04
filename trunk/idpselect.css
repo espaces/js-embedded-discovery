@@ -16,7 +16,7 @@
  */
 #idpSelectPreferredIdPTile
 {
-    height:160px; /* Force the height so that the  selector box
+    height:138px; /* Force the height so that the  selector box
                    * goes below when there is only one preslect 
                    */
 }
@@ -73,7 +73,7 @@ div.IdPSelectPreferredIdPButton div.IdPSelectTextDiv
     font-size: smaller;
     font-weight: normal;
     max-width: 95%;
-    height: 52px;       /* Specify max height to allow three lines.  The 
+    height: 30px;       /* Specify max height to allow two lines.  The 
                          * Javascript controlls the max length of the
                          * strings 
                          */

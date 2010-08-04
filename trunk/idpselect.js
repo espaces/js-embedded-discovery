@@ -9,7 +9,7 @@ function IdPSelectUI(){
     this.defaultLanguage = 'en';
     this.preferredIdP = '';
     this.maxPreferredIdPs = 3;
-    this.maxIdPCharsButton = 43;
+    this.maxIdPCharsButton = 33;
     this.maxIdPCharsDropDown = 58;
     this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
     this.ie6Hack = null;
@@ -304,8 +304,9 @@ function IdPSelectUI(){
 
         var nameDiv = buildDiv(undefined, 'TextDiv');
         var nameStr = getLocalizedName(idp);
+        div.title = nameStr;
         if (nameStr.length > maxIdPCharsButton) {
-            nameStr = nameStr.substring(0, maxIdPCharsButton);
+            nameStr = nameStr.substring(0, maxIdPCharsButton) + "...";
         }
         nameDiv.appendChild(document.createTextNode(nameStr));
         aval.appendChild(nameDiv);
@@ -415,6 +416,7 @@ function IdPSelectUI(){
             //
             // And always ask for the cookie to be updated before we continue
             //
+            textInput.value = hidden.textValue;
             selectIdP(hidden.value);
             return true;
         };
