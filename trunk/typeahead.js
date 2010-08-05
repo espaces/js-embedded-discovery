@@ -139,6 +139,7 @@ TypeAheadControl.prototype.getPossible = function(name) {
                 
         inIndex ++;
     }
+    this.dropDown.current = -1;
     
     return possibles;
 };
