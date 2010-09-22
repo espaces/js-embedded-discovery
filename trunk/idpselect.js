@@ -82,6 +82,14 @@ function IdPSelectUI(){
     var classPrefix = 'IdPSelect';
     var dropDownControl;
 
+    //
+    // DS protocol configuration
+    //
+    var sPEntityID = "";
+    var returnString = '';
+    var returnIDParam = 'entityID';
+
+
     // *************************************
     // Public functions
     // *************************************
@@ -134,7 +142,7 @@ function IdPSelectUI(){
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
 
         if (typeof Navigator == 'undefined') {
-            lang = "en";
+            lang = 'en';
         } else {
             lang = Navigator.userLanguage || parent.defaultLanguage;
         }
@@ -151,6 +159,60 @@ function IdPSelectUI(){
         }
         if (!langBundle) {
             debug('No language support for ' + lang);
+        }
+        //
+        // Now set up the return values from the URL
+        //
+        var win = window;
+        while (null !== win.parent && win !== win.parent) {
+            win = win.parent;
+        }
+        var loc = win.location;
+        var parmlist = loc.search;
+        if (null == parmlist || 0 == parmlist.length) {
+            //
+            // FAILURE
+            //
+            return;
+        }
+        if (parmlist.charAt(0) != '?') {
+            //
+            // FAILURE
+            //
+        } else {
+            parmlist = parmlist.substring(1);
+        }
+        //
+        // protect against XSS by 
+
+        var parms = parmlist.split('&');
+        if (parms.length == 0) {
+            //
+            // FAILURE
+            //
+            return;
+        }
+        var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
+        var i;
+        for (i = 0; i < parms.length; i++) {
+            var parmPair = parms[i].split('=');
+            if (parmPair.length != 2) {
+                continue;
+            }
+            if (parmPair[0] == 'entityID') {
+                sPEntityID = decodeURIComponent(parmPair[1]);
+            } else if (parmPair[0] == 'return') {
+                returnString = decodeURIComponent(parmPair[1]);
+            } else if (parmPair[0] == 'returnIDParam') {
+                returnIDParam = decodeURIComponent(parmPair[1]);
+            } else if (parmPair[0] == 'policy') {
+                policy = decodeURIComponent(parmPair[1]);
+            } 
+        }
+        if (policy != 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single') {
+            //
+            // FAILURE
+            //
         }
     };
     
@@ -286,9 +348,12 @@ function IdPSelectUI(){
     var composePreferredIdPButton = function(idp, uniq) {
         var div = buildDiv(undefined, 'PreferredIdPButton');
         var aval = document.createElement('a');
-        var retString = idpData.returnIDParam + '=' + idp.id;
-        var retVal = idpData['return'];
+        var retString = returnIDParam + '=' + idp.id;
+        var retVal = returnString;
         var img = getImageForIdP(idp);
+        //
+        // Compose up the URL
+        //
         if (retVal.indexOf('?') == -1) {
             retString = '?' + retString;
         } else {
@@ -306,7 +371,7 @@ function IdPSelectUI(){
         var nameStr = getLocalizedName(idp);
         div.title = nameStr;
         if (nameStr.length > maxIdPCharsButton) {
-            nameStr = nameStr.substring(0, maxIdPCharsButton) + "...";
+            nameStr = nameStr.substring(0, maxIdPCharsButton) + '...';
         }
         nameDiv.appendChild(document.createTextNode(nameStr));
         aval.appendChild(nameDiv);
@@ -385,7 +450,7 @@ function IdPSelectUI(){
         var form = document.createElement('form');
         idpEntryDiv.appendChild(form);
 
-        form.action = idpData['return'];
+        form.action = returnString;
         form.method = 'GET';
         form.setAttribute('autocomplete', 'OFF');
         
@@ -399,7 +464,7 @@ function IdPSelectUI(){
         hidden.setAttribute('type', 'hidden');
         form.appendChild(hidden);
 
-        hidden.name = idpData.returnIDParam;
+        hidden.name = returnIDParam;
         hidden.value='-';
 
         var button = buildContinueButton('Select');
@@ -449,7 +514,7 @@ function IdPSelectUI(){
              <option value="EntityID">Localized Entity Name</option>
              [...]
           </select>
-          <input type="submit/>
+          <input type="submit"/>
        </div>
         
        @return {Element} IdP drop down selection UI tile
@@ -466,7 +531,7 @@ function IdPSelectUI(){
 
         idpSelect = document.createElement('select');
         setID(idpSelect, 'Selector');
-        idpSelect.name = idpData.returnIDParam;
+        idpSelect.name = returnIDParam;
         idpListDiv.appendChild(idpSelect);
         
         var idpOption = buildSelectOption('-', getLocalizedMessage('idpList.defaultOptionLabel'));
@@ -482,7 +547,7 @@ function IdPSelectUI(){
         }
 
         var form = document.createElement('form');
-        form.action = idpData['return'];
+        form.action = returnString;
         form.method = 'GET';
         form.setAttribute('autocomplete', 'OFF');
         form.appendChild(idpSelect);
