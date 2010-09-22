@@ -44,7 +44,7 @@ div.IdPSelectPreferredIdPButton a
     
 }
 div.IdPSelectTextDiv{
-    height: 24px; /* Add some height to separate the text from the boxes */
+    height: 3.5ex; /* Add some height to separate the text from the boxes */
 }
 
 div.IdPSelectPreferredIdPImg
