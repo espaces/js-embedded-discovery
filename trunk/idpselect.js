@@ -1,3 +1,17 @@
+/*
+TODO
+ - langiage set up isn't working on (at least) IE 
+ - Need to cache-bust on (at least) IE8 when getting JSON
+ - Need to change to use new format codeJSON layout
+ - HTMLencoding URLs
+
+ - check list for browsers
+    - Z axis
+    - CSS and Javascript sanity
+    - language
+*/
+
+
 /** @class IdP Selector UI */
 function IdPSelectUI(){
     //
@@ -17,6 +31,9 @@ function IdPSelectUI(){
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
+    this.minWidth = 20;
+    this.minHeight = 20;
+    this.bestRatio = 80 / 60;
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -45,12 +62,17 @@ function IdPSelectUI(){
     var base64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
     var lang;
+    var majorLang;
     var defaultLang;
     var langBundle;
     var defaultLangBundle;
     var defaultLogo;
     var defaultLogoWidth;
     var defaultLogoHeight;
+    var minWidth;
+    var minHeight;
+    var minWidth;
+    var bestRatio;
 
     //
     // Parameters passed into our closure
@@ -100,8 +122,8 @@ function IdPSelectUI(){
     */
     this.draw = function(){
         setupLocals(this);
+        load('idp2.json');        
         load(this.dataSource);
-        
         var idpSelectDiv = document.getElementById(this.insertAtDiv);
         if(!idpSelectDiv){
             fatal(getLocalizedMessage('fatal.divMissing'));
@@ -138,16 +160,28 @@ function IdPSelectUI(){
         defaultLogo = parent.defaultLogo;
         defaultLogoWidth = parent.defaultLogoWidth;
         defaultLogoHeight = parent.defaultLogoHeight;
+        minWidth = parent.minWidth;
+        minHeight = parent.minHeight;
+        bestRatio = parent.bestRatio;
         maxIdPCharsButton =  parent.maxIdPCharsButton;
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
 
-        if (typeof Navigator == 'undefined') {
-            lang = 'en';
+        if (typeof navigator == 'undefined') {
+            lang = parent.defaultLanguage;
         } else {
-            lang = Navigator.userLanguage || parent.defaultLanguage;
+            lang = navigator.language || navigator.userLanguage || parent.defaultLanguage;
         }
+        if (lang.indexOf('-') > 0) {
+            majorLang = lang.substring(0, lang.indexOf('-'));
+        }
+
         defaultLang = parent.defaultLanguage;
-        langBundle = parent.langBundles[lang];
+
+        if (typeof parent.langBundles[lang] != 'undefined') {
+            langBundle = parent.langBundles[lang];
+        } else if (typeof majorLang != 'undefined' && typeof parent.langBundles[majorLang] != 'undefined') {
+            langBundle = parent.langBundles[majorLang];
+        }
         defaultLangBundle = parent.langBundles[parent.defaultLanguage];
 
         //
@@ -230,6 +264,7 @@ function IdPSelectUI(){
             fatal('No XMLHttpRequest');
         }
 
+        dataSource += '?randome=random';
         //
         // Grab the data
         //
@@ -288,22 +323,62 @@ function IdPSelectUI(){
 
     var getImageForIdP = function(idp) {
 
+        var getBestFit = function(language) {
+            //
+            // See GetLocalizedEntry
+            //
+            var bestFit = null;
+            var i;
+            if (null == idp.logos) {
+                return null;
+            }
+            for (i in idp.logos) {
+                if (idp.logos[i].lang == language &&
+                    idp.logos[i].width != null &&  
+                    idp.logos[i].width >= minWidth &&
+                    idp.logos[i].height != null && 
+                    idp.logos[i].height >= minHeight) {
+                    if (bestFit == null) {
+                        bestFit = idp.logos[i];
+                    } else {
+                        me = Math.abs(bestRatio - (idp.logos[i].width/idp.logos[i].height));
+                        him = Math.abs(bestRatio - (bestFit.width/bestFit.height));
+                        if (him > me) {
+                            bestFit = idp.logos[i];
+                        }
+                    }
+                }
+            }
+            return bestFit;
+        }
+
+        var bestFit = null
         var img = document.createElement('img');
-        if (null === idp.logos || 0 === idp.logos.length) {
+
+        bestFit = getBestFit(lang);
+        if (null == bestFit && typeof majorLang != 'undefined') {
+            bestFit = getBestFit(majorLang);
+        }
+        if (null == bestFit) {
+            bestFit = getBestFit(null);
+        }
+        if (null == bestFit) {
+            bestFit = getBestFit(defaultLang);
+        }
+               
+
+        if (null === bestFit) {
             img.src = defaultLogo;
             img.width = defaultLogoWidth;
             img.height = defaultLogoHeight;
             img.alt = getLocalizedMessage('defaultLogoAlt');
-        } else {
-            img.src = idp.logos[0].imgsrc;
-            img.alt = idp.logos[0].alttxt;
-            if (null != idp.logos[0].width) {
-                img.setAttribute('width', idp.logos[0].width);
-            }
-            if (null != idp.logos[0].height) {
-                img.setAttribute('height', idp.logos[0].height);
-            }
+            return img;
         }
+
+        img.src = bestFit.imgsrc;
+        img.alt = bestFit.alttxt;
+        img.setAttribute('width', bestFit.width);
+        img.setAttribute('height', bestFit.height);
         return img;
     };
 
@@ -718,7 +793,7 @@ function IdPSelectUI(){
             message = defaultLangBundle[messageId];
         }
         if(!message){
-            fatal('Missing message for ' + messageId);
+            message = 'Missing message for ' + messageId;
         }
         
         return message;
@@ -732,23 +807,55 @@ function IdPSelectUI(){
 
        @return (String) The localized name
     */
+    var getLocalizedName = function(idp) {
+        var res = getLocalizedEntry(idp.names);
+        if (null != res) {
+            return res;
+        }
+        warn('No Name entry in any language for ' + idp.id);
+        return idp.id;
+    }
 
-    var getLocalizedName = function(idp){
+    var getLocalizedEntry = function(theArray){
         var i;
 
-        for (i in idp.names) {
-            if (idp.names[i].lang == lang) {
-                return idp.names[i].name;
+        //
+        // try by full name
+        //
+        for (i in theArray) {
+            if (theArray[i].lang == lang) {
+                return theArray[i].name;
             }
         }
-        for (i in idp.names) {
-            if (idp.names[i].lang == defaultLang) {
-                return idp.names[i].name;
+        //
+        // then by major language
+        //
+        if (typeof majorLang != 'undefined') {
+            for (i in theArray) {
+                if (theArray[i].lang == majorLang) {
+                    return theArray[i].name;
+                }
+            }
+        }
+        //
+        // then by null language in metadata
+        //
+        for (i in theArray) {
+            if (theArray[i].lang == null) {
+                return theArray[i].name;
+            }
+        }
+        
+        //
+        // then by default language
+        //
+        for (i in theArray) {
+            if (theArray[i].lang == defaultLang) {
+                return theArray[i].name;
             }
         }
 
-        error('No Name in either language for ' + idp.id);
-        return 'unknown';
+        return null;
     };
 
     
