@@ -561,7 +561,7 @@ function IdPSelectUI(){
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, ie6Hack);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, ie6Hack);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));

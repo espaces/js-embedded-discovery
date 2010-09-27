@@ -1,4 +1,4 @@
-function TypeAheadControl(jsonObj, box, orig, submit, maxchars, ie6hack)
+function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, ie6hack)
 {
     //
     // Squirrel away the parameters we were given
@@ -11,6 +11,7 @@ function TypeAheadControl(jsonObj, box, orig, submit, maxchars, ie6hack)
     this.maxResults = 35;
     this.ie6hack = ie6hack;
     this.maxchars = maxchars;
+    this.getName = getName;
 }
 
 TypeAheadControl.prototype.draw = function() {
@@ -102,38 +103,24 @@ TypeAheadControl.prototype.getPossible = function(name) {
     while (outIndex <= this.maxResults && inIndex < this.elementList.length) {
         var hit = false;
         var i;
+        var thisName = this.getName(this.elementList[inIndex]);
 
         //
-        // Check names
+        // Check name
         //
         i = 0;
-        while (!hit && this.elementList[inIndex].names[i]){
-            if (this.elementList[inIndex].names[i].name.toLowerCase().indexOf(name) != -1) {
-                hit = true;
-            }
-            i++;
-        }
-
-        //
-        // Check altnames
-        //
-        i = 0;
-        while (!hit && this.elementList[inIndex].altnames[i]){
-            if (this.elementList[inIndex].altnames[i].name.toLowerCase().indexOf(name) != -1) {
-                hit = true;
-            }
-            i++;
-        }
-
+        if (thisName.toLowerCase().indexOf(name) != -1) {
+            hit = true;
+        }  
         //
         // Check entityID
         //
-        if (this.elementList[inIndex].id.toLowerCase().indexOf(name) != -1) {
+        if (!hit && this.elementList[inIndex].id.toLowerCase().indexOf(name) != -1) {
             hit = true;
         }
                 
         if (hit) {
-            possibles[outIndex] = [this.elementList[inIndex].names[0].name, this.elementList[inIndex].id];
+            possibles[outIndex] = [thisName, this.elementList[inIndex].id];
             outIndex ++;
         }
                 
