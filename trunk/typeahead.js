@@ -93,7 +93,8 @@ TypeAheadControl.prototype.draw = function() {
 //
 TypeAheadControl.prototype.getPossible = function(name) {
     var possibles = [];
-    var inIndex = 0;
+    var inIndexi = 0;
+    var inIndexj = 0;
     var outIndex = 0;
     var strIndex = 0;
     var str;
@@ -101,10 +102,17 @@ TypeAheadControl.prototype.getPossible = function(name) {
 
     name = name.toLowerCase();
         
-    while (outIndex <= this.maxResults && inIndex < this.elementList.length) {
+    while (outIndex <= this.maxResults && 
+           inIndexi < this.elementList.length) {
+
+        if (inIndexj >= this.elementList[inIndexi].length) {
+            inIndexi ++;
+            inIndexj = 0;
+            continue;
+        }
         var hit = false;
         var i;
-        var thisName = this.getName(this.elementList[inIndex]);
+        var thisName = this.getName(this.elementList[inIndexi][inIndexj]);
 
         //
         // Check name
@@ -116,16 +124,16 @@ TypeAheadControl.prototype.getPossible = function(name) {
         //
         // Check entityID
         //
-        if (!hit && this.getEntityId(this.elementList[inIndex]).toLowerCase().indexOf(name) != -1) {
+        if (!hit && this.getEntityId(this.elementList[inIndexi][inIndexj]).toLowerCase().indexOf(name) != -1) {
             hit = true;
         }
                 
         if (hit) {
-            possibles[outIndex] = [thisName, this.getEntityId(this.elementList[inIndex])];
+            possibles[outIndex] = [thisName, this.getEntityId(this.elementList[inIndexi][inIndexj])];
             outIndex ++;
         }
                 
-        inIndex ++;
+        inIndexj ++;
     }
     this.dropDown.current = -1;
     

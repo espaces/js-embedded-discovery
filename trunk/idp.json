@@ -1,4 +1,4 @@
-
+[
    [
          {
             "entityID": "https://Dieng.Switch.ch/idp/shibboleth",
@@ -50,17 +50,18 @@
                 }
             ]
         }
-,
-
+   ],
+   [
         {
             "entityID": "https://idp.edina.ac.uk/shibboleth-devel",
             "Logos": [
                 {
                     "value": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/edina-logo110x58.jpg",
                     "height": "59",
-                    "width": "110"
+                    "width": "110",
+                    "lang": "en"
                 },
-                                 
+
                  {
                     "value": "https://dlib-adidp.ucs.ed.ac.uk:442/Images/edina-logo-blue-150x59.jpg",
                     "height": "59",
@@ -92,4 +93,4 @@
             ]
         }
 ]
-
+]

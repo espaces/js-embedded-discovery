@@ -304,8 +304,10 @@ function IdPSelectUI(){
     var getIdPFor = function(idpName) {
 
         for (var i = 0; i < idpData.length; i++) {
-            if (getEntityId(idpData[i]) == idpName) {
-                return idpData[i];
+            for (var j = 0; j < idpData[i].length; j++) {
+                if (getEntityId(idpData[i][j]) == idpName) {
+                    return idpData[i][j];
+                }
             }
         }
         return null;
@@ -615,9 +617,11 @@ function IdPSelectUI(){
     
         var idp;
         for(var i=0; i<idpData.length; i++){
-            idp = idpData[i];
-            idpOption = buildSelectOption(getEntityId(idp), getLocalizedName(idp));
-            idpSelect.appendChild(idpOption);
+            for (var j = 0; j < idpData[i].length; j++) {
+                idp = idpData[i][j];
+                idpOption = buildSelectOption(getEntityId(idp), getLocalizedName(idp));
+                idpSelect.appendChild(idpOption);
+            }
         }
 
         var form = document.createElement('form');
