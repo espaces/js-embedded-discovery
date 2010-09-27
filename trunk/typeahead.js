@@ -1,9 +1,9 @@
-function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, ie6hack)
+function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEntityId, ie6hack)
 {
     //
     // Squirrel away the parameters we were given
     //
-    this.elementList = jsonObj.idps;
+    this.elementList = jsonObj;
     this.textBox = box;
     this.origin = orig;
     this.submit = submit;
@@ -12,6 +12,7 @@ function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, ie6hack
     this.ie6hack = ie6hack;
     this.maxchars = maxchars;
     this.getName = getName;
+    this.getEntityId = getEntityId;
 }
 
 TypeAheadControl.prototype.draw = function() {
@@ -115,12 +116,12 @@ TypeAheadControl.prototype.getPossible = function(name) {
         //
         // Check entityID
         //
-        if (!hit && this.elementList[inIndex].id.toLowerCase().indexOf(name) != -1) {
+        if (!hit && this.getEntityId(this.elementList[inIndex]).toLowerCase().indexOf(name) != -1) {
             hit = true;
         }
                 
         if (hit) {
-            possibles[outIndex] = [thisName, this.elementList[inIndex].id];
+            possibles[outIndex] = [thisName, this.getEntityId(this.elementList[inIndex])];
             outIndex ++;
         }
                 

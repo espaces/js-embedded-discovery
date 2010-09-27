@@ -33,7 +33,7 @@ function IdPSelectUI(){
     this.defaultLogoHeight = 80 ;
     this.minWidth = 20;
     this.minHeight = 20;
-    this.bestRatio = 80 / 60;
+    this.bestRatio = Math.log(80 / 60);
     this.langBundles = {
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
@@ -122,7 +122,6 @@ function IdPSelectUI(){
     */
     this.draw = function(){
         setupLocals(this);
-        load('idp2.json');        
         load(this.dataSource);
         var idpSelectDiv = document.getElementById(this.insertAtDiv);
         if(!idpSelectDiv){
@@ -304,9 +303,9 @@ function IdPSelectUI(){
 
     var getIdPFor = function(idpName) {
 
-        for (var i = 0; i < idpData.idps.length; i++) {
-            if (idpData.idps[i].id == idpName) {
-                return idpData.idps[i];
+        for (var i = 0; i < idpData.length; i++) {
+            if (getEntityId(idpData[i]) == idpName) {
+                return idpData[i];
             }
         }
         return null;
@@ -329,22 +328,22 @@ function IdPSelectUI(){
             //
             var bestFit = null;
             var i;
-            if (null == idp.logos) {
+            if (null == idp.Logos) {
                 return null;
             }
-            for (i in idp.logos) {
-                if (idp.logos[i].lang == language &&
-                    idp.logos[i].width != null &&  
-                    idp.logos[i].width >= minWidth &&
-                    idp.logos[i].height != null && 
-                    idp.logos[i].height >= minHeight) {
+            for (i in idp.Logos) {
+                if (idp.Logos[i].lang == language &&
+                    idp.Logos[i].width != null &&  
+                    idp.Logos[i].width >= minWidth &&
+                    idp.Logos[i].height != null && 
+                    idp.Logos[i].height >= minHeight) {
                     if (bestFit == null) {
-                        bestFit = idp.logos[i];
+                        bestFit = idp.Logos[i];
                     } else {
-                        me = Math.abs(bestRatio - (idp.logos[i].width/idp.logos[i].height));
-                        him = Math.abs(bestRatio - (bestFit.width/bestFit.height));
+                        me = Math.abs(bestRatio - Math.log(idp.Logos[i].width/idp.Logos[i].height));
+                        him = Math.abs(bestRatio - Math.log(bestFit.width/bestFit.height));
                         if (him > me) {
-                            bestFit = idp.logos[i];
+                            bestFit = idp.Logos[i];
                         }
                     }
                 }
@@ -375,8 +374,8 @@ function IdPSelectUI(){
             return img;
         }
 
-        img.src = bestFit.imgsrc;
-        img.alt = bestFit.alttxt;
+        img.src = bestFit.value;
+        img.alt = getLocalizedName(idp);
         img.setAttribute('width', bestFit.width);
         img.setAttribute('height', bestFit.height);
         return img;
@@ -423,7 +422,7 @@ function IdPSelectUI(){
     var composePreferredIdPButton = function(idp, uniq) {
         var div = buildDiv(undefined, 'PreferredIdPButton');
         var aval = document.createElement('a');
-        var retString = returnIDParam + '=' + idp.id;
+        var retString = returnIDParam + '=' + getEntityId(idp);
         var retVal = returnString;
         var img = getImageForIdP(idp);
         //
@@ -436,7 +435,7 @@ function IdPSelectUI(){
         }
         aval.href = retVal + retString;
         aval.onclick = function () {
-            selectIdP(idp.id);
+            selectIdP(getEntityId(idp));
         };
         var imgDiv=buildDiv(undefined, 'PreferredIdPImg');
         imgDiv.appendChild(img);
@@ -561,7 +560,7 @@ function IdPSelectUI(){
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, ie6Hack);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, ie6Hack);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
@@ -615,9 +614,9 @@ function IdPSelectUI(){
         idpSelect.appendChild(idpOption);
     
         var idp;
-        for(var i=0; i<idpData.idps.length; i++){
-            idp = idpData.idps[i];
-            idpOption = buildSelectOption(idp.id, getLocalizedName(idp));
+        for(var i=0; i<idpData.length; i++){
+            idp = idpData[i];
+            idpOption = buildSelectOption(getEntityId(idp), getLocalizedName(idp));
             idpSelect.appendChild(idpOption);
         }
 
@@ -799,6 +798,10 @@ function IdPSelectUI(){
         return message;
     };
 
+    var getEntityId = function(idp) {
+        return idp.entityID;
+    }
+
     /**
        Returns the localized name information for the provided idp
 
@@ -808,12 +811,12 @@ function IdPSelectUI(){
        @return (String) The localized name
     */
     var getLocalizedName = function(idp) {
-        var res = getLocalizedEntry(idp.names);
+        var res = getLocalizedEntry(idp.DisplayNames);
         if (null != res) {
             return res;
         }
-        warn('No Name entry in any language for ' + idp.id);
-        return idp.id;
+        debug('No Name entry in any language for ' + getEntityId(idp));
+        return getEntityId(idp);
     }
 
     var getLocalizedEntry = function(theArray){
@@ -824,7 +827,7 @@ function IdPSelectUI(){
         //
         for (i in theArray) {
             if (theArray[i].lang == lang) {
-                return theArray[i].name;
+                return theArray[i].value;
             }
         }
         //
@@ -833,7 +836,7 @@ function IdPSelectUI(){
         if (typeof majorLang != 'undefined') {
             for (i in theArray) {
                 if (theArray[i].lang == majorLang) {
-                    return theArray[i].name;
+                    return theArray[i].value;
                 }
             }
         }
@@ -842,7 +845,7 @@ function IdPSelectUI(){
         //
         for (i in theArray) {
             if (theArray[i].lang == null) {
-                return theArray[i].name;
+                return theArray[i].value;
             }
         }
         
@@ -851,7 +854,7 @@ function IdPSelectUI(){
         //
         for (i in theArray) {
             if (theArray[i].lang == defaultLang) {
-                return theArray[i].name;
+                return theArray[i].value;
             }
         }
 
