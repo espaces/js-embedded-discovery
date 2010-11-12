@@ -127,6 +127,9 @@ TypeAheadControl.prototype.getPossible = function(name) {
                 
         inIndex ++;
     }
+    //
+    // reset the cursor to the top
+    //
     this.dropDown.current = -1;
     
     return possibles;
