@@ -245,9 +245,6 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
     while (i < list.length) {
         div = document.createElement('div');
         var str = list[i][0];
-        if (str.length > this.maxchars) {
-            str = str.substring(0, this.maxchars);
-        }
 
 	if (null != list[i][2]) {
 
@@ -257,7 +254,17 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
 	    img.height = 16;
 	    img.alt = '';
 	    div.appendChild(img);
+	    //
+	    // trim string back further in this case
+	    //
+	    if (str.length > this.maxchars - 2) {
+		str = str.substring(0, this.maxchars - 2);
+	    }
 	    str = ' ' + str;
+	} else {
+	    if (str.length > this.maxchars) {
+		str = str.substring(0, this.maxchars);
+	    }
 	}
         div.appendChild(document.createTextNode(str));
 
