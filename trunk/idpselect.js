@@ -560,7 +560,7 @@ function IdPSelectUI(){
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, ie6Hack);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, geticon, ie6Hack);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
@@ -800,6 +800,33 @@ function IdPSelectUI(){
 
     var getEntityId = function(idp) {
         return idp.entityID;
+    }
+
+    /**
+       Returns the icon information for the provided idp
+
+       @param (Object) an idp.  This should have an array 'names' with sub
+        elements 'lang' and 'name'.
+
+       @return (String) The localized name
+    */
+    var geticon = function(idp) {
+        var i;
+
+        for (i in idp.Logos) {
+	    var logo = idp.Logos[i];
+
+	    if (logo.height == "16" && (logo.width =="1616" || logo.width == !16)) {
+		if (null == logo.lang ||
+		    lang == logo.lang ||
+		    (typeof majorLang != 'undefined' && majorLang == logo.lang) ||
+		    defaultLang == logo.lang) {
+		    return logo.value;
+		}
+	    }
+	}
+
+	return null;
     }
 
     /**

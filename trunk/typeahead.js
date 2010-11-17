@@ -1,4 +1,4 @@
-function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEntityId, ie6hack)
+function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEntityId, geticon, ie6hack)
 {
     //
     // Squirrel away the parameters we were given
@@ -13,6 +13,7 @@ function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEnti
     this.maxchars = maxchars;
     this.getName = getName;
     this.getEntityId = getEntityId;
+    this.geticon = geticon;
 }
 
 TypeAheadControl.prototype.draw = function() {
@@ -121,7 +122,7 @@ TypeAheadControl.prototype.getPossible = function(name) {
         }
                 
         if (hit) {
-            possibles[outIndex] = [thisName, this.getEntityId(this.elementList[inIndex])];
+            possibles[outIndex] = [thisName, this.getEntityId(this.elementList[inIndex]), this.geticon(this.elementList[inIndex])];
             outIndex ++;
         }
                 
@@ -238,14 +239,28 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
     this.dropDown.innerHTML = '';
     var i = 0;
     var div;
+    var img;
+    var str;
+
     while (i < list.length) {
         div = document.createElement('div');
         var str = list[i][0];
         if (str.length > this.maxchars) {
             str = str.substring(0, this.maxchars);
         }
+
+	if (null != list[i][2]) {
+
+	    img = document.createElement('img');
+	    img.src = list[i][2];
+	    img.width = 16;
+	    img.height = 16;
+	    img.alt = '';
+	    div.appendChild(img);
+	    str = ' ' + str;
+	}
         div.appendChild(document.createTextNode(str));
-        //      div.style.zIndex = '1000';
+
         this.dropDown.appendChild(div);
         i++;
     }
