@@ -273,7 +273,7 @@ function IdPSelectUI(){
         if (typeof xhr.overrideMimeType == 'function') {
             xhr.overrideMimeType('application/json');
         }
-        xhr.send();
+        xhr.send(null);
         
         if(xhr.status == 200){
             //
