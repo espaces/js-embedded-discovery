@@ -123,6 +123,8 @@ function IdPSelectUI(){
     this.draw = function(){
         setupLocals(this);
         load(this.dataSource);
+        idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
+
         var idpSelectDiv = document.getElementById(this.insertAtDiv);
         if(!idpSelectDiv){
             fatal(getLocalizedMessage('fatal.divMissing'));
@@ -816,7 +818,7 @@ function IdPSelectUI(){
         for (i in idp.Logos) {
 	    var logo = idp.Logos[i];
 
-	    if (logo.height == "16" && (logo.width =="1616" || logo.width == !16)) {
+	    if (logo.height == "16" && (logo.width =="1616" || logo.width == "16")) {
 		if (null == logo.lang ||
 		    lang == logo.lang ||
 		    (typeof majorLang != 'undefined' && majorLang == logo.lang) ||
