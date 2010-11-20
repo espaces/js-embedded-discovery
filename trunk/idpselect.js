@@ -818,7 +818,7 @@ function IdPSelectUI(){
         for (i in idp.Logos) {
 	    var logo = idp.Logos[i];
 
-	    if (logo.height == "16" && (logo.width =="1616" || logo.width == "16")) {
+	    if (logo.height == "16" && logo.width == "16") {
 		if (null == logo.lang ||
 		    lang == logo.lang ||
 		    (typeof majorLang != 'undefined' && majorLang == logo.lang) ||
