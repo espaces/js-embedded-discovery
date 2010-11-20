@@ -33,6 +33,8 @@ function IdPSelectUI(){
     this.defaultLogoHeight = 80 ;
     this.minWidth = 20;
     this.minHeight = 20;
+    this.maxWidth = 115;
+    this.maxHeight = 69;
     this.bestRatio = Math.log(80 / 60);
     this.langBundles = {
     'en': {
@@ -71,7 +73,8 @@ function IdPSelectUI(){
     var defaultLogoHeight;
     var minWidth;
     var minHeight;
-    var minWidth;
+    var maxWidth;
+    var maxHeight;
     var bestRatio;
 
     //
@@ -163,6 +166,8 @@ function IdPSelectUI(){
         defaultLogoHeight = parent.defaultLogoHeight;
         minWidth = parent.minWidth;
         minHeight = parent.minHeight;
+        maxWidth = parent.maxWidth;
+        maxHeight = parent.maxHeight;
         bestRatio = parent.bestRatio;
         maxIdPCharsButton =  parent.maxIdPCharsButton;
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
@@ -378,8 +383,20 @@ function IdPSelectUI(){
 
         img.src = bestFit.value;
         img.alt = getLocalizedName(idp);
-        img.setAttribute('width', bestFit.width);
-        img.setAttribute('height', bestFit.height);
+
+        var w = bestFit.width;
+        var h = bestFit.height;
+        if (w>maxWidth) {
+            h = (maxWidth/w) * h;
+            w = maxWidth;
+        }
+        if (h> maxHeight) {
+            w = (maxHeight/h) * w;
+            w = maxHeight;
+        }
+            
+        img.setAttribute('width', w);
+        img.setAttribute('height', h);
         return img;
     };
 
