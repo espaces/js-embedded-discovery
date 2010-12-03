@@ -1,10 +1,9 @@
 /*
 TODO
- - Need to cache-bust on (at least) IE8 when getting JSON
  - HTMLencoding URLs
  - URL encoding of the parameters back to the SP
- - Add sorting of input
-
+ - Split parameters out
+ 
  - check list for browsers
     - Z axis
     - CSS and Javascript sanity
@@ -223,7 +222,8 @@ function IdPSelectUI(){
             parmlist = parmlist.substring(1);
         }
         //
-        // protect against XSS by 
+        // protect against XSS by decoding. We rencode just before we push
+        //
 
         var parms = parmlist.split('&');
         if (parms.length == 0) {
@@ -255,7 +255,22 @@ function IdPSelectUI(){
             //
         }
     };
-    
+
+    /**
+     * We need to cache bust on IE.  So how do we know?  Use a bigger hammer.
+     */
+    var isIE = function() {
+        if (null == navigator) {
+            return false;
+        }
+        var browserName = navigator.appName;
+        if (null == browserName) {
+            return false;
+        }
+        return (browserName == 'Microsoft Internet Explorer');
+    }
+
+
     /**
        Loads the data used by the IdP selection UI.  Data is loaded 
        from a JSON document fetched from the given url.
@@ -270,7 +285,13 @@ function IdPSelectUI(){
             fatal('No XMLHttpRequest');
         }
 
-        dataSource += '?randome=random';
+        if (isIE()) {
+            //
+            // cache bust (for IE)
+            //
+            dataSource += '?random=' + (Math.random()*1000000);
+        }
+
         //
         // Grab the data
         //
