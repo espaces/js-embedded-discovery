@@ -320,7 +320,7 @@ TypeAheadControl.prototype.select = function(selected) {
             //
             // and the value for the Server
             //
-            this.origin.value = this.results[i][1];
+            this.origin.value = encodeURIComponent(this.results[i][1]);
             this.origin.textValue = this.results[i][0];
         } else {
             node.className = '';
@@ -340,7 +340,7 @@ TypeAheadControl.prototype.downSelect = function() {
             this.dropDown.current = 0;
             this.dropDown.childNodes[0].className = 'IdPSelectCurrent';
             this.doSelected();
-            this.origin.value = this.results[0][1];
+            this.origin.value = encodeURIComponent(this.results[0][1]);
             this.origin.textValue = this.results[0][0];
 
         } else if (this.dropDown.current < (this.results.length-1)) {
@@ -357,7 +357,7 @@ TypeAheadControl.prototype.downSelect = function() {
             //
             this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
             this.doSelected();
-            this.origin.value = this.results[this.dropDown.current][1];
+            this.origin.value = encodeURIComponent(this.results[this.dropDown.current][1]);
             this.origin.textValue = this.results[this.dropDown.current][0];
 
         }
@@ -382,7 +382,7 @@ TypeAheadControl.prototype.upSelect = function() {
             //
             this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
             this.doSelected();
-            this.origin.value = this.results[this.dropDown.current][1];
+            this.origin.value = encodeURIComponent(this.results[this.dropDown.current][1]);
             this.origin.textValue = this.results[this.dropDown.current][0];
         }
 };

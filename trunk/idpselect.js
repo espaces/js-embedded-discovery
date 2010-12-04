@@ -462,7 +462,7 @@ function IdPSelectUI(){
     var composePreferredIdPButton = function(idp, uniq) {
         var div = buildDiv(undefined, 'PreferredIdPButton');
         var aval = document.createElement('a');
-        var retString = returnIDParam + '=' + getEntityId(idp);
+        var retString = returnIDParam + '=' + encodeURIComponent(getEntityId(idp));
         var retVal = returnString;
         var img = getImageForIdP(idp);
         //
@@ -596,7 +596,7 @@ function IdPSelectUI(){
             // And always ask for the cookie to be updated before we continue
             //
             textInput.value = hidden.textValue;
-            selectIdP(hidden.value);
+            selectIdP(decodeURIComponent(hidden.value));
             return true;
         };
 
@@ -656,7 +656,7 @@ function IdPSelectUI(){
         var idp;
         for(var i=0; i<idpData.length; i++){
             idp = idpData[i];
-            idpOption = buildSelectOption(getEntityId(idp), getLocalizedName(idp));
+            idpOption = buildSelectOption(encodeURIComponent(getEntityId(idp)), getLocalizedName(idp));
             idpSelect.appendChild(idpOption);
         }
 
@@ -676,7 +676,7 @@ function IdPSelectUI(){
             //
             // otherwise update the cookie
             //
-            selectIdP(idpSelect.options[idpSelect.selectedIndex].value);
+            selectIdP(decodeURIComponent(idpSelect.options[idpSelect.selectedIndex].value));
             return true;
         };
 
@@ -801,7 +801,8 @@ function IdPSelectUI(){
     // *************************************
 
     /**
-       Base helper function for when an IdP is selected
+     * Base helper function for when an IdP is selected
+     * @param (String) The UN-encoded entityID of the IdP
     */
 
     var selectIdP = function(idP) {
@@ -1026,7 +1027,7 @@ function IdPSelectUI(){
                     if (0 == cookieValues[j].length) {
                         continue;
                     }
-                    var dec = base64Decode(cookieValues[j]);
+                    var dec = base64Decode(decodeURIComponent(cookieValues[j]));
                     if (dec.length > 0) {
                         userSelectedIdPs.push(dec);
                     }
@@ -1044,9 +1045,13 @@ function IdPSelectUI(){
     */
     var saveUserSelectedIdPs = function(idps){
         var cookieData = new Array();
-        for(var i=0; i < idps.length; i++){
+        var length = idps.length;
+        if (length > 5) {
+            length = 5;
+        }
+        for(var i=0; i < length; i++){
             if (idps[i].length > 0) {
-                cookieData.push(base64Encode(idps[i]));
+                cookieData.push(encodeURIComponent(base64Encode(idps[i])));
             }
         }
         
@@ -1057,7 +1062,7 @@ function IdPSelectUI(){
             expireDate = new Date(now.getTime() + cookieTTL);
         }
         
-        document.cookie='_saml_idp' + '=' + cookieData.join('+') +
+        document.cookie='_saml_idp' + '=' + cookieData.join('+') + '; path = /' +
             ((expireDate===null) ? '' : '; expires=' + expireDate.toUTCString());
     };
     
