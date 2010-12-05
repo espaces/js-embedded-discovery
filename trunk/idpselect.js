@@ -111,8 +111,9 @@ function IdPSelectUI(){
     //
     var sPEntityID = "";
     var returnString = '';
+    var returnBase='';
+    var returnParms= new Array();
     var returnIDParam = 'entityID';
-
 
     // *************************************
     // Public functions
@@ -254,6 +255,26 @@ function IdPSelectUI(){
             // FAILURE
             //
         }
+        //
+        // Now split up returnString
+        //
+        i = returnString.indexOf('?');
+        if (i < 0) {
+            returnBase = returnString;
+            return;
+        }
+        returnBase = returnString.substring(0, i);
+        parmlist = returnString.substring(i+1);
+        parms = parmlist.split('&');
+        for (i = 0; i < parms.length; i++) {
+            var parmPair = parms[i].split('=');
+            if (parmPair.length != 2) {
+                continue;
+            }
+            parmPair[1] = decodeURIComponent(parmPair[1]);
+            returnParms.push(parmPair);
+        }
+        
     };
 
     /**
@@ -539,6 +560,31 @@ function IdPSelectUI(){
     };
 
     /**
+     * Build the <form> from the return parameters
+     */
+
+    var buildSelectForm = function ()
+    {
+        var form = document.createElement('form');
+        idpEntryDiv.appendChild(form);
+
+        form.action = returnBase;
+        form.method = 'GET';
+        form.setAttribute('autocomplete', 'OFF');
+        var i = 0;
+        for (i = 0; i < returnParms.length; i++) {
+            var hidden = document.createElement('input');
+            hidden.setAttribute('type', 'hidden');
+            hidden.name = returnParms[i][0];
+            hidden.value= returnParms[i][1];
+            form.appendChild(hidden);
+        }
+
+        return form;
+    }        
+
+
+    /**
        Build the manual IdP Entry tile (bottom half of UI with
        search-as-you-type field).
 
@@ -561,13 +607,8 @@ function IdPSelectUI(){
             buildTextDiv(idpEntryDiv, 'idpEntry.NoPreferred.label');
         }
 
-        var form = document.createElement('form');
-        idpEntryDiv.appendChild(form);
-
-        form.action = returnString;
-        form.method = 'GET';
-        form.setAttribute('autocomplete', 'OFF');
-        
+        var form = buildSelectForm();
+      
         var textInput = document.createElement('input');
         form.appendChild(textInput);
 
@@ -596,7 +637,7 @@ function IdPSelectUI(){
             // And always ask for the cookie to be updated before we continue
             //
             textInput.value = hidden.textValue;
-            selectIdP(decodeURIComponent(hidden.value));
+            selectIdP(hidden.value);
             return true;
         };
 
@@ -656,14 +697,12 @@ function IdPSelectUI(){
         var idp;
         for(var i=0; i<idpData.length; i++){
             idp = idpData[i];
-            idpOption = buildSelectOption(encodeURIComponent(getEntityId(idp)), getLocalizedName(idp));
+            idpOption = buildSelectOption(getEntityId(idp), getLocalizedName(idp));
             idpSelect.appendChild(idpOption);
         }
 
-        var form = document.createElement('form');
-        form.action = returnString;
-        form.method = 'GET';
-        form.setAttribute('autocomplete', 'OFF');
+        var form = buildSelectForm();
+
         form.appendChild(idpSelect);
 
         form.onsubmit = function () {
@@ -676,7 +715,7 @@ function IdPSelectUI(){
             //
             // otherwise update the cookie
             //
-            selectIdP(decodeURIComponent(idpSelect.options[idpSelect.selectedIndex].value));
+            selectIdP(idpSelect.options[idpSelect.selectedIndex].value);
             return true;
         };
 
