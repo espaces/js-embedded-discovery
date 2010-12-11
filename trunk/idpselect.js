@@ -1,8 +1,6 @@
 /*
 TODO
- - HTMLencoding URLs
- - URL encoding of the parameters back to the SP
- - Split parameters out
+ - HTMLencoding
  
  - check list for browsers
     - Z axis
@@ -17,10 +15,12 @@ function IdPSelectUI(){
     // The following are parameters - see setupLocals to where there are
     // made into global (to the module) variables.
     //
-    this.dataSource = 'idp.json';
-    this.insertAtDiv = 'idpSelect';
-    this.defaultLanguage = 'en';
-    this.preferredIdP = '';
+    this.dataSource = 'idp.json';    // Where to get the data from
+    this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
+    this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
+    this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
+    this.preferredIdP = null;        // Array of entityIds to always show
+    this.stripHost = true;           // false allows this to be a DS to non cohosted SPs.
     this.maxPreferredIdPs = 3;
     this.maxIdPCharsButton = 33;
     this.maxIdPCharsDropDown = 58;
@@ -39,9 +39,10 @@ function IdPSelectUI(){
     'en': {
         'fatal.divMissing': 'Supplied Div is not present in the DOM',
         'fatal.noXMLHttpRequest': 'Browser does not support XMLHttpRequest, unable to load IdP selection data',
-        'error.noData': '',
-        'error.noIdPSelectDiv': '',
-
+        'fatal.wrongProtocol' : 'policy supplied to DS was not "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single"',
+        'fatal.wrongEntityId' : 'entityId supplied was wrong"',
+        'fatal.noparms' : 'No parameters to to discovery session',
+        'fatal.noReturnURL' : "No URL return parmeter provided",
         'idpPreferred.label': 'Use a preferred selection:',
         'idpEntry.label': 'Or enter your organization\'s name',
         'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
@@ -61,7 +62,7 @@ function IdPSelectUI(){
     //
     var idpData;
     var base64chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
+    var idpSelectDiv;
     var lang;
     var majorLang;
     var defaultLang;
@@ -87,6 +88,8 @@ function IdPSelectUI(){
     var maxIdPCharsDropDown;
     var maxIdPCharsButton;
 
+    var testGUI = false; // To allow test and debug
+
     //
     // The cookie contents
     //
@@ -109,7 +112,6 @@ function IdPSelectUI(){
     //
     // DS protocol configuration
     //
-    var sPEntityID = "";
     var returnString = '';
     var returnBase='';
     var returnParms= new Array();
@@ -124,15 +126,20 @@ function IdPSelectUI(){
        method for the IdPSelectUI class.
     */
     this.draw = function(){
-        setupLocals(this);
-        load(this.dataSource);
-        idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
-
-        var idpSelectDiv = document.getElementById(this.insertAtDiv);
+        idpSelectDiv = document.getElementById(this.insertAtDiv);
         if(!idpSelectDiv){
             fatal(getLocalizedMessage('fatal.divMissing'));
             return;
         }
+
+        if (!setupLocals(this)) {
+            return;
+        }
+        if (!load(this.dataSource)) {
+            return;
+        }
+        idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
+
         
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
@@ -156,6 +163,8 @@ function IdPSelectUI(){
         //
         // Copy parameters in
         //
+        var suppliedEntityId;
+
         preferredIdP = parent.preferredIdP;
         maxPreferredIdPs = parent.maxPreferredIdPs;
         helpURL = parent.helpURL;
@@ -195,10 +204,17 @@ function IdPSelectUI(){
         //
         if (!defaultLangBundle) {
             fatal('No languages work');
-            return;
+            return false;
         }
         if (!langBundle) {
             debug('No language support for ' + lang);
+        }
+
+        if (testGUI) {
+            //
+            // no policing of parms
+            //
+            return true;
         }
         //
         // Now set up the return values from the URL
@@ -209,29 +225,22 @@ function IdPSelectUI(){
         }
         var loc = win.location;
         var parmlist = loc.search;
-        if (null == parmlist || 0 == parmlist.length) {
-            //
-            // FAILURE
-            //
-            return;
+        if (null == parmlist || 0 == parmlist.length || parmlist.charAt(0) != '?') {
+
+            fatal(getLocalizedMessage('fatal.noparms'));
+            return false;
         }
-        if (parmlist.charAt(0) != '?') {
-            //
-            // FAILURE
-            //
-        } else {
-            parmlist = parmlist.substring(1);
-        }
+        parmlist = parmlist.substring(1);
+
         //
         // protect against XSS by decoding. We rencode just before we push
         //
 
         var parms = parmlist.split('&');
         if (parms.length == 0) {
-            //
-            // FAILURE
-            //
-            return;
+
+            fatal(getLocalizedMessage('fatal.noparms'));
+            return false;
         }
         var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
         var i;
@@ -241,7 +250,7 @@ function IdPSelectUI(){
                 continue;
             }
             if (parmPair[0] == 'entityID') {
-                sPEntityID = decodeURIComponent(parmPair[1]);
+                suppliedEntityId = decodeURIComponent(parmPair[1]);
             } else if (parmPair[0] == 'return') {
                 returnString = decodeURIComponent(parmPair[1]);
             } else if (parmPair[0] == 'returnIDParam') {
@@ -251,17 +260,28 @@ function IdPSelectUI(){
             } 
         }
         if (policy != 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single') {
-            //
-            // FAILURE
-            //
+            fatal(getLocalizedMessage('fatal.wrongProtocol'));
+            return false
         }
+        if (parent.myEntityID != null && parent.myEntityID != suppliedEntityId) {
+            fatal(getLocalizedMessage('fatal.wrongEntityId') + '"' + suppliedEntityId + '" != "' + parent.myEntityID + '"');
+            return false;
+        }
+        if (parent.stripHost) {
+            returnString = stripHostName(returnString);
+        }
+        if (null == returnString || returnString.length == 0) {
+            fatal(getLocalizedMessage('fatal.noReturnURL'));
+            return false;
+        }
+
         //
         // Now split up returnString
         //
         i = returnString.indexOf('?');
         if (i < 0) {
             returnBase = returnString;
-            return;
+            return true;
         }
         returnBase = returnString.substring(0, i);
         parmlist = returnString.substring(i+1);
@@ -274,8 +294,32 @@ function IdPSelectUI(){
             parmPair[1] = decodeURIComponent(parmPair[1]);
             returnParms.push(parmPair);
         }
-        
+        return true;
     };
+
+    /**
+     * Strip the "protocol://host" bit out of the URL
+     * @param the URL to process
+     * @return the URL without the protocol and host
+     */
+
+    var stripHostName = function(s) {
+        if (null == s) {
+            return s;
+        }
+        var marker = "://";
+        var protocolEnd = s.indexOf(marker);
+        if (protocolEnd < 0) {
+            return s;
+        }
+        s = s.substring(marker.length + protocolEnd);
+        marker = "/";
+        var hostEnd = s.indexOf(marker);
+        if (hostEnd < 0) {
+            return s;
+        }
+        return s.substring(hostEnd);
+    }
 
     /**
      * We need to cache bust on IE.  So how do we know?  Use a bigger hammer.
@@ -302,9 +346,6 @@ function IdPSelectUI(){
     */
     var load = function(dataSource){
         var xhr = new XMLHttpRequest();
-        if(xhr === null){
-            fatal('No XMLHttpRequest');
-        }
 
         if (isIE()) {
             //
@@ -330,6 +371,7 @@ function IdPSelectUI(){
             var jsonData = xhr.responseText;
             if(jsonData == ''){
                 fatal('No data!');
+                return false;
             }
 
             //
@@ -340,7 +382,9 @@ function IdPSelectUI(){
 
         }else{
             fatal('Could not download data from ' + dataSource);
+            return false;
         }
+        return true;
     };
 
     /**
@@ -1190,12 +1234,10 @@ function IdPSelectUI(){
        
     */
 
-    var error = function(message) {
-        alert('DISCO-UI: ' + message);
-    };
-
     var fatal = function(message) {
         alert('FATAL - DISCO UI:' + message);
+        var txt = document.createTextNode(message); 
+        idpSelectDiv.appendChild(txt);
     };
 
     var debug = function() {
