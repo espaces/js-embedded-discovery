@@ -21,15 +21,22 @@ function IdPSelectUI(){
     this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
     this.preferredIdP = null;        // Array of entityIds to always show
     this.stripHost = true;           // false allows this to be a DS to non cohosted SPs.
-    this.maxPreferredIdPs = 3;
-    this.maxIdPCharsButton = 33;
-    this.maxIdPCharsDropDown = 58;
     this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
-    this.ie6Hack = null;
-    this.samlIdPCookieTTL = 730; // in days
+    this.ie6Hack = null;             // An array of characters to disable when drawing the pull down (needed to 
+                                     // handle the ie6 z axis problem
+    this.samlIdPCookieTTL = 730;     // in days
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
+    this.HTMLEncodeChars = "#%&():[]\`{}";
+    
+    //
+    // The following should not be changed without changes to the css
+    //
+    this.maxPreferredIdPs = 3;
+    this.maxIdPCharsButton = 33;
+    this.maxIdPCharsDropDown = 58;
+
     this.minWidth = 20;
     this.minHeight = 20;
     this.maxWidth = 115;
@@ -76,6 +83,7 @@ function IdPSelectUI(){
     var maxWidth;
     var maxHeight;
     var bestRatio;
+    var HTMLEncodeChars;
 
     //
     // Parameters passed into our closure
@@ -139,7 +147,12 @@ function IdPSelectUI(){
             return;
         }
         idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
-
+        /*
+         * We are building the DOM, not HTML, so we don't need this.  
+         * But just in case some browser decides to behave differently
+         
+        HTMLEncodeIdPData();
+        */
         
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
@@ -180,6 +193,7 @@ function IdPSelectUI(){
         bestRatio = parent.bestRatio;
         maxIdPCharsButton =  parent.maxIdPCharsButton;
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
+        HTMLEncodeChars = AddMissingHTMLEncodeChars(parent.HTMLEncodeChars);
 
         if (typeof navigator == 'undefined') {
             lang = parent.defaultLanguage;
@@ -210,7 +224,7 @@ function IdPSelectUI(){
             debug('No language support for ' + lang);
         }
 
-        if (testGUI) {
+        if (parent.testGUI) {
             //
             // no policing of parms
             //
@@ -233,7 +247,7 @@ function IdPSelectUI(){
         parmlist = parmlist.substring(1);
 
         //
-        // protect against XSS by decoding. We rencode just before we push
+        // protect against various hideousness by decoding. We re-encode just before we push
         //
 
         var parms = parmlist.split('&');
@@ -1223,6 +1237,103 @@ function IdPSelectUI(){
         return output;
     };
 
+    //
+    // HTML encoding functions
+    //
+
+    /**
+     *  AddMissingHTMLEncodeChars 
+     *  make sure that <,>,&,",',\ are alwats escaped
+     */ 
+    var AddMissingChar = function (inString, theChar) {
+        if (inString.indexOf(theChar) < 0) {
+            inString = theChar + inString;
+        }
+        return inString;
+    }
+
+    var AddMissingHTMLEncodeChars = function(inString)
+    {
+        //
+        // and add the "always encode" ones
+        //
+        inString = AddMissingChar(inString,"<");
+        inString = AddMissingChar(inString,">");
+        inString = AddMissingChar(inString,"&");
+        inString = AddMissingChar(inString,"'");
+        inString = AddMissingChar(inString,'"');
+        inString = AddMissingChar(inString,"\\");
+        return inString
+    }            
+
+    /**
+     * hasEncodingChars
+     * Does the string contain any html encoding chars
+     * @param theString - The string under question 
+     * @return -1 if the string has no encoding chars
+     * otherwise returns the index of the first char met
+     */
+    var hasEncodingChars = function(theString)
+    {
+        var i;
+        for (i = 0; i < theString.length; i++) {
+            var pos =  HTMLEncodeChars.indexOf(theString.charAt(i));
+            if (pos > 0 ) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * HTMLEncode
+     * HTML encode the provided string, with a hint to where to start
+     * the encoding
+     * @param theString - string to encode
+     * @param hint - the index of the first char to encode
+     * @return HTML encoded string
+     */
+    var HTMLEncode = function(theString, hint) {
+        var retString = theString.substring(0,hint);
+        var i = 0;
+
+        for (i = hint; i < theString.length; i++) {
+            var theChar = theString.charCodeAt(i);
+            var nextSegment = theString.charAt(i);
+            var j;
+            for (j = 0; j < HTMLEncodeChars.length; j++) {
+                var HTMLchar = HTMLEncodeChars.charCodeAt(j);
+                if (theChar == HTMLchar) {
+                    var asHex = theChar.toString(16);
+                    var hexString = "&#x0000";
+                    nextSegment =  hexString.substring(0, hexString.length - asHex.length) + asHex + ";";
+                    break;
+                }
+            }
+            retString = retString + nextSegment;
+        }
+        return retString;
+    }
+
+    var HTMLEncodeIdPData = function()
+    {
+        var i;
+        for (i = 0; i < idpData.length; i++) {
+            var j;
+            var pos;
+            displayNames = idpData[i].DisplayNames;
+            if (displayNames == null) {
+                continue;
+            }
+            for (j = 0; j < displayNames.length; j++) {
+                pos = hasEncodingChars(displayNames[j].value);
+                if (pos > 0) {
+                    displayNames[j].value = HTMLEncode(displayNames[j].value, pos);
+                }
+            }
+        }
+    }
+ 
     // *************************************
     // Private functions
     //
