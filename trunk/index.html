@@ -22,7 +22,10 @@
 	<script>
           var idpselect = new IdPSelectUI();
           idpselect.dataSource = '/Shibboleth.sso/DiscoFeed';
-          // idpselect.dataSource = 'http://localhost:8080/shibboleth-wayf/json.ds?entityID=https%3A%2F%2Fsh2testsp1.iay.org.uk%2Fshibboleth&return=https%3A%2F%2Fsh2testsp1.iay.org.uk%2FShibboleth.sso%2FDS%3FSAMLDS%3D1%26target%3Dcookie%253A7914e77e';
+          idpselect.defaultLogo = 'flyingpiglogo.jpg';
+          idpselect.defaultLogoWidth = 90;
+          idpselect.defaultLogoHeight = 80 ;
+
           idpselect.draw();
         </script>
         
