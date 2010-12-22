@@ -15,20 +15,19 @@ function IdPSelectUI(){
     // The following are parameters - see setupLocals to where there are
     // made into global (to the module) variables.
     //
-    this.dataSource = 'idp.json';    // Where to get the data from
+    this.dataSource = '/Shibboleth.sso/DiscoFeed';    // Where to get the data from
     this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
     this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
     this.preferredIdP = null;        // Array of entityIds to always show
     this.stripHost = true;           // false allows this to be a DS to non cohosted SPs.
     this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
-    this.ie6Hack = null;             // An array of characters to disable when drawing the pull down (needed to 
+    this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 
                                      // handle the ie6 z axis problem
     this.samlIdPCookieTTL = 730;     // in days
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
-    this.HTMLEncodeChars = "#%&():[]\`{}";
     
     //
     // The following should not be changed without changes to the css
@@ -56,7 +55,7 @@ function IdPSelectUI(){
         'idpList.label': 'Or select your organization from the list below',
         'idpList.NoPreferred.label': 'Select your organization from the list below',
         'idpList.defaultOptionLabel': 'Please select your organization...',
-        'idpList.showList' : 'Allow me to pick from a list',
+ 'idpList.showList' : 'Allow me to pick from a list',
         'idpList.showSearch' : 'Allow me to specify the site',
         'submitButton.label': 'Continue',
         'helpText': 'Help',
@@ -95,8 +94,6 @@ function IdPSelectUI(){
     var samlIdPCookieTTL;
     var maxIdPCharsDropDown;
     var maxIdPCharsButton;
-
-    var testGUI = false; // To allow test and debug
 
     //
     // The cookie contents
