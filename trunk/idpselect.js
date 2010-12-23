@@ -28,7 +28,7 @@ function IdPSelectUI(){
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
-    
+    this.HTMLEncodeChars = "#%&():[]\`{}";
     //
     // The following should not be changed without changes to the css
     //
