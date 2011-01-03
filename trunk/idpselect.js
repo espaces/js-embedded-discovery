@@ -1,7 +1,5 @@
 /*
 TODO
- - HTMLencoding
- 
  - check list for browsers
     - Z axis
     - CSS and Javascript sanity
@@ -28,7 +26,7 @@ function IdPSelectUI(){
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
-    this.HTMLEncodeChars = "#%&():[]\`{}";
+    this.HTMLEncodeChars = "#%&():][\\`{}";
     //
     // The following should not be changed without changes to the css
     //
@@ -119,7 +117,7 @@ function IdPSelectUI(){
     //
     var returnString = '';
     var returnBase='';
-    var returnParms= new Array();
+    var returnParms= [];
     var returnIDParam = 'entityID';
 
     // *************************************
@@ -248,15 +246,16 @@ function IdPSelectUI(){
         //
 
         var parms = parmlist.split('&');
-        if (parms.length == 0) {
+        if (parms.length === 0) {
 
             fatal(getLocalizedMessage('fatal.noparms'));
             return false;
         }
         var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
         var i;
+        var parmPair;
         for (i = 0; i < parms.length; i++) {
-            var parmPair = parms[i].split('=');
+            parmPair = parms[i].split('=');
             if (parmPair.length != 2) {
                 continue;
             }
@@ -272,16 +271,16 @@ function IdPSelectUI(){
         }
         if (policy != 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single') {
             fatal(getLocalizedMessage('fatal.wrongProtocol'));
-            return false
+            return false;
         }
-        if (parent.myEntityID != null && parent.myEntityID != suppliedEntityId) {
+        if (parent.myEntityID !== null && parent.myEntityID != suppliedEntityId) {
             fatal(getLocalizedMessage('fatal.wrongEntityId') + '"' + suppliedEntityId + '" != "' + parent.myEntityID + '"');
             return false;
         }
         if (parent.stripHost) {
             returnString = stripHostName(returnString);
         }
-        if (null == returnString || returnString.length == 0) {
+        if (null === returnString || returnString.length === 0) {
             fatal(getLocalizedMessage('fatal.noReturnURL'));
             return false;
         }
@@ -298,7 +297,7 @@ function IdPSelectUI(){
         parmlist = returnString.substring(i+1);
         parms = parmlist.split('&');
         for (i = 0; i < parms.length; i++) {
-            var parmPair = parms[i].split('=');
+            parmPair = parms[i].split('=');
             if (parmPair.length != 2) {
                 continue;
             }
@@ -315,7 +314,7 @@ function IdPSelectUI(){
      */
 
     var stripHostName = function(s) {
-        if (null == s) {
+        if (null === s) {
             return s;
         }
         var marker = "://";
@@ -330,7 +329,7 @@ function IdPSelectUI(){
             return s;
         }
         return s.substring(hostEnd);
-    }
+    };
 
     /**
      * We need to cache bust on IE.  So how do we know?  Use a bigger hammer.
@@ -343,8 +342,8 @@ function IdPSelectUI(){
         if (null == browserName) {
             return false;
         }
-        return (browserName == 'Microsoft Internet Explorer');
-    }
+        return (browserName == 'Microsoft Internet Explorer') ;
+    } ;
 
 
     /**
@@ -380,7 +379,7 @@ function IdPSelectUI(){
             // if locally loading its 0.  Go figure
             //
             var jsonData = xhr.responseText;
-            if(jsonData == ''){
+            if(jsonData === null){
                 fatal('No data!');
                 return false;
             }
@@ -441,7 +440,7 @@ function IdPSelectUI(){
                     idp.Logos[i].width >= minWidth &&
                     idp.Logos[i].height != null && 
                     idp.Logos[i].height >= minHeight) {
-                    if (bestFit == null) {
+                    if (bestFit === null) {
                         bestFit = idp.Logos[i];
                     } else {
                         me = Math.abs(bestRatio - Math.log(idp.Logos[i].width/idp.Logos[i].height));
@@ -453,19 +452,19 @@ function IdPSelectUI(){
                 }
             }
             return bestFit;
-        }
+        } ;
 
-        var bestFit = null
+        var bestFit = null;
         var img = document.createElement('img');
 
         bestFit = getBestFit(lang);
-        if (null == bestFit && typeof majorLang != 'undefined') {
+        if (null === bestFit && typeof majorLang != 'undefined') {
             bestFit = getBestFit(majorLang);
         }
-        if (null == bestFit) {
+        if (null === bestFit) {
             bestFit = getBestFit(null);
         }
-        if (null == bestFit) {
+        if (null === bestFit) {
             bestFit = getBestFit(defaultLang);
         }
                
@@ -579,7 +578,7 @@ function IdPSelectUI(){
         var introTxt = document.createTextNode(getLocalizedMessage(textId)); 
         div.appendChild(introTxt);
         parent.appendChild(div);
-    }
+    } ;
     
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
@@ -592,10 +591,10 @@ function IdPSelectUI(){
       
        @return {Element} preferred IdP selection UI
     */
-    var buildPreferredIdPTile = function(parentDiv){
+    var buildPreferredIdPTile = function(parentDiv) {
 
         var preferredIdPs = getPreferredIdPs();
-        if (0 == preferredIdPs.length) {
+        if (0 === preferredIdPs.length) {
             return false;
         }
 
@@ -636,7 +635,7 @@ function IdPSelectUI(){
         }
 
         return form;
-    }        
+    } ;
 
 
     /**
@@ -685,7 +684,7 @@ function IdPSelectUI(){
             //
             // Make sure we cannot ask for garbage
             //
-            if (null === hidden.value || 0 == hidden.value.length || '-' == hidden.value) {
+            if (null === hidden.value || 0 === hidden.value.length || '-' == hidden.value) {
                 return false;
             }
             //
@@ -821,7 +820,7 @@ function IdPSelectUI(){
         aval.appendChild(document.createTextNode(getLocalizedMessage('helpText')));
         setClass(aval, 'HelpButton');
         containerDiv.appendChild(aval);
-    }
+    } ;
     
     /**
        Creates a div element whose id attribute is set to the given ID.
@@ -832,10 +831,10 @@ function IdPSelectUI(){
     */
     var buildDiv = function(id, whichClass){
         var div = document.createElement('div');
-        if (undefined != id) {
+        if (undefined !== id) {
             setID(div, id);
         }
-        if(undefined != whichClass) {
+        if(undefined !== whichClass) {
 
             setClass(div, whichClass);
         }
@@ -873,7 +872,7 @@ function IdPSelectUI(){
 
     var setClass = function(obj, name) {
         obj.setAttribute('class', classPrefix + name);
-    }
+    };
 
     /**
        Returns the DOM object with the specified id.  We abstract
@@ -935,7 +934,7 @@ function IdPSelectUI(){
 
     var getEntityId = function(idp) {
         return idp.entityID;
-    }
+    };
 
     /**
        Returns the icon information for the provided idp
@@ -948,11 +947,11 @@ function IdPSelectUI(){
     var geticon = function(idp) {
         var i;
 
-        for (i in idp.Logos) {
+        for (i =0; i < idp.Logos.length; i++) {
 	    var logo = idp.Logos[i];
 
 	    if (logo.height == "16" && logo.width == "16") {
-		if (null == logo.lang ||
+		if (null === logo.lang ||
 		    lang == logo.lang ||
 		    (typeof majorLang != 'undefined' && majorLang == logo.lang) ||
 		    defaultLang == logo.lang) {
@@ -962,7 +961,7 @@ function IdPSelectUI(){
 	}
 
 	return null;
-    }
+    } ;
 
     /**
        Returns the localized name information for the provided idp
@@ -974,12 +973,12 @@ function IdPSelectUI(){
     */
     var getLocalizedName = function(idp) {
         var res = getLocalizedEntry(idp.DisplayNames);
-        if (null != res) {
+        if (null !== res) {
             return res;
         }
         debug('No Name entry in any language for ' + getEntityId(idp));
         return getEntityId(idp);
-    }
+    } ;
 
     var getLocalizedEntry = function(theArray){
         var i;
@@ -1037,8 +1036,8 @@ function IdPSelectUI(){
        be those past IdPs selected by a user.  The size of the array
        will be no larger than the maximum number of preferred IdPs.
     */
-    var getPreferredIdPs = function(){
-        var idps = new Array();
+    var getPreferredIdPs = function() {
+        var idps = [];
         var offset = 0;
         var i;
         var j;
@@ -1080,7 +1079,7 @@ function IdPSelectUI(){
         // iterate through the list copying everything but the old
         // name
         //
-        while (0 != userSelectedIdPs.length) {
+        while (0 !== userSelectedIdPs.length) {
             var what = userSelectedIdPs.pop();
             if (what != newIdP) {
                 newList.unshift(what);
@@ -1101,7 +1100,7 @@ function IdPSelectUI(){
        @return {Array} user selected IdPs identified by their entity ID
     */
     var retrieveUserSelectedIdPs = function(){
-        var userSelectedIdPs = new Array();
+        var userSelectedIdPs = [];
         var i, j;
         var cookies;
 
@@ -1118,7 +1117,7 @@ function IdPSelectUI(){
             if ( '_saml_idp' == cookieName.replace(/^\s+|\s+$/g, '') ) {
                 cookieValues = cookieValues.replace(/^\s+|\s+$/g, '').split('+');
                 for(j=0; j< cookieValues.length; j++){
-                    if (0 == cookieValues[j].length) {
+                    if (0 === cookieValues[j].length) {
                         continue;
                     }
                     var dec = base64Decode(decodeURIComponent(cookieValues[j]));
@@ -1138,7 +1137,7 @@ function IdPSelectUI(){
        @param {Array} idps idps selected by the user
     */
     var saveUserSelectedIdPs = function(idps){
-        var cookieData = new Array();
+        var cookieData = [];
         var length = idps.length;
         if (length > 5) {
             length = 5;
@@ -1247,7 +1246,7 @@ function IdPSelectUI(){
             inString = theChar + inString;
         }
         return inString;
-    }
+    };
 
     var AddMissingHTMLEncodeChars = function(inString)
     {
@@ -1261,7 +1260,7 @@ function IdPSelectUI(){
         inString = AddMissingChar(inString,'"');
         inString = AddMissingChar(inString,"\\");
         return inString
-    }            
+    };
 
     /**
      * hasEncodingChars
@@ -1280,7 +1279,7 @@ function IdPSelectUI(){
             }
         }
         return -1;
-    }
+    };
 
     /**
      * HTMLEncode
@@ -1310,7 +1309,7 @@ function IdPSelectUI(){
             retString = retString + nextSegment;
         }
         return retString;
-    }
+    };
 
     var HTMLEncodeIdPData = function()
     {
@@ -1319,7 +1318,7 @@ function IdPSelectUI(){
             var j;
             var pos;
             displayNames = idpData[i].DisplayNames;
-            if (displayNames == null) {
+            if (displayNames === null) {
                 continue;
             }
             for (j = 0; j < displayNames.length; j++) {
@@ -1329,7 +1328,7 @@ function IdPSelectUI(){
                 }
             }
         }
-    }
+    };
  
     // *************************************
     // Private functions
@@ -1353,3 +1352,4 @@ function IdPSelectUI(){
         // Nothing
     };
 }
+ 

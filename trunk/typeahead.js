@@ -173,7 +173,7 @@ TypeAheadControl.prototype.handleKeyDown = function(event) {
 
 TypeAheadControl.prototype.hideDrop = function() {
     var i = 0;
-    if (null != this.ie6hack) {
+    if (null !== this.ie6hack) {
         while (i < this.ie6hack.length) {
             this.ie6hack[i].style.visibility = 'visible';
             i++;
@@ -188,7 +188,7 @@ TypeAheadControl.prototype.hideDrop = function() {
 
 TypeAheadControl.prototype.showDrop = function() {
     var i = 0;
-    if (null != this.ie6hack) {
+    if (null !== this.ie6hack) {
         while (i < this.ie6hack.length) {
             this.ie6hack[i].style.visibility = 'hidden';
             i++;
@@ -212,7 +212,7 @@ TypeAheadControl.prototype.handleChange = function() {
     var res = this.getPossible(val);
 
 
-    if (0 == res.length || this.maxResults < res.length) {
+    if (0 === res.length || this.maxResults < res.length) {
         this.hideDrop();
         this.doUnselected();
         this.results = [];
@@ -244,9 +244,9 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
 
     while (i < list.length) {
         div = document.createElement('div');
-        var str = list[i][0];
+        str = list[i][0];
 
-	if (null != list[i][2]) {
+	if (null !== list[i][2]) {
 
 	    img = document.createElement('img');
 	    img.src = list[i][2];
