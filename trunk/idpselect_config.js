@@ -2,8 +2,7 @@
 /** @class IdP Selector UI */
 function IdPSelectUIParms(){
     //
-    // The following are parameters - see setupLocals to where there are
-    // made into global (to the module) variables.
+    // Adjust the following to fit into your local configuration
     //
     this.dataSource = '/Shibboleth.sso/DiscoFeed';    // Where to get the data from
     this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
@@ -18,7 +17,6 @@ function IdPSelectUIParms(){
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
-    this.HTMLEncodeChars = "#%&():][\\`{}";
     //
     // Globalization stuff
     //

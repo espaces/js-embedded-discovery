@@ -26,7 +26,6 @@ function IdPSelectUI() {
     var maxWidth;
     var maxHeight;
     var bestRatio;
-    var HTMLEncodeChars;
 
     //
     // Parameters passed into our closure
@@ -90,12 +89,6 @@ function IdPSelectUI() {
             return;
         }
         idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
-        /*
-         * We are building the DOM, not HTML, so we don't need this.  
-         * But just in case some browser decides to behave differently
-         
-        HTMLEncodeIdPData();
-        */
         
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
@@ -136,7 +129,6 @@ function IdPSelectUI() {
         bestRatio = parent.bestRatio;
         maxIdPCharsButton =  parent.maxIdPCharsButton;
         maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
-        HTMLEncodeChars = AddMissingHTMLEncodeChars(parent.HTMLEncodeChars);
 
         if (typeof navigator == 'undefined') {
             lang = parent.defaultLanguage;
@@ -1184,103 +1176,6 @@ function IdPSelectUI() {
         return output;
     };
 
-    //
-    // HTML encoding functions
-    //
-
-    /**
-     *  AddMissingHTMLEncodeChars 
-     *  make sure that <,>,&,",',\ are alwats escaped
-     */ 
-    var AddMissingChar = function (inString, theChar) {
-        if (inString.indexOf(theChar) < 0) {
-            inString = theChar + inString;
-        }
-        return inString;
-    };
-
-    var AddMissingHTMLEncodeChars = function(inString)
-    {
-        //
-        // and add the "always encode" ones
-        //
-        inString = AddMissingChar(inString,"<");
-        inString = AddMissingChar(inString,">");
-        inString = AddMissingChar(inString,"&");
-        inString = AddMissingChar(inString,"'");
-        inString = AddMissingChar(inString,'"');
-        inString = AddMissingChar(inString,"\\");
-        return inString
-    };
-
-    /**
-     * hasEncodingChars
-     * Does the string contain any html encoding chars
-     * @param theString - The string under question 
-     * @return -1 if the string has no encoding chars
-     * otherwise returns the index of the first char met
-     */
-    var hasEncodingChars = function(theString)
-    {
-        var i;
-        for (i = 0; i < theString.length; i++) {
-            var pos =  HTMLEncodeChars.indexOf(theString.charAt(i));
-            if (pos > 0 ) {
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    /**
-     * HTMLEncode
-     * HTML encode the provided string, with a hint to where to start
-     * the encoding
-     * @param theString - string to encode
-     * @param hint - the index of the first char to encode
-     * @return HTML encoded string
-     */
-    var HTMLEncode = function(theString, hint) {
-        var retString = theString.substring(0,hint);
-        var i = 0;
-
-        for (i = hint; i < theString.length; i++) {
-            var theChar = theString.charCodeAt(i);
-            var nextSegment = theString.charAt(i);
-            var j;
-            for (j = 0; j < HTMLEncodeChars.length; j++) {
-                var HTMLchar = HTMLEncodeChars.charCodeAt(j);
-                if (theChar == HTMLchar) {
-                    var asHex = theChar.toString(16);
-                    var hexString = "&#x0000";
-                    nextSegment =  hexString.substring(0, hexString.length - asHex.length) + asHex + ";";
-                    break;
-                }
-            }
-            retString = retString + nextSegment;
-        }
-        return retString;
-    };
-
-    var HTMLEncodeIdPData = function()
-    {
-        var i;
-        for (i = 0; i < idpData.length; i++) {
-            var j;
-            var pos;
-            displayNames = idpData[i].DisplayNames;
-            if (displayNames === null) {
-                continue;
-            }
-            for (j = 0; j < displayNames.length; j++) {
-                pos = hasEncodingChars(displayNames[j].value);
-                if (pos > 0) {
-                    displayNames[j].value = HTMLEncode(displayNames[j].value, pos);
-                }
-            }
-        }
-    };
- 
     // *************************************
     // Private functions
     //
@@ -1303,12 +1198,4 @@ function IdPSelectUI() {
         // Nothing
     };
 }
- 
-var idpselect = new IdPSelectUI();
-var parms = new IdPSelectUIParms();
-parms.dataSource = 'idp.json';
-parms.defaultLogo = 'flyingpiglogo.jpg';
-parms.defaultLogoWidth = 90;
-parms.defaultLogoHeight = 80 ;
-
-idpselect.draw(parms);
+(new IdPSelectUI()).draw(new IdPSelectUIParms());
