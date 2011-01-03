@@ -6,61 +6,7 @@ TODO
     - language
 */
 
-
-/** @class IdP Selector UI */
-function IdPSelectUI(){
-    //
-    // The following are parameters - see setupLocals to where there are
-    // made into global (to the module) variables.
-    //
-    this.dataSource = '/Shibboleth.sso/DiscoFeed';    // Where to get the data from
-    this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
-    this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
-    this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
-    this.preferredIdP = null;        // Array of entityIds to always show
-    this.stripHost = true;           // false allows this to be a DS to non cohosted SPs.
-    this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
-    this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 
-                                     // handle the ie6 z axis problem
-    this.samlIdPCookieTTL = 730;     // in days
-    this.defaultLogo = 'flyingpiglogo.jpg';
-    this.defaultLogoWidth = 90;
-    this.defaultLogoHeight = 80 ;
-    this.HTMLEncodeChars = "#%&():][\\`{}";
-    //
-    // The following should not be changed without changes to the css
-    //
-    this.maxPreferredIdPs = 3;
-    this.maxIdPCharsButton = 33;
-    this.maxIdPCharsDropDown = 58;
-
-    this.minWidth = 20;
-    this.minHeight = 20;
-    this.maxWidth = 115;
-    this.maxHeight = 69;
-    this.bestRatio = Math.log(80 / 60);
-    this.langBundles = {
-    'en': {
-        'fatal.divMissing': 'Supplied Div is not present in the DOM',
-        'fatal.noXMLHttpRequest': 'Browser does not support XMLHttpRequest, unable to load IdP selection data',
-        'fatal.wrongProtocol' : 'policy supplied to DS was not "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single"',
-        'fatal.wrongEntityId' : 'entityId supplied was wrong"',
-        'fatal.noparms' : 'No parameters to to discovery session',
-        'fatal.noReturnURL' : "No URL return parmeter provided",
-        'idpPreferred.label': 'Use a preferred selection:',
-        'idpEntry.label': 'Or enter your organization\'s name',
-        'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
-        'idpList.label': 'Or select your organization from the list below',
-        'idpList.NoPreferred.label': 'Select your organization from the list below',
-        'idpList.defaultOptionLabel': 'Please select your organization...',
- 'idpList.showList' : 'Allow me to pick from a list',
-        'idpList.showSearch' : 'Allow me to specify the site',
-        'submitButton.label': 'Continue',
-        'helpText': 'Help',
-        'defaultLogoAlt' : 'DefaultLogo'
-        }
-    };
-
+function IdPSelectUI() {
     //
     // module locals
     //
@@ -128,17 +74,19 @@ function IdPSelectUI(){
        Draws the IdP Selector UI on the screen.  This is the main
        method for the IdPSelectUI class.
     */
-    this.draw = function(){
-        idpSelectDiv = document.getElementById(this.insertAtDiv);
+    this.draw = function(parms){
+
+        if (!setupLocals(parms)) {
+            return;
+        }
+
+        idpSelectDiv = document.getElementById(parms.insertAtDiv);
         if(!idpSelectDiv){
             fatal(getLocalizedMessage('fatal.divMissing'));
             return;
         }
 
-        if (!setupLocals(this)) {
-            return;
-        }
-        if (!load(this.dataSource)) {
+        if (!load(parms.dataSource)) {
             return;
         }
         idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
@@ -947,11 +895,14 @@ function IdPSelectUI(){
     var geticon = function(idp) {
         var i;
 
+        if (null == idp.Logos) { 
+            return null;
+        }
         for (i =0; i < idp.Logos.length; i++) {
 	    var logo = idp.Logos[i];
 
 	    if (logo.height == "16" && logo.width == "16") {
-		if (null === logo.lang ||
+		if (null == logo.lang ||
 		    lang == logo.lang ||
 		    (typeof majorLang != 'undefined' && majorLang == logo.lang) ||
 		    defaultLang == logo.lang) {
@@ -1353,3 +1304,11 @@ function IdPSelectUI(){
     };
 }
  
+var idpselect = new IdPSelectUI();
+var parms = new IdPSelectUIParms();
+parms.dataSource = 'idp.json';
+parms.defaultLogo = 'flyingpiglogo.jpg';
+parms.defaultLogoWidth = 90;
+parms.defaultLogoHeight = 80 ;
+
+idpselect.draw(parms);
