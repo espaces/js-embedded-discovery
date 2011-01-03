@@ -217,11 +217,12 @@ function IdPSelectUI() {
             fatal(getLocalizedMessage('fatal.wrongEntityId') + '"' + suppliedEntityId + '" != "' + parent.myEntityID + '"');
             return false;
         }
-        if (parent.stripHost) {
-            returnString = stripHostName(returnString);
-        }
         if (null === returnString || returnString.length === 0) {
             fatal(getLocalizedMessage('fatal.noReturnURL'));
+            return false;
+        }
+        if (!validProtocol(returnString)) {
+            fatal(getLocalizedMessage('fatal.badProtocol'));
             return false;
         }
 
@@ -248,27 +249,25 @@ function IdPSelectUI() {
     };
 
     /**
-     * Strip the "protocol://host" bit out of the URL
+     * Strip the "protocol://host" bit out of the URL and check the protocol
      * @param the URL to process
-     * @return the URL without the protocol and host
+     * @return whether it starts with http: or https://
      */
 
-    var stripHostName = function(s) {
+    var validProtocol = function(s) {
         if (null === s) {
-            return s;
+            return false;
         }
         var marker = "://";
         var protocolEnd = s.indexOf(marker);
         if (protocolEnd < 0) {
-            return s;
+            return false;
         }
-        s = s.substring(marker.length + protocolEnd);
-        marker = "/";
-        var hostEnd = s.indexOf(marker);
-        if (hostEnd < 0) {
-            return s;
+        s = s.substring(0, protocolEnd);
+        if (s == "http" || s== "https") {
+            return true;
         }
-        return s.substring(hostEnd);
+        return false;
     };
 
     /**
