@@ -1,4 +1,4 @@
-function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEntityId, geticon, ie6hack)
+function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEntityId, geticon, ie6hack, alwaysShow, maxResults)
 {
     //
     // Squirrel away the parameters we were given
@@ -8,7 +8,8 @@ function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEnti
     this.origin = orig;
     this.submit = submit;
     this.results = 0;
-    this.maxResults = 35;
+    this.alwaysShow = alwaysShow;
+    this.maxResults = maxResults;
     this.ie6hack = ie6hack;
     this.maxchars = maxchars;
     this.getName = getName;
@@ -212,7 +213,9 @@ TypeAheadControl.prototype.handleChange = function() {
     var res = this.getPossible(val);
 
 
-    if (0 === res.length || this.maxResults < res.length) {
+    if (0 === val.length || 
+        0 === res.length ||
+        (!this.alwaysShow && this.maxResults < res.length)) {
         this.hideDrop();
         this.doUnselected();
         this.results = [];

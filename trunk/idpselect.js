@@ -37,6 +37,8 @@ function IdPSelectUI() {
     var samlIdPCookieTTL;
     var maxIdPCharsDropDown;
     var maxIdPCharsButton;
+    var alwaysShow;
+    var maxResults;
 
     //
     // The cookie contents
@@ -108,45 +110,47 @@ function IdPSelectUI() {
        IdPSelectUI object
     */
 
-    var setupLocals = function (parent) {
+    var setupLocals = function (paramsSupplied) {
         //
         // Copy parameters in
         //
         var suppliedEntityId;
 
-        preferredIdP = parent.preferredIdP;
-        maxPreferredIdPs = parent.maxPreferredIdPs;
-        helpURL = parent.helpURL;
-        ie6Hack = parent.ie6Hack;
-        samlIdPCookieTTL = parent.samlIdPCookieTTL;
-        defaultLogo = parent.defaultLogo;
-        defaultLogoWidth = parent.defaultLogoWidth;
-        defaultLogoHeight = parent.defaultLogoHeight;
-        minWidth = parent.minWidth;
-        minHeight = parent.minHeight;
-        maxWidth = parent.maxWidth;
-        maxHeight = parent.maxHeight;
-        bestRatio = parent.bestRatio;
-        maxIdPCharsButton =  parent.maxIdPCharsButton;
-        maxIdPCharsDropDown = parent.maxIdPCharsDropDown;
+        preferredIdP = paramsSupplied.preferredIdP;
+        maxPreferredIdPs = paramsSupplied.maxPreferredIdPs;
+        helpURL = paramsSupplied.helpURL;
+        ie6Hack = paramsSupplied.ie6Hack;
+        samlIdPCookieTTL = paramsSupplied.samlIdPCookieTTL;
+        alwaysShow = paramsSupplied.alwaysShow;
+        maxResults = paramsSupplied.maxResults;
+        defaultLogo = paramsSupplied.defaultLogo;
+        defaultLogoWidth = paramsSupplied.defaultLogoWidth;
+        defaultLogoHeight = paramsSupplied.defaultLogoHeight;
+        minWidth = paramsSupplied.minWidth;
+        minHeight = paramsSupplied.minHeight;
+        maxWidth = paramsSupplied.maxWidth;
+        maxHeight = paramsSupplied.maxHeight;
+        bestRatio = paramsSupplied.bestRatio;
+        maxIdPCharsButton =  paramsSupplied.maxIdPCharsButton;
+        maxIdPCharsDropDown = paramsSupplied.maxIdPCharsDropDown;
 
         if (typeof navigator == 'undefined') {
-            lang = parent.defaultLanguage;
+            lang = paramsSupplied.defaultLanguage;
         } else {
-            lang = navigator.language || navigator.userLanguage || parent.defaultLanguage;
+            lang = navigator.language || navigator.userLanguage || paramsSupplied.defaultLanguage;
         }
         if (lang.indexOf('-') > 0) {
             majorLang = lang.substring(0, lang.indexOf('-'));
         }
 
-        defaultLang = parent.defaultLanguage;
+        defaultLang = paramsSupplied.defaultLanguage;
 
-        if (typeof parent.langBundles[lang] != 'undefined') {
-            langBundle = parent.langBundles[lang];
-        } else if (typeof majorLang != 'undefined' && typeof parent.langBundles[majorLang] != 'undefined') {
-            langBundle = parent.langBundles[majorLang];
+        if (typeof paramsSupplied.langBundles[lang] != 'undefined') {
+            langBundle = paramsSupplied.langBundles[lang];
+        } else if (typeof majorLang != 'undefined' && typeof paramsSupplied.langBundles[majorLang] != 'undefined') {
+            langBundle = paramsSupplied.langBundles[majorLang];
         }
-        defaultLangBundle = parent.langBundles[parent.defaultLanguage];
+        defaultLangBundle = paramsSupplied.langBundles[paramsSupplied.defaultLanguage];
 
         //
         // Setup Language bundles
@@ -159,7 +163,7 @@ function IdPSelectUI() {
             debug('No language support for ' + lang);
         }
 
-        if (parent.testGUI) {
+        if (paramsSupplied.testGUI) {
             //
             // no policing of parms
             //
@@ -213,8 +217,8 @@ function IdPSelectUI() {
             fatal(getLocalizedMessage('fatal.wrongProtocol'));
             return false;
         }
-        if (parent.myEntityID !== null && parent.myEntityID != suppliedEntityId) {
-            fatal(getLocalizedMessage('fatal.wrongEntityId') + '"' + suppliedEntityId + '" != "' + parent.myEntityID + '"');
+        if (paramsSupplied.myEntityID !== null && paramsSupplied.myEntityID != suppliedEntityId) {
+            fatal(getLocalizedMessage('fatal.wrongEntityId') + '"' + suppliedEntityId + '" != "' + paramsSupplied.myEntityID + '"');
             return false;
         }
         if (null === returnString || returnString.length === 0) {
@@ -634,7 +638,7 @@ function IdPSelectUI() {
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, geticon, ie6Hack);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, geticon, ie6Hack, alwaysShow, maxResults);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));

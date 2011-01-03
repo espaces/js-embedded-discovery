@@ -17,6 +17,12 @@ function IdPSelectUIParms(){
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
     //
+    // Control for the incremenetal Search
+    //
+    this.alwaysShow = true;          // If true, this will show results as soon as you start typing
+    this.maxResults = 10;            // How many results to show at once or the number at which to
+                                     // start showing ig alwaysShow is true
+    //
     // Globalization stuff
     //
     this.langBundles = {
