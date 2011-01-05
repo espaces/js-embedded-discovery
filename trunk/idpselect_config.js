@@ -4,24 +4,28 @@ function IdPSelectUIParms(){
     //
     // Adjust the following to fit into your local configuration
     //
-    this.dataSource = '/Shibboleth.sso/DiscoFeed';    // Where to get the data from
-    this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
+    this.alwaysShow = true;          // If true, this will show results as soon as you start typing
+    this.dataSource = 'idp.json';//'/Shibboleth.sso/DiscoFeed';    // Where to get the data from
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
-    this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
-    this.preferredIdP = null;        // Array of entityIds to always show
-    this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
-    this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 
-                                     // handle the ie6 z axis problem
-    this.samlIdPCookieTTL = 730;     // in days
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
     this.defaultLogoHeight = 80 ;
-    //
-    // Control for the incremenetal Search
-    //
-    this.alwaysShow = true;          // If true, this will show results as soon as you start typing
+    this.defaultReturn = null;       // If non null, then the default place to send users who are not
+                                     // Approaching via the Discovery Protocol for example
+    //this.defaultReturn = "https://example.org/Shibboleth.sso/DS?SAMLDS=1&target=https://example.org/secure";
+    this.defaultReturnIDParam = null;
+    this.helpURL = 'https://spaces.internet2.edu/display/SHIB2/DSRoadmap';
+    this.ie6Hack = null;             // An array of structures to disable when drawing the pull down (needed to 
+                                     // handle the ie6 z axis problem
+    this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
     this.maxResults = 10;            // How many results to show at once or the number at which to
                                      // start showing ig alwaysShow is true
+    this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
+    this.preferredIdP = null;        // Array of entityIds to always show
+    this.samlIdPCookieTTL = 730;     // in days
+    this.testGUI = false;
+
+
     //
     // Globalization stuff
     //
@@ -31,7 +35,7 @@ function IdPSelectUIParms(){
         'fatal.noXMLHttpRequest': 'Browser does not support XMLHttpRequest, unable to load IdP selection data',
         'fatal.wrongProtocol' : 'policy supplied to DS was not "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single"',
         'fatal.wrongEntityId' : 'entityId supplied was wrong"',
-        'fatal.noparms' : 'No parameters to to discovery session',
+        'fatal.noparms' : 'No parameters to to discovery session and no defaultReturn supplied',
         'fatal.noReturnURL' : "No URL return parmeter provided",
         'fatal.badProtocol' : "return request must start with https:// or http://",
         'idpPreferred.label': 'Use a preferred selection:',
@@ -49,7 +53,7 @@ function IdPSelectUIParms(){
     };
 
     //
-    // The following should not be changed without changes to the css
+    // The following should not be changed without changes to the css.  Consider them as mandatory defaults
     //
     this.maxPreferredIdPs = 3;
     this.maxIdPCharsButton = 33;

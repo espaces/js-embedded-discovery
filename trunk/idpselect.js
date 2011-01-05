@@ -172,6 +172,10 @@ function IdPSelectUI() {
         //
         // Now set up the return values from the URL
         //
+        var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
+        var i;
+        var parms;
+        var parmPair;
         var win = window;
         while (null !== win.parent && win !== win.parent) {
             win = win.parent;
@@ -180,38 +184,49 @@ function IdPSelectUI() {
         var parmlist = loc.search;
         if (null == parmlist || 0 == parmlist.length || parmlist.charAt(0) != '?') {
 
-            fatal(getLocalizedMessage('fatal.noparms'));
-            return false;
-        }
-        parmlist = parmlist.substring(1);
+            if (null == paramsSupplied.defaultReturn) {
 
-        //
-        // protect against various hideousness by decoding. We re-encode just before we push
-        //
-
-        var parms = parmlist.split('&');
-        if (parms.length === 0) {
-
-            fatal(getLocalizedMessage('fatal.noparms'));
-            return false;
-        }
-        var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
-        var i;
-        var parmPair;
-        for (i = 0; i < parms.length; i++) {
-            parmPair = parms[i].split('=');
-            if (parmPair.length != 2) {
-                continue;
+                fatal(getLocalizedMessage('fatal.noparms'));
+                return false;
             }
-            if (parmPair[0] == 'entityID') {
-                suppliedEntityId = decodeURIComponent(parmPair[1]);
-            } else if (parmPair[0] == 'return') {
-                returnString = decodeURIComponent(parmPair[1]);
-            } else if (parmPair[0] == 'returnIDParam') {
-                returnIDParam = decodeURIComponent(parmPair[1]);
-            } else if (parmPair[0] == 'policy') {
-                policy = decodeURIComponent(parmPair[1]);
-            } 
+            //
+            // No parameters, so just collect the defaults
+            //
+            suppliedEntityId  = paramsSupplied.myEntityID;
+            returnString = paramsSupplied.defaultReturn;
+            if (null != paramsSupplied.defaultReturnIDParam) {
+                returnIDParam = paramsSupplied.defaultReturnIDParam;
+            }
+            
+        } else {
+            parmlist = parmlist.substring(1);
+
+            //
+            // protect against various hideousness by decoding. We re-encode just before we push
+            //
+
+            parms = parmlist.split('&');
+            if (parms.length === 0) {
+
+                fatal(getLocalizedMessage('fatal.noparms'));
+                return false;
+            }
+
+            for (i = 0; i < parms.length; i++) {
+                parmPair = parms[i].split('=');
+                if (parmPair.length != 2) {
+                    continue;
+                }
+                if (parmPair[0] == 'entityID') {
+                    suppliedEntityId = decodeURIComponent(parmPair[1]);
+                } else if (parmPair[0] == 'return') {
+                    returnString = decodeURIComponent(parmPair[1]);
+                } else if (parmPair[0] == 'returnIDParam') {
+                    returnIDParam = decodeURIComponent(parmPair[1]);
+                } else if (parmPair[0] == 'policy') {
+                    policy = decodeURIComponent(parmPair[1]);
+                } 
+            }
         }
         if (policy != 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single') {
             fatal(getLocalizedMessage('fatal.wrongProtocol'));
