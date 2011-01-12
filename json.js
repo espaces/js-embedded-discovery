@@ -266,7 +266,7 @@ if (!this.JSON) {
 // The parse method takes a text and an optional reviver function, and returns
 // a JavaScript value if the text is a valid JSON text.
 
-            var j;
+            var j ;
 
             function walk(holder, key) {
 
