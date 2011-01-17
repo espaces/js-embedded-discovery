@@ -161,6 +161,7 @@ function IdPSelectUI() {
         }
         if (!langBundle) {
             debug('No language support for ' + lang);
+            langBundle = defaultLangBundle;
         }
 
         if (paramsSupplied.testGUI) {
