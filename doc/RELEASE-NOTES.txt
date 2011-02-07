@@ -1,4 +1,6 @@
-Changes in Release XXXX
+Changes in Release Beta 3
 =============================================
-The precise Cases changed are.
+The precise Cases changed are:
+
+EDS-10 The EDS should supportisPassive
 

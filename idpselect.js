@@ -175,6 +175,7 @@ function IdPSelectUI() {
         //
         var policy = 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single';
         var i;
+        var isPassive = false;
         var parms;
         var parmPair;
         var win = window;
@@ -226,7 +227,9 @@ function IdPSelectUI() {
                     returnIDParam = decodeURIComponent(parmPair[1]);
                 } else if (parmPair[0] == 'policy') {
                     policy = decodeURIComponent(parmPair[1]);
-                } 
+                } else if (parmPair[0] == 'isPassive') {
+                    isPassive = (parmPair[1].toUpperCase() == "TRUE");
+                }
             }
         }
         if (policy != 'urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single') {
@@ -244,6 +247,32 @@ function IdPSelectUI() {
         if (!validProtocol(returnString)) {
             fatal(getLocalizedMessage('fatal.badProtocol'));
             return false;
+        }
+
+        //
+        // isPassive
+        //
+        if (isPassive) {
+            var prefs = retrieveUserSelectedIdPs();
+            if (prefs.length == 0) {
+                //
+                // no preference, go back
+                //
+                location.href = returnString;
+                return false;
+            } else {
+                var retString = returnIDParam + '=' + encodeURIComponent(prefs[0]);
+                //
+                // Compose up the URL
+                //
+                if (returnString.indexOf('?') == -1) {
+                    retString = '?' + retString;
+                } else {
+                    retString = '&' + retString;
+                }
+                location.href = returnString + retString;
+                return false;
+            }            
         }
 
         //
@@ -1007,7 +1036,7 @@ function IdPSelectUI() {
         //
         // populate start of array with preselected IdPs
         //
-        if(preferredIdP){
+        if(null != preferredIdP){
             for(i=0; i < preferredIdP.length && i < maxPreferredIdPs-1; i++){
                 idps[i] = getIdPFor(preferredIdP[i]);
                 offset++;
