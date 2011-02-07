@@ -22,6 +22,7 @@ function IdPSelectUIParms(){
                                      // start showing ig alwaysShow is true
     this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
     this.preferredIdP = null;        // Array of entityIds to always show
+    this.hiddenIdPs = null;          // Array of entityIds to delete 
     this.samlIdPCookieTTL = 730;     // in days
     this.testGUI = false;
 

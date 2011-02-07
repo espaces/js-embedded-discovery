@@ -90,6 +90,8 @@ function IdPSelectUI() {
         if (!load(parms.dataSource)) {
             return;
         }
+        stripHidden(parms.hiddenIdPs);
+
         idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
         
         var idpSelector = buildIdPSelector();
@@ -296,6 +298,27 @@ function IdPSelectUI() {
         }
         return true;
     };
+
+    /**
+       Strips the supllied IdP list from the idpData
+    */
+    var stripHidden = function(hiddenList) {
+    
+        if (null == hiddenList || 0 == hiddenList.length) {
+            return;
+        }
+        var i;
+        var j;
+        for (i = 0; i < hiddenList.length; i++) {
+            for (j = 0; j < idpData.length; j++) {
+                if (getEntityId(idpData[j]) == hiddenList[i]) {
+                    idpData.splice(j, 1);
+                    break;
+                }
+            }
+        }
+    }
+
 
     /**
      * Strip the "protocol://host" bit out of the URL and check the protocol
