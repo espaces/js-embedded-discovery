@@ -88,6 +88,7 @@ TypeAheadControl.prototype.draw = function() {
         myThis.handleChange();
     };
 
+    this.textBox.focus();
 };
 
 //

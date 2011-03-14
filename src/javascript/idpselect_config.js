@@ -39,7 +39,7 @@ function IdPSelectUIParms(){
         'fatal.noparms' : 'No parameters to discovery session and no defaultReturn parameter configured',
         'fatal.noReturnURL' : "No URL return parameter provided",
         'fatal.badProtocol' : "Return request must start with https:// or http://",
-        'idpPreferred.label': 'Use a preferred selection:',
+        'idpPreferred.label': 'Use a suggested selection:',
         'idpEntry.label': 'Or enter your organization\'s name',
         'idpEntry.NoPreferred.label': 'Enter your organization\'s name',
         'idpList.label': 'Or select your organization from the list below',
