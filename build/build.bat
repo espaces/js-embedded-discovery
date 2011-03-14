@@ -24,7 +24,7 @@ mkdir ..\target
 
 rem Build js
 
-copy /b /y ..\src\javascript\json2.js+..\src\javascript\idpselect.js+..\src\javascript\typeahead.js %TEMP%\idpselect.js
+copy /b /y ..\src\javascript\json2.js+..\src\javascript\typeahead.js+..\src\javascript\idpselect.js %TEMP%\idpselect.js
 java -jar yuicompressor-2.4.2.jar -o ..\target\idpselect.js %TEMP%\idpselect.js
 del/q %TEMP%\idpselect.js
 
