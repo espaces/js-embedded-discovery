@@ -39,6 +39,7 @@ function IdPSelectUI() {
     var maxIdPCharsButton;
     var alwaysShow;
     var maxResults;
+    var ignoreKeywords;
 
     //
     // The cookie contents
@@ -125,6 +126,7 @@ function IdPSelectUI() {
         samlIdPCookieTTL = paramsSupplied.samlIdPCookieTTL;
         alwaysShow = paramsSupplied.alwaysShow;
         maxResults = paramsSupplied.maxResults;
+        ignoreKeywords = paramsSupplied.ignoreKeywords;
         defaultLogo = paramsSupplied.defaultLogo;
         defaultLogoWidth = paramsSupplied.defaultLogoWidth;
         defaultLogoHeight = paramsSupplied.defaultLogoHeight;
@@ -706,7 +708,7 @@ function IdPSelectUI() {
             return true;
         };
 
-        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, geticon, ie6Hack, alwaysShow, maxResults);
+        dropDownControl = new TypeAheadControl(idpData, textInput, hidden, button, maxIdPCharsDropDown, getLocalizedName, getEntityId, geticon, ie6Hack, alwaysShow, maxResults, getKeywords);
 
         var a = document.createElement('a');
         a.appendChild(document.createTextNode(getLocalizedMessage('idpList.showList')));
@@ -994,6 +996,15 @@ function IdPSelectUI() {
         return getEntityId(idp);
     } ;
 
+    var getKeywords = function(idp) {
+        if (ignoreKeywords || null == idp.Keywords) {
+            return null;
+        }
+        var s = getLocalizedEntry(idp.Keywords);
+
+        return s;
+    }
+        
     var getLocalizedEntry = function(theArray){
         var i;
 

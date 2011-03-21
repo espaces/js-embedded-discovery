@@ -19,10 +19,11 @@ function IdPSelectUIParms(){
                                      // handle the ie6 z axis problem
     this.insertAtDiv = 'idpSelect';  // The div where we will insert the data
     this.maxResults = 10;            // How many results to show at once or the number at which to
-                                     // start showing ig alwaysShow is true
+                                     // start showing if alwaysShow is false
     this.myEntityID = null;          // If non null then this string must match the string provided in the DS parms
     this.preferredIdP = null;        // Array of entityIds to always show
-    this.hiddenIdPs = null;          // Array of entityIds to delete 
+    this.hiddenIdPs = null;          // Array of entityIds to delete
+    this.ignoreKeywords = false;     // Do we ignore the <mdui:Keywords/> when looking for candidates
     this.samlIdPCookieTTL = 730;     // in days
     this.testGUI = false;
 
