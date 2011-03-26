@@ -368,7 +368,14 @@ function IdPSelectUI() {
        passed the {@link XMLHttpRequest} used to request the JSON data.
     */
     var load = function(dataSource){
-        var xhr = new XMLHttpRequest();
+        var xhr = null;
+
+        try {
+            xhr = new XMLHttpRequest();
+        } catch (e) {}
+        if (null == xhr) {
+            fatal(getLocalizedMessage('fatal.noXMLHttpRequest'));
+        }
 
         if (isIE()) {
             //
@@ -592,7 +599,21 @@ function IdPSelectUI() {
         div.appendChild(introTxt);
         parent.appendChild(div);
     } ;
-    
+
+    var setSelector = function (selector, selected) {
+        if (null === selected || 0 === selected.length || '-' == selected.value) {
+            return;
+        }
+        var i = 0;
+        while (i < selector.options.length) {
+            if (selector.options[i].value == selected) {
+                selector.options[i].selected = true;
+                break;
+            }
+            i++;
+        }
+    }
+
     /**
        Builds the preferred IdP selection UI (top half of the UI w/ the
        IdP buttons)
@@ -716,6 +737,7 @@ function IdPSelectUI() {
         setClass(a, 'DropDownToggle');
         a.onclick = function() { 
             idpEntryDiv.style.display='none';
+            setSelector(idpSelect, hidden.value);
             idpListDiv.style.display='inline';
             listButton.focus();
         };

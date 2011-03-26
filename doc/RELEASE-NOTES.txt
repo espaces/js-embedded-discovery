@@ -5,3 +5,7 @@ The precise Cases changed are:
 EDS-10 The EDS should supportisPassive.
 EDS-8  Add option to hide IdPs in the EDS.
 EDS-12 Should take advantage of the <mdui:Keywords>.
+EDS-1 Globalization testing
+EDS-3 Mobile browsers
+EDS-16 Transfer Selection from typeahead to dropdown
+
