@@ -8,4 +8,6 @@ EDS-12 Should take advantage of the <mdui:Keywords>.
 EDS-1 Globalization testing
 EDS-3 Mobile browsers
 EDS-16 Transfer Selection from typeahead to dropdown
-
+EDS-14 Return correct error for XMLHttpRequest Impaired browsers
+EDS-15 Not all FATAL errors in language bundles
+EDS-11 Some cosmetic suggestions

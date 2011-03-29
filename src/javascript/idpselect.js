@@ -1,11 +1,3 @@
-/*
-TODO
- - check list for browsers
-    - Z axis
-    - CSS and Javascript sanity
-    - language
-*/
-
 function IdPSelectUI() {
     //
     // module locals
@@ -375,6 +367,7 @@ function IdPSelectUI() {
         } catch (e) {}
         if (null == xhr) {
             fatal(getLocalizedMessage('fatal.noXMLHttpRequest'));
+            return false;
         }
 
         if (isIE()) {
@@ -400,7 +393,7 @@ function IdPSelectUI() {
             //
             var jsonData = xhr.responseText;
             if(jsonData === null){
-                fatal('No data!');
+                fatal(getLocalizedMessage('fatal.noData'));
                 return false;
             }
 
@@ -411,7 +404,7 @@ function IdPSelectUI() {
             idpData = JSON.parse(jsonData);
 
         }else{
-            fatal('Could not download data from ' + dataSource);
+            fatal(getLocalizedMessage('fatal.loadFailed') + dataSource);
             return false;
         }
         return true;
