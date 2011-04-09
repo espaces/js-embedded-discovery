@@ -35,6 +35,7 @@ java -jar yuicompressor-2.4.2.jar -o ..\target\idpselect.css  ..\src\resources\i
 rem Copy other files
 
 copy ..\LICENSE.txt ..\target
+copy ..\doc\*.txt ..\target
 copy ..\src\resources\index.html ..\target
 copy ..\src\javascript\idpselect_config.js ..\target
 
