@@ -1,7 +1,7 @@
 Name:		shibboleth-embedded-ds
 Version:	1.0
 Release:	1
-Summary:    Client-side federation discovery service for SAML-based SSO.
+Summary:    Client-side federation discovery service for SAML-based SSO
 Group:		Productivity/Networking/Security
 Vendor:     Shibboleth Consortium
 License:	Apache 2.0
@@ -20,6 +20,9 @@ single sign-on implementations such as Shibboleth.
 
 %prep
 %setup -q
+
+%build
+
 
 %install
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
@@ -77,12 +80,12 @@ cd /
 %files -f rpm.filelist
 %defattr(-,root,root,-)
 %dir %{_sysconfdir}/shibboleth-ds
-%{_sysconfdir}/shibboleth-ds/*.txt
+%config %{_sysconfdir}/shibboleth-ds/*.txt
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/index.html
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect.css
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect_config.js
-%{_sysconfdir}/shibboleth-ds/idpselect.js
-%{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
+%config %{_sysconfdir}/shibboleth-ds/idpselect.js
+%config %{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
 
 %changelog
 * Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
