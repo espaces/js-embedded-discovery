@@ -1,5 +1,5 @@
 Name:		shibboleth-embedded-ds
-Version:	0.1
+Version:	1.0
 Release:	1
 Summary:    Client-side federation discovery service for SAML-based SSO.
 Group:		Productivity/Networking/Security
@@ -9,9 +9,6 @@ URL:		http://shibboleth.internet2.edu/
 Source:     %{name}-%{version}.tar.gz
 BuildArch:  noarch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root
-%if 0%{?suse_version} > 1030 && 0%{?suse_version} < 1130
-PreReq:         %{insserv_prereq}
-%endif
 %if "%{_vendor}" == "redhat"
 BuildRequires: redhat-rpm-config
 %endif
@@ -88,5 +85,5 @@ cd /
 %{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
 
 %changelog
-* Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 0.1-1
-- First attempt.
+* Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
+- First version.
