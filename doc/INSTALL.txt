@@ -1,8 +1,0 @@
-Shibboleth Embedded Discovery Service Installation
-
-To build:
-
-Prior to installation you may need to configure the system as described in deployment guide.
-This is currently available at:
-
-https://wiki.shibboleth.net/confluence/display/EDS10/
