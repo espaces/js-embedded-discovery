@@ -1,5 +1,5 @@
 Name:		shibboleth-embedded-ds
-Version:	1.0
+Version:	1.0.1
 Release:	1
 Summary:    Client-side federation discovery service for SAML-based SSO
 Group:		Productivity/Networking/Security
