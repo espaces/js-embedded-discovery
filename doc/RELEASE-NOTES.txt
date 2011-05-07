@@ -1,4 +1,8 @@
-Changes in Release Beta 3
+Chnages in V1.0.1
+=============================================
+EDS-20 Kitting error prevents incremental search from working.
+
+Changes in V1.0
 =============================================
 The precise Cases changed are:
 
@@ -11,3 +15,4 @@ EDS-16 Transfer Selection from typeahead to dropdown
 EDS-14 Return correct error for XMLHttpRequest Impaired browsers
 EDS-15 Not all FATAL errors in language bundles
 EDS-11 Some cosmetic suggestions
+
