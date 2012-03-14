@@ -366,6 +366,22 @@ function IdPSelectUI() {
             xhr = new XMLHttpRequest();
         } catch (e) {}
         if (null == xhr) {
+            //
+            // EDS24. try to get 'Microsoft.XMLHTTP'
+            //
+            try {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+        }
+        if (null == xhr) {
+            //
+            // EDS35. try to get 'Microsoft.XMLHTTP'
+            //
+            try {
+                xhr = new  ActiveXObject('MSXML2.XMLHTTP.3.0');
+            } catch (e) {}
+        }
+        if (null == xhr) {
             fatal(getLocalizedMessage('fatal.noXMLHttpRequest'));
             return false;
         }

@@ -1,4 +1,8 @@
-Chnages in V1.0.1
+Changes in V1.0.2
+=============================================
+EDS-24 The embedded discovery service will fail to work with Internet Explorer when native XHR is disabled
+
+Changes in V1.0.1
 =============================================
 EDS-20 Kitting error prevents incremental search from working.
 
