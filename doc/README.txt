@@ -1,9 +1,8 @@
-Welcome to Internet2's Shibboleth Embedded Discovery Service.
+Welcome to the Shibboleth Embedded Discovery Service.
 
 Shibboleth is a federated web authentication and attribute exchange
-system based on SAML developed by Internet2 and MACE.  The Embedded
-Discovery Service allows anyone running a suitable SP to quickly and
-easily deploy IdP discovery.
+system based on SAML. The Embedded Discovery Service allows anyone
+running a suitable SP to quickly and easily deploy IdP discovery.
 
 For full instructions on installation and deployment please read:
 
@@ -43,7 +42,7 @@ Shibboleth Documentation Site:
 https://wiki.shibboleth.net/confluence/display/SHIB2/Home
 
 Source and binary distributions
-http://shibboleth.internet2.edu/downloads
+http://www.shibboleth.net/downloads/
 
 Bug Tracker:
 https://issues.shibboleth.net/
