@@ -74,6 +74,28 @@ function IdPSelectUIParms(){
         'submitButton.label': 'OK',
         'helpText': 'Hilfe',
         'defaultLogoAlt' : 'Standard logo'
+        },
+    'ja': {
+        'fatal.divMissing': '"insertAtDiv" の ID を持つ <div> が HTML 中に存在しません',
+        'fatal.noXMLHttpRequest': 'ブラウザが XMLHttpRequest をサポートしていないので IdP 情報を取得できません',
+        'fatal.wrongProtocol' : 'DSへ渡された Policy パラメータが "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single" ではありません',
+        'fatal.wrongEntityId' : 'SP から渡された entityId が設定値と異なります',
+        'fatal.noData' : 'メタデータが空です',
+        'fatal.loadFailed': '次の URL からメタデータをダウンロードできませんでした: ',
+        'fatal.noparms' : 'DSにパラメータが渡されておらず defaultReturn も設定されていません',
+        'fatal.noReturnURL' : "戻り URL が指定されていません",
+        'fatal.badProtocol' : "戻り URL は https:// か http:// で始まらなければなりません",
+        'idpPreferred.label': '選択候補の IdP:',
+        'idpEntry.label': 'もしくはあなたの所属機関名を入力してください',
+        'idpEntry.NoPreferred.label': 'あなたの所属機関名を入力してください',
+        'idpList.label': 'もしくはあなたの所属機関を選択してください',
+        'idpList.NoPreferred.label': 'あなたの所属機関を一覧から選択してください',
+        'idpList.defaultOptionLabel': '所属機関を選択してください...',
+        'idpList.showList' : '一覧から選択する',
+        'idpList.showSearch' : '機関名を入力する',
+        'submitButton.label': '選択',
+        'helpText': 'Help',
+        'defaultLogoAlt' : 'DefaultLogo'
         }
     };
 

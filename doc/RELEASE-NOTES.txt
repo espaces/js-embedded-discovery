@@ -1,3 +1,7 @@
+Changed in V1.0.3
+=============================================
+EDS-37 Japanese localization
+
 Changes in V1.0.2
 =============================================
 EDS-24 The embedded discovery service will fail to work with Internet Explorer when native XHR is disabled
