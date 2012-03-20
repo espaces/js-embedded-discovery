@@ -1,5 +1,6 @@
 Changed in V1.0.3
 =============================================
+EDS-36 Message located in wrong place in the face of font changes.
 EDS-37 Japanese localization
 
 Changes in V1.0.2
