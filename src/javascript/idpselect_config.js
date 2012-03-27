@@ -5,7 +5,7 @@ function IdPSelectUIParms(){
     // Adjust the following to fit into your local configuration
     //
     this.alwaysShow = true;          // If true, this will show results as soon as you start typing
-    this.dataSource = '/Shibboleth.sso/DiscoFeed';    // Where to get the data from
+    this.dataSource = 'DiscoFeed';    // Where to get the data from
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
     this.defaultLogo = 'flyingpiglogo.jpg';
     this.defaultLogoWidth = 90;
@@ -24,7 +24,9 @@ function IdPSelectUIParms(){
     this.preferredIdP = null;        // Array of entityIds to always show
     this.hiddenIdPs = null;          // Array of entityIds to delete
     this.ignoreKeywords = false;     // Do we ignore the <mdui:Keywords/> when looking for candidates
+    this.showListFirst = false;      // Do we start with a list of IdPs or just one
     this.samlIdPCookieTTL = 730;     // in days
+    this.setFocusTextBox = true;     // Set to false to supress focus 
     this.testGUI = false;
 
 

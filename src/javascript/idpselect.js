@@ -32,6 +32,7 @@ function IdPSelectUI() {
     var alwaysShow;
     var maxResults;
     var ignoreKeywords;
+    var showListFirst;
 
     //
     // The cookie contents
@@ -89,7 +90,7 @@ function IdPSelectUI() {
         
         var idpSelector = buildIdPSelector();
         idpSelectDiv.appendChild(idpSelector);
-        dropDownControl.draw();
+        dropDownControl.draw(parms.setFocusTextBox);
     } ;
     
     // *************************************
@@ -119,6 +120,11 @@ function IdPSelectUI() {
         alwaysShow = paramsSupplied.alwaysShow;
         maxResults = paramsSupplied.maxResults;
         ignoreKeywords = paramsSupplied.ignoreKeywords;
+        if (paramsSupplied.showListFirst) {
+            showListFirst = paramsSupplied.showListFirst;
+        } else {
+            showListFirst = false;
+        }
         defaultLogo = paramsSupplied.defaultLogo;
         defaultLogoWidth = paramsSupplied.defaultLogoWidth;
         defaultLogoHeight = paramsSupplied.defaultLogoHeight;
@@ -696,7 +702,11 @@ function IdPSelectUI() {
     */
     var buildIdPEntryTile = function(parentDiv, preferredTile) {
 
+
         idpEntryDiv = buildDiv('IdPEntryTile');
+        if (showListFirst) {
+            idpEntryDiv.style.display = 'none';
+        }
 
         if (preferredTile) {
             buildTextDiv(idpEntryDiv, 'idpEntry.label');
@@ -774,7 +784,9 @@ function IdPSelectUI() {
     */
     var buildIdPDropDownListTile = function(parentDiv, preferredTile) {
         idpListDiv = buildDiv('IdPListTile');
-        idpListDiv.style.display = 'none';
+        if (!showListFirst) {
+            idpListDiv.style.display = 'none';
+        }
 
         if (preferredTile) {
             buildTextDiv(idpListDiv, 'idpList.label');

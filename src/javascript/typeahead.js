@@ -18,7 +18,7 @@ function TypeAheadControl(jsonObj, box, orig, submit, maxchars, getName, getEnti
     this.getKeywords = getKeywords;
 }
 
-TypeAheadControl.prototype.draw = function() {
+TypeAheadControl.prototype.draw = function(setFocus) {
 
     //
     // Make a closure on this so that the embedded functions
@@ -89,7 +89,9 @@ TypeAheadControl.prototype.draw = function() {
         myThis.handleChange();
     };
 
-    this.textBox.focus();
+    if (null == setFocus || setFocus) {
+        this.textBox.focus();
+    }
 };
 
 //
