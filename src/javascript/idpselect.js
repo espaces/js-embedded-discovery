@@ -29,6 +29,7 @@ function IdPSelectUI() {
     var samlIdPCookieTTL;
     var maxIdPCharsDropDown;
     var maxIdPCharsButton;
+    var maxIdPCharsAltTxt;
     var alwaysShow;
     var maxResults;
     var ignoreKeywords;
@@ -133,8 +134,9 @@ function IdPSelectUI() {
         maxWidth = paramsSupplied.maxWidth;
         maxHeight = paramsSupplied.maxHeight;
         bestRatio = paramsSupplied.bestRatio;
-        maxIdPCharsButton =  paramsSupplied.maxIdPCharsButton;
+        maxIdPCharsButton = paramsSupplied.maxIdPCharsButton;
         maxIdPCharsDropDown = paramsSupplied.maxIdPCharsDropDown;
+        maxIdPCharsAltTxt = paramsSupplied.maxIdPCharsAltTxt;
 
         if (typeof navigator == 'undefined') {
             lang = paramsSupplied.defaultLanguage;
@@ -513,7 +515,11 @@ function IdPSelectUI() {
         }
 
         img.src = bestFit.value;
-        img.alt = getLocalizedName(idp);
+        var altTxt = getLocalizedName(idp);
+        if (altTxt.length > maxIdPCharsAltTxt) {
+            altTxt = altTxt.substring(0, maxIdPCharsAltTxt) + '...';
+        }
+        img.alt = altTxt;
 
         var w = bestFit.width;
         var h = bestFit.height;
@@ -593,10 +599,10 @@ function IdPSelectUI() {
 
         var nameDiv = buildDiv(undefined, 'TextDiv');
         var nameStr = getLocalizedName(idp);
-        div.title = nameStr;
         if (nameStr.length > maxIdPCharsButton) {
             nameStr = nameStr.substring(0, maxIdPCharsButton) + '...';
         }
+        div.title = nameStr;
         nameDiv.appendChild(document.createTextNode(nameStr));
         aval.appendChild(nameDiv);
 
