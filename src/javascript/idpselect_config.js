@@ -99,6 +99,28 @@ function IdPSelectUIParms(){
         'helpText': 'Help',
         'defaultLogoAlt' : 'DefaultLogo'
         }
+    'pt-br': {
+        'fatal.divMissing': 'A tag <div> com "insertAtDiv" não foi encontrada no arquivo HTML',
+        'fatal.noXMLHttpRequest': 'Seu navegador não suporta "XMLHttpRequest", impossível de carregador os dados do IdP selecionado',
+        'fatal.wrongProtocol' : 'A política "Policy" fornecida para o DS não foi "urn:oasis:names:tc:SAML:profiles:SSO:idpdiscovery-protocol:single"',
+        'fatal.wrongEntityId' : 'entityId oferecido pelo SP não confere com o da configuração',
+        'fatal.noData' : 'O arquivo de metadados não retornou nada;',
+        'fatal.loadFailed': 'Falhou ao realizar download do metadado de ',
+        'fatal.noparms' : 'Sem parâmetros para sessão de descoberta e sem parâmetro "defaultReturn" configurado',
+        'fatal.noReturnURL' : "Não foi definida um endereço (URL) de retorno no parâmetro",
+        'fatal.badProtocol' : "Retorno do endereço requisitado deve começar com https:// ou http://",
+        'idpPreferred.label': 'Use estas Instituições sugeridas: ',
+        'idpEntry.label': 'Ou informe o nome da sua Instituição',
+        'idpEntry.NoPreferred.label': 'Informe o nome da sua Instituição',
+        'idpList.label': 'Ou selecione sua Instituição através da lista abaixo',
+        'idpList.NoPreferred.label': 'Selecione sua Instituição através da lista abaixo',
+        'idpList.defaultOptionLabel': 'Por favor, selecione sua Instituição: ',
+        'idpList.showList' : 'Permitir que eu escolha um IdP através de uma lista',
+        'idpList.showSearch' : 'Permitir que eu especifique o IdP',
+        'submitButton.label': 'Continuar ',
+        'helpText': 'Ajuda',
+        'defaultLogoAlt' : 'Logo padrão'
+        }
     };
 
     //
