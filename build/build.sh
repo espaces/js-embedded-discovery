@@ -39,7 +39,7 @@ mkdir ../target
 
 # Build js
 
-cat ../src/javascript/json2.js ../src/javascript/typeahead.js ../src/javascript/idpselect.js | java -jar yuicompressor-2.4.2.jar -o ../target/idpselect.js --type js
+cat ../src/javascript/json2.js ../src/javascript/typeahead.js ../src/javascript/idpselect.js | java -jar yuicompressor-2.4.8.jar -o ../target/idpselect.js --type js
 
 # copy other files
 
@@ -54,3 +54,4 @@ cd ../target
 
 $JARCMD cfM  ../EDS.zip *
 mv ../EDS.zip .
+gpg -a -s -b EDS.zip

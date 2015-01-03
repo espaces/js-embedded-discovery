@@ -25,7 +25,7 @@ mkdir ..\target
 rem Build js
 
 copy /b /y ..\src\javascript\json2.js+..\src\javascript\typeahead.js+..\src\javascript\idpselect.js %TEMP%\idpselect.js
-java -jar yuicompressor-2.4.2.jar -o ..\target\idpselect.js %TEMP%\idpselect.js
+java -jar yuicompressor-2.4.8.jar -o ..\target\idpselect.js %TEMP%\idpselect.js
 del/q %TEMP%\idpselect.js
 
 rem Copy other files
@@ -42,3 +42,6 @@ cd ..\target
 %JARCMD% cfM  %TEMP%\EDS.zip *
 copy %TEMP%\EDS.zip
 del/q  %TEMP%\EDS.zip
+gpg -a -s -b EDS.zip
+
+
