@@ -35,6 +35,11 @@ copy ..\doc\*.txt ..\target
 copy ..\src\resources\index.html ..\target
 copy ..\src\javascript\idpselect_config.js ..\target
 copy ..\src\resources\idpselect.css ..\target
+mkdir ..\target\nonminimised\
+copy ..\src\javascript\json2.js ..\target\nonminimised\
+copy ..\src\javascript\typeahead.js ..\target\nonminimised\
+copy ..\src\javascript\idpselect.js ..\target\nonminimised\
+
 rem Zip it up
 
 cd ..\target

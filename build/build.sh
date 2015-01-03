@@ -48,6 +48,10 @@ cp ../doc/*.txt ../target
 cp ../src/resources/index.html ../target
 cp ../src/javascript/idpselect_config.js ../target
 cp ../src/resources/idpselect.css ../target
+mkdir ../target/nonminimised
+cp ../src/javascript/json2.js ../target/nonminimised
+cp ../src/javascript/typeahead.js ../target/nonminimised
+cp ../src/javascript/idpselect.js ../target/nonminimised
 # rem Zip it up
 
 cd ../target
