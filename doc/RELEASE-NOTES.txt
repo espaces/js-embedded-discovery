@@ -1,9 +1,10 @@
-EDS-53 Add pr-br messages.
 
 Changed in V1.1.0
 EDS-34 Allow configuration of dropdown rather than typeahead.
 EDS-88 Allow configuration to not set focus to search box.
 EDS-32 Clip Alt txt
+EDS-53 Add pr-br messages.
+EDS-42 Move Compressor up to 2.4.8
 
 Changed in V1.0.3
 =============================================
