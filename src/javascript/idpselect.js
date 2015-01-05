@@ -1198,11 +1198,11 @@ function IdPSelectUI() {
                 cookieValues = cookieValues.replace(/^\s+|\s+$/g, '');
                 cookieValues = cookieValues.replace('+','%20');
                 cookieValues = cookieValues.split('%20');
-                for(j=0; j< cookieValues.length; j++){
-                    if (0 === cookieValues[j].length) {
+                for(j=cookieValues.length; j > 0; j--){
+                    if (0 === cookieValues[j-1].length) {
                         continue;
                     }
-                    var dec = base64Decode(decodeURIComponent(cookieValues[j]));
+                    var dec = base64Decode(decodeURIComponent(cookieValues[j-1]));
                     if (dec.length > 0) {
                         userSelectedIdPs.push(dec);
                     }
@@ -1229,9 +1229,9 @@ function IdPSelectUI() {
         if (length > 5) {
             length = 5;
         }
-        for(var i=0; i < length; i++){
-            if (idps[i].length > 0) {
-                cookieData.push(encodeURIComponent(base64Encode(idps[i])));
+        for(var i=length; i > 0; i--){
+            if (idps[i-1].length > 0) {
+                cookieData.push(encodeURIComponent(base64Encode(idps[i-1])));
             }
         }
         

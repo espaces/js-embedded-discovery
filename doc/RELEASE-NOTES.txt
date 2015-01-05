@@ -8,6 +8,7 @@ EDS-42 Move Compressor up to 2.4.8
 EDS-39 Ship non mimimized sources
 EDS-30 Use %20 as the separator for entityIDs in the cookie, but continue to understand '+'
 EDS-58 Configurable writing of the cookie.  Allows the SP to write it instead.
+EDS-33 Ordering of multiple selected IdPs is backwards.
 
 Changed in V1.0.3
 =============================================
