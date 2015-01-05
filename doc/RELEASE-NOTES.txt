@@ -7,6 +7,7 @@ EDS-53 Add pr-br messages.
 EDS-42 Move Compressor up to 2.4.8
 EDS-39 Ship non mimimized sources
 EDS-30 Use %20 as the separator for entityIDs in the cookie, but continue to understand '+'
+EDS-40 Configurable writing of the cookie.  Allows the SP to write it instead.
 
 Changed in V1.0.3
 =============================================

@@ -34,6 +34,7 @@ function IdPSelectUI() {
     var maxResults;
     var ignoreKeywords;
     var showListFirst;
+    var noWriteCookie;
 
     //
     // The cookie contents
@@ -125,6 +126,11 @@ function IdPSelectUI() {
             showListFirst = paramsSupplied.showListFirst;
         } else {
             showListFirst = false;
+        }
+        if (paramsSupplied.noWriteCookie) {
+            noWriteCookie = paramsSupplied.noWriteCookie;
+        } else {
+            noWriteCookie = false;
         }
         defaultLogo = paramsSupplied.defaultLogo;
         defaultLogoWidth = paramsSupplied.defaultLogoWidth;
@@ -1215,6 +1221,11 @@ function IdPSelectUI() {
     var saveUserSelectedIdPs = function(idps){
         var cookieData = [];
         var length = idps.length;
+
+        if (noWriteCookie) {
+            return;
+        }
+
         if (length > 5) {
             length = 5;
         }
