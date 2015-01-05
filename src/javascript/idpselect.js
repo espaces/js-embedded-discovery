@@ -86,6 +86,7 @@ function IdPSelectUI() {
         if (!load(parms.dataSource)) {
             return;
         }
+        deDupe();
         stripHidden(parms.hiddenIdPs);
 
         idpData.sort(function(a,b) {return getLocalizedName(a).localeCompare(getLocalizedName(b));});
@@ -306,6 +307,21 @@ function IdPSelectUI() {
         }
         return true;
     };
+
+    /** Deduplicate by entityId */
+    var deDupe = function() {
+        var names = [];
+        var j;
+        for (j = 0; j < idpData.length; ) {
+            var eid = getEntityId(idpData[j]);
+            if (null == names[eid]) {
+                names[eid] = eid;
+                j = j + 1;
+            } else {
+                idpData.splice(j, 1);
+            }
+        }
+    }
 
     /**
        Strips the supllied IdP list from the idpData
