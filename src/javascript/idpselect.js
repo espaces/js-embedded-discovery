@@ -1189,7 +1189,9 @@ function IdPSelectUI() {
             var cookieValues = cookie.substring(splitPoint+1);
                                 
             if ( '_saml_idp' == cookieName.replace(/^\s+|\s+$/g, '') ) {
-                cookieValues = cookieValues.replace(/^\s+|\s+$/g, '').split('+');
+                cookieValues = cookieValues.replace(/^\s+|\s+$/g, '');
+                cookieValues = cookieValues.replace('+','%20');
+                cookieValues = cookieValues.split('%20');
                 for(j=0; j< cookieValues.length; j++){
                     if (0 === cookieValues[j].length) {
                         continue;
@@ -1229,8 +1231,9 @@ function IdPSelectUI() {
             expireDate = new Date(now.getTime() + cookieTTL);
         }
         
-        document.cookie='_saml_idp' + '=' + cookieData.join('+') + '; path = /' +
+        document.cookie='_saml_idp' + '=' + cookieData.join('%20') + '; path = /' +
             ((expireDate===null) ? '' : '; expires=' + expireDate.toUTCString());
+        
     };
     
     /**

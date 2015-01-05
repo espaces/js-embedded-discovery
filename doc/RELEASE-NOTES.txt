@@ -6,6 +6,7 @@ EDS-32 Clip Alt txt
 EDS-53 Add pr-br messages.
 EDS-42 Move Compressor up to 2.4.8
 EDS-39 Ship non mimimized sources
+EDS-30 Use %20 as the separator for entityIDs in the cookie, but continue to understand '+'
 
 Changed in V1.0.3
 =============================================
