@@ -482,7 +482,7 @@ function IdPSelectUI() {
        TODO - rather more careful selection
     */
 
-    var getImageForIdP = function(idp) {
+    var getImageForIdP = function(idp, useDefault) {
 
         var getBestFit = function(language) {
             //
@@ -527,8 +527,10 @@ function IdPSelectUI() {
             bestFit = getBestFit(defaultLang);
         }
                
-
         if (null === bestFit) {
+            if (!useDefault) {
+                return null;
+            }
             img.src = defaultLogo;
             img.width = defaultLogoWidth;
             img.height = defaultLogoHeight;
@@ -597,12 +599,12 @@ function IdPSelectUI() {
       @return (Element) preselector for the IdP
     */
 
-    var composePreferredIdPButton = function(idp, uniq) {
+    var composePreferredIdPButton = function(idp, uniq, useDefault) {
         var div = buildDiv(undefined, 'PreferredIdPButton');
         var aval = document.createElement('a');
         var retString = returnIDParam + '=' + encodeURIComponent(getEntityId(idp));
         var retVal = returnString;
-        var img = getImageForIdP(idp);
+        var img = getImageForIdP(idp, useDefault);
         //
         // Compose up the URL
         //
@@ -615,9 +617,11 @@ function IdPSelectUI() {
         aval.onclick = function () {
             selectIdP(getEntityId(idp));
         };
-        var imgDiv=buildDiv(undefined, 'PreferredIdPImg');
-        imgDiv.appendChild(img);
-        aval.appendChild(imgDiv);
+        if (null != img) {
+            var imgDiv=buildDiv(undefined, 'PreferredIdPImg');
+            imgDiv.appendChild(img);
+            aval.appendChild(imgDiv);
+        }
 
         var nameDiv = buildDiv(undefined, 'TextDiv');
         var nameStr = getLocalizedName(idp);
@@ -675,13 +679,27 @@ function IdPSelectUI() {
             return false;
         }
 
-        var preferredIdPDIV = buildDiv('PreferredIdPTile');
+        var atLeastOneImg = false;
+        for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
+            if (preferredIdPs[i] && getImageForIdP(preferredIdPs[i], false)) {
+                atLeastOneImg = true;
+            }
+        }
+        
+        var preferredIdPDIV;
+        if (atLeastOneImg) {
+            preferredIdPDIV = buildDiv('PreferredIdPTile');
+        } else {
+            preferredIdPDIV = buildDiv('PreferredIdPTileNoImg');
+        }
+
 
         buildTextDiv(preferredIdPDIV, 'idpPreferred.label');
 
+
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i]) {
-                var button = composePreferredIdPButton(preferredIdPs[i],i);
+                var button = composePreferredIdPButton(preferredIdPs[i],i, atLeastOneImg);
                 preferredIdPDIV.appendChild(button);
             }
         }

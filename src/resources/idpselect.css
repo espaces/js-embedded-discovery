@@ -20,6 +20,10 @@
                    * goes below when there is only one preslect 
                    */
 }
+#idpSelectPreferredIdPTileNoImg
+{
+    height:60px;
+}
 
 /***
  *  The preselect buttons

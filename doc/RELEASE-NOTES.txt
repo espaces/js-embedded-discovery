@@ -10,6 +10,7 @@ EDS-30 Use %20 as the separator for entityIDs in the cookie, but continue to und
 EDS-58 Configurable writing of the cookie.  Allows the SP to write it instead.
 EDS-33 Ordering of multiple selected IdPs is backwards.
 EDS-52 Deduplicate by entityId prior to displaying choices.
+EDS-28 Make EDS shorter if no preselected IdPs have logos
 
 Changed in V1.0.3
 =============================================
