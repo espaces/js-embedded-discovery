@@ -28,14 +28,17 @@ copy /b /y ..\src\javascript\json2.js+..\src\javascript\typeahead.js+..\src\java
 java -jar yuicompressor-2.4.8.jar -o ..\target\idpselect.js %TEMP%\idpselect.js
 del/q %TEMP%\idpselect.js
 
+rem minify CSS
+java -jar yuicompressor-2.4.8.jar --type css -o ..\target\idpselect.css ..\src\resources\idpselect.css
+
 rem Copy other files
 
 copy ..\LICENSE.txt ..\target
 copy ..\doc\*.txt ..\target
 copy ..\src\resources\index.html ..\target
 copy ..\src\javascript\idpselect_config.js ..\target
-copy ..\src\resources\idpselect.css ..\target
 mkdir ..\target\nonminimised\
+copy ..\src\resources\idpselect.css ..\target\nonminimised\
 copy ..\src\javascript\json2.js ..\target\nonminimised\
 copy ..\src\javascript\typeahead.js ..\target\nonminimised\
 copy ..\src\javascript\idpselect.js ..\target\nonminimised\
