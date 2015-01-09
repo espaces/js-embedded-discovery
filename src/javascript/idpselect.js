@@ -35,6 +35,7 @@ function IdPSelectUI() {
     var ignoreKeywords;
     var showListFirst;
     var noWriteCookie;
+    var ignoreURLParams;
 
     //
     // The cookie contents
@@ -133,6 +134,12 @@ function IdPSelectUI() {
         } else {
             noWriteCookie = false;
         }
+        if (paramsSupplied.ignoreURLParams) {
+            ignoreURLParams = paramsSupplied.ignoreURLParams;
+        } else {
+            ignoreURLParams = false;
+        }
+
         defaultLogo = paramsSupplied.defaultLogo;
         defaultLogoWidth = paramsSupplied.defaultLogoWidth;
         defaultLogoHeight = paramsSupplied.defaultLogoHeight;
@@ -195,7 +202,7 @@ function IdPSelectUI() {
         }
         var loc = win.location;
         var parmlist = loc.search;
-        if (null == parmlist || 0 == parmlist.length || parmlist.charAt(0) != '?') {
+        if (ignoreURLParams || null == parmlist || 0 == parmlist.length || parmlist.charAt(0) != '?') {
 
             if (null == paramsSupplied.defaultReturn) {
 
