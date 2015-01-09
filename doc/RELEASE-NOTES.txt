@@ -13,6 +13,7 @@ EDS-52 Deduplicate by entityId prior to displaying choices.
 EDS-28 Make EDS shorter if no preselected IdPs have logos
 EDS-48 Be more specific about the image size.
 EDS-59 Minify the CSS for the EDS
+EDS-40 Remove JSON from default minified code
 
 Changed in V1.0.3
 =============================================
