@@ -515,6 +515,7 @@ function IdPSelectUI() {
 
         var bestFit = null;
         var img = document.createElement('img');
+        setClass(img, 'IdPImg');
 
         bestFit = getBestFit(lang);
         if (null === bestFit && typeof majorLang != 'undefined') {

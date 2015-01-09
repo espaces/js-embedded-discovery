@@ -60,6 +60,10 @@ div.IdPSelectPreferredIdPImg
     margin: 2px;
 }
 
+img.IdPSelectIdPImg {
+   width:auto;
+}
+
 div.IdPSelectPreferredIdPButton img
 {
     display: block;    /* Block display to allow auto centring */
