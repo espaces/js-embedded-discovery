@@ -36,6 +36,7 @@ rem Copy other files
 copy ..\LICENSE.txt ..\target
 copy ..\doc\*.txt ..\target
 copy ..\src\resources\index.html ..\target
+copy ..\src\resources\blank.gif ..\target
 copy ..\src\javascript\idpselect_config.js ..\target
 mkdir ..\target\nonminimised\
 copy ..\src\resources\idpselect.css ..\target\nonminimised\

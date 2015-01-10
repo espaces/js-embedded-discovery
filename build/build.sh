@@ -49,6 +49,7 @@ java -jar yuicompressor-2.4.8.jar -o ../target/idpselect.js --type css ../src/re
 cp ../LICENSE.txt ../target
 cp ../doc/*.txt ../target
 cp ../src/resources/index.html ../target
+cp ../src/resources/blank.gif ../target
 cp ../src/javascript/idpselect_config.js ../target
 mkdir ../target/nonminimised
 cp ../src/resources/idpselect.css ../target/nonminimised
