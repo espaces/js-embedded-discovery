@@ -1,13 +1,13 @@
 Name:		shibboleth-embedded-ds
-Version:	1.0.2
+Version:	1.1
 Release:	1
-Summary:    Client-side federation discovery service for SAML-based SSO
+Summary:	Client-side federation discovery service for SAML-based SSO
 Group:		Productivity/Networking/Security
-Vendor:     Shibboleth Consortium
+Vendor:		Shibboleth Consortium
 License:	Apache 2.0
-URL:		http://shibboleth.internet2.edu/
-Source:     %{name}-%{version}.tar.gz
-BuildArch:  noarch
+URL:		http://shibboleth.net/
+Source:		%{name}-%{version}.tar.gz
+BuildArch:	noarch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root
 %if "%{_vendor}" == "redhat"
 BuildRequires: redhat-rpm-config
@@ -92,5 +92,8 @@ cd /
 %config %{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
 
 %changelog
+* Sun Jan 11 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1-1
+- Update version
+
 * Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
 - First version.
