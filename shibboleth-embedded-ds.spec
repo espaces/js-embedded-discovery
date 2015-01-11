@@ -1,5 +1,5 @@
 Name:		shibboleth-embedded-ds
-Version:	1.1
+Version:	1.1.0
 Release:	1
 Summary:	Client-side federation discovery service for SAML-based SSO
 Group:		Productivity/Networking/Security
@@ -92,7 +92,7 @@ cd /
 %config %{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
 
 %changelog
-* Sun Jan 11 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1-1
+* Sun Jan 11 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1.0-1
 - Update version
 
 * Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
