@@ -5,7 +5,7 @@ function IdPSelectUIParms(){
     // Adjust the following to fit into your local configuration
     //
     this.alwaysShow = true;          // If true, this will show results as soon as you start typing
-    this.dataSource = 'DiscoFeed';   // Where to get the data from
+    this.dataSource = '/Shibboleth.sso/DiscoFeed';   // Where to get the data from
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
     this.defaultLogo = 'blank.gif';  // Replace with your own logo
     this.defaultLogoWidth = 1;
