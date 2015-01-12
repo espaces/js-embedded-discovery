@@ -98,7 +98,7 @@ function IdPSelectUIParms(){
         'submitButton.label': '選択',
         'helpText': 'Help',
         'defaultLogoAlt' : 'DefaultLogo'
-        }
+    },
     'pt-br': {
         'fatal.divMissing': 'A tag <div> com "insertAtDiv" não foi encontrada no arquivo HTML',
         'fatal.noXMLHttpRequest': 'Seu navegador não suporta "XMLHttpRequest", impossível de carregador os dados do IdP selecionado',
