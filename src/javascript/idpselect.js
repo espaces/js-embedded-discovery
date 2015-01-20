@@ -152,23 +152,40 @@ function IdPSelectUI() {
         maxIdPCharsDropDown = paramsSupplied.maxIdPCharsDropDown;
         maxIdPCharsAltTxt = paramsSupplied.maxIdPCharsAltTxt;
 
+        var lang;
+
         if (typeof navigator == 'undefined') {
             lang = paramsSupplied.defaultLanguage;
         } else {
             lang = navigator.language || navigator.userLanguage || paramsSupplied.defaultLanguage;
         }
+        lang = lang.toLowerCase();
+
         if (lang.indexOf('-') > 0) {
             majorLang = lang.substring(0, lang.indexOf('-'));
         }
 
+        var providedLangs = new IdPSelectLanguages();
+
         defaultLang = paramsSupplied.defaultLanguage;
 
-        if (typeof paramsSupplied.langBundles[lang] != 'undefined') {
+        if (typeof paramsSupplied.langBundles != 'undefined' && typeof paramsSupplied.langBundles[lang] != 'undefined') {
             langBundle = paramsSupplied.langBundles[lang];
-        } else if (typeof majorLang != 'undefined' && typeof paramsSupplied.langBundles[majorLang] != 'undefined') {
-            langBundle = paramsSupplied.langBundles[majorLang];
+        } else if (typeof providedLangs.langBundles[lang] != 'undefined') {
+            langBundle = providedLangs.langBundles[lang];
+        } else if (typeof majorLang != 'undefined') {
+            if (typeof paramsSupplied.langBundles != 'undefined' && typeof paramsSupplied.langBundles[majorLang] != 'undefined') {
+                langBundle = paramsSupplied.langBundles[majorLang];
+            } else if (typeof providedLangs.langBundles[majorLang] != 'undefined') {
+                langBundle = providedLangs.langBundles[majorLang];
+            }
         }
-        defaultLangBundle = paramsSupplied.langBundles[paramsSupplied.defaultLanguage];
+        
+        if (typeof paramsSupplied.langBundles != 'undefined' && typeof paramsSupplied.langBundles[paramsSupplied.defaultLanguage] != 'undefined') {
+            defaultLangBundle = paramsSupplied.langBundles[paramsSupplied.defaultLanguage];
+        } else {
+            defaultLangBundle = providedLangs.langBundles[paramsSupplied.defaultLanguage];
+        }
 
         //
         // Setup Language bundles
@@ -1385,4 +1402,5 @@ function IdPSelectUI() {
         // Nothing
     };
 }
+
 (new IdPSelectUI()).draw(new IdPSelectUIParms());

@@ -24,7 +24,7 @@ mkdir ..\target
 
 rem Build js
 
-copy /b /y ..\src\javascript\typeahead.js+..\src\javascript\idpselect.js %TEMP%\idpselect.js
+copy /b /y ..\src\javascript\idpselect_languages.js+..\src\javascript\typeahead.js+..\src\javascript\idpselect.js %TEMP%\idpselect.js
 java -jar yuicompressor-2.4.8.jar -o ..\target\idpselect.js %TEMP%\idpselect.js
 del/q %TEMP%\idpselect.js
 
@@ -43,6 +43,7 @@ copy ..\src\resources\idpselect.css ..\target\nonminimised\
 copy ..\src\javascript\json2.js ..\target\nonminimised\
 copy ..\src\javascript\typeahead.js ..\target\nonminimised\
 copy ..\src\javascript\idpselect.js ..\target\nonminimised\
+copy ..\src\javascript\idpselect_languages.js ..\target\nonminimised\
 
 rem Zip it up
 
