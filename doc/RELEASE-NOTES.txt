@@ -17,6 +17,7 @@ EDS-40 Remove JSON from default minified code
 EDS-51 Parameter ignoreURLParams completely ignores any params and makes EDS fully standalone.
 EDS-45 Explicitly avoid protecting the EDS if mod_shib is loaded into Apache.
 EDS-43 Add a 1x1 px transparent gif for the default logo and refer to it.
+EDS-60 Move shipped localization bundles from config to the minimised source
 
 Changed in V1.0.3
 =============================================
