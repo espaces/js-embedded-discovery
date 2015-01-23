@@ -778,14 +778,18 @@ function IdPSelectUI() {
         if (showListFirst) {
             idpEntryDiv.style.display = 'none';
         }
+        
+        var label = document.createElement('label');
+        label.setAttribute('for', idPrefix + 'Input');
 
         if (preferredTile) {
-            buildTextDiv(idpEntryDiv, 'idpEntry.label');
+            buildTextDiv(label, 'idpEntry.label');
         } else {
-            buildTextDiv(idpEntryDiv, 'idpEntry.NoPreferred.label');
+            buildTextDiv(label, 'idpEntry.NoPreferred.label');
         }
 
         var form = buildSelectForm();
+        form.appendChild(label);
       
         var textInput = document.createElement('input');
         form.appendChild(textInput);
@@ -859,10 +863,13 @@ function IdPSelectUI() {
             idpListDiv.style.display = 'none';
         }
 
+        var label = document.createElement('label');
+        label.setAttribute('for', idPrefix + 'Selector');
+
         if (preferredTile) {
-            buildTextDiv(idpListDiv, 'idpList.label');
+            buildTextDiv(label, 'idpList.label');
         } else {
-            buildTextDiv(idpListDiv, 'idpList.NoPreferred.label');
+            buildTextDiv(label, 'idpList.NoPreferred.label');
         }
 
         idpSelect = document.createElement('select');
@@ -883,7 +890,7 @@ function IdPSelectUI() {
         }
 
         var form = buildSelectForm();
-
+        form.appendChild(label);
         form.appendChild(idpSelect);
 
         form.onsubmit = function () {
