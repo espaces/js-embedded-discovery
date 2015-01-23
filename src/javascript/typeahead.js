@@ -26,6 +26,7 @@ TypeAheadControl.prototype.draw = function(setFocus) {
     //
     var myThis = this;
    
+
     //
     // Set up the 'dropDown'
     //
@@ -35,7 +36,14 @@ TypeAheadControl.prototype.draw = function(setFocus) {
 
     this.dropDown.style.width = this.textBox.offsetWidth;
     this.dropDown.current = -1;
+    this.textBox.setAttribute('role', 'listbox');
     document.body.appendChild(this.dropDown);
+
+    //
+    // Set ARIA on the input
+    //
+    this.textBox.setAttribute('role', 'combobox');
+    this.textBox.setAttribute('aria-controls', 'IdPSelectDropDown');
 
     //
     // mouse listeners for the dropdown box
@@ -191,6 +199,8 @@ TypeAheadControl.prototype.hideDrop = function() {
         }
     }
     this.dropDown.style.visibility = 'hidden';
+    this.dropDown.setAttribute('aria-expanded', 'false');
+
 
     if (-1 == this.dropDown.current) {
         this.doUnselected();
@@ -206,6 +216,7 @@ TypeAheadControl.prototype.showDrop = function() {
         }
     }
     this.dropDown.style.visibility = 'visible';
+    this.dropDown.setAttribute('aria-expanded', 'true');
 };
 
 
@@ -280,7 +291,7 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
 	    }
 	}
         div.appendChild(document.createTextNode(str));
-
+        div.setAttribute('role', 'option');
         this.dropDown.appendChild(div);
         i++;
     }
@@ -322,6 +333,8 @@ TypeAheadControl.prototype.select = function(selected) {
             // Highlight it
             //
             node.className = 'IdPSelectCurrent';
+            node.setAttribute('aria-selected', 'true');
+
             //
             // turn on the button
             //
@@ -336,6 +349,7 @@ TypeAheadControl.prototype.select = function(selected) {
             this.origin.value = this.results[i][1];
             this.origin.textValue = this.results[i][0];
         } else {
+            node.setAttribute('aria-selected', 'false');
             node.className = '';
         }
         i++;
