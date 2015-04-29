@@ -1,3 +1,6 @@
+#
+# Note: Changes made here should be reflected in the windows .bat file at src/build.bat
+#
 INSTALL=/usr/bin/install
 JAVA=java
 TAR=tar

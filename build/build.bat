@@ -1,3 +1,9 @@
+REM
+REM  NOTE NOTE NOTE
+REM 
+REM  Changes made here need to be reflected in ..\Makefile
+REM 
+
 @echo off
 setlocal
 
