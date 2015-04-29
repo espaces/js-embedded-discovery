@@ -834,6 +834,7 @@ function IdPSelectUI() {
             setSelector(idpSelect, hidden.value);
             idpListDiv.style.display='inline';
             listButton.focus();
+            return false;
         };
         idpEntryDiv.appendChild(a);
         buildHelpText(idpEntryDiv);
@@ -923,6 +924,7 @@ function IdPSelectUI() {
         a.onclick = function() { 
             idpEntryDiv.style.display='inline';
             idpListDiv.style.display='none';
+            return false;
         };
         idpListDiv.appendChild(a);
         buildHelpText(idpListDiv);
