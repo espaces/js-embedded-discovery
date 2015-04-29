@@ -39,7 +39,7 @@ mkdir ../target
 
 # Build js
 
-cat ..\src\javascript\idpselect_languages.js ../src/javascript/typeahead.js ../src/javascript/idpselect.js | java -jar yuicompressor-2.4.8.jar -o ../target/idpselect.js --type js
+cat ../src/javascript/idpselect_languages.js ../src/javascript/typeahead.js ../src/javascript/idpselect.js | java -jar yuicompressor-2.4.8.jar -o ../target/idpselect.js --type js
 
 # Build CSS
 java -jar yuicompressor-2.4.8.jar -o ../target/idpselect.js --type css ../src/resources/idpselect.css
