@@ -221,7 +221,7 @@ function IdPSelectUI() {
         var parmlist = loc.search;
         if (ignoreURLParams || null == parmlist || 0 == parmlist.length || parmlist.charAt(0) != '?') {
 
-            if (null == paramsSupplied.defaultReturn) {
+            if ((null == paramsSupplied.defaultReturn)&& !ignoreURLParams) {
 
                 fatal(getLocalizedMessage('fatal.noparms'));
                 return false;

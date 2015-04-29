@@ -30,7 +30,7 @@ TypeAheadControl.prototype.draw = function(setFocus) {
     //
     // Set up the 'dropDown'
     //
-    this.dropDown = document.createElement('div');
+    this.dropDown = document.createElement('ul');
     this.dropDown.className = 'IdPSelectDropDown';
     this.dropDown.style.visibility = 'hidden';
 
@@ -44,6 +44,7 @@ TypeAheadControl.prototype.draw = function(setFocus) {
     //
     this.textBox.setAttribute('role', 'combobox');
     this.textBox.setAttribute('aria-controls', 'IdPSelectDropDown');
+    this.textBox.setAttribute('aria-owns', 'IdPSelectDropDown');
 
     //
     // mouse listeners for the dropdown box
@@ -199,7 +200,7 @@ TypeAheadControl.prototype.hideDrop = function() {
         }
     }
     this.dropDown.style.visibility = 'hidden';
-    this.dropDown.setAttribute('aria-expanded', 'false');
+    this.textBox.setAttribute('aria-expanded', 'false');
 
 
     if (-1 == this.dropDown.current) {
@@ -216,7 +217,7 @@ TypeAheadControl.prototype.showDrop = function() {
         }
     }
     this.dropDown.style.visibility = 'visible';
-    this.dropDown.setAttribute('aria-expanded', 'true');
+    this.textBox.setAttribute('aria-expanded', 'true');
 };
 
 
@@ -226,6 +227,7 @@ TypeAheadControl.prototype.doSelected = function() {
 
 TypeAheadControl.prototype.doUnselected = function() {
     this.submit.disabled = true;
+    this.textBox.setAttribute('aria-activedescendant', '');
 };
 
 TypeAheadControl.prototype.handleChange = function() {
@@ -262,12 +264,13 @@ TypeAheadControl.prototype.handleChange = function() {
 TypeAheadControl.prototype.populateDropDown = function(list) {
     this.dropDown.innerHTML = '';
     var i = 0;
-    var div;
+    var li;
     var img;
     var str;
 
     while (i < list.length) {
-        div = document.createElement('div');
+        li = document.createElement('li');
+        li.id='IdPSelectOption' + i;
         str = list[i][0];
 
 	if (null !== list[i][2]) {
@@ -277,7 +280,7 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
 	    img.width = 16;
 	    img.height = 16;
 	    img.alt = '';
-	    div.appendChild(img);
+	    li.appendChild(img);
 	    //
 	    // trim string back further in this case
 	    //
@@ -290,9 +293,9 @@ TypeAheadControl.prototype.populateDropDown = function(list) {
 		str = str.substring(0, this.maxchars);
 	    }
 	}
-        div.appendChild(document.createTextNode(str));
-        div.setAttribute('role', 'option');
-        this.dropDown.appendChild(div);
+        li.appendChild(document.createTextNode(str));
+        li.setAttribute('role', 'option');
+        this.dropDown.appendChild(li);
         i++;
     }
     var off = this.getXY();
@@ -334,6 +337,7 @@ TypeAheadControl.prototype.select = function(selected) {
             //
             node.className = 'IdPSelectCurrent';
             node.setAttribute('aria-selected', 'true');
+            this.textBox.setAttribute('aria-activedescendant', 'IdPSelectOption' + i);
 
             //
             // turn on the button
@@ -366,6 +370,8 @@ TypeAheadControl.prototype.downSelect = function() {
             //
             this.dropDown.current = 0;
             this.dropDown.childNodes[0].className = 'IdPSelectCurrent';
+            this.dropDown.childNodes[0].setAttribute('aria-selected', 'true');
+            this.textBox.setAttribute('aria-activedescendant', 'IdPSelectOption' + 0);
             this.doSelected();
             this.origin.value = this.results[0][1];
             this.origin.textValue = this.results[0][0];
@@ -383,6 +389,8 @@ TypeAheadControl.prototype.downSelect = function() {
             // and 'select'
             //
             this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
+            this.dropDown.childNodes[this.dropDown.current].setAttribute('aria-selected', 'true');
+            this.textBox.setAttribute('aria-activedescendant', 'IdPSelectOption' + this.dropDown.current);
             this.doSelected();
             this.origin.value = this.results[this.dropDown.current][1];
             this.origin.textValue = this.results[this.dropDown.current][0];
@@ -408,6 +416,8 @@ TypeAheadControl.prototype.upSelect = function() {
             // and 'select'
             //
             this.dropDown.childNodes[this.dropDown.current].className = 'IdPSelectCurrent';
+            this.dropDown.childNodes[this.dropDown.current].setAttribute('aria-selected', 'true');
+            this.textBox.setAttribute('aria-activedescendant', 'IdPSelectOption' + this.dropDown.current);
             this.doSelected();
             this.origin.value = this.results[this.dropDown.current][1];
             this.origin.textValue = this.results[this.dropDown.current][0];
