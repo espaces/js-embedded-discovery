@@ -46,7 +46,7 @@ if [ "$APACHE_CONFIG" != "no" ] ; then
     if [ "$APACHE_CONFD" != "no" ] ; then
         %{__mkdir} -p $RPM_BUILD_ROOT$APACHE_CONFD
         %{__cp} -p $RPM_BUILD_ROOT%{_sysconfdir}/shibboleth-ds/$APACHE_CONFIG $RPM_BUILD_ROOT$APACHE_CONFD/$APACHE_CONFIG 
-        echo "%config $APACHE_CONFD/$APACHE_CONFIG" > rpm.filelist
+        echo "%config(noreplace) $APACHE_CONFD/$APACHE_CONFIG" > rpm.filelist
     fi
 fi
 
@@ -57,7 +57,7 @@ fi
 %if "%{_vendor}" == "redhat"
 	# On upgrade, restart components if they're already running.
     if [ "$1" -gt "1" ] ; then
-        %{!?_without_builtinapache:/etc/init.d/httpd status 1>/dev/null && /etc/init.d/httpd restart 1>/dev/null}
+        %{!?_without_builtinapache:/sbin/service httpd status 1>/dev/null && /sbin/service httpd restart 1>/dev/null}
         exit 0
     fi
 %endif
@@ -65,12 +65,12 @@ fi
 %preun
 %if "%{_vendor}" == "redhat"
 	if [ "$1" = 0 ] ; then
-        %{!?_without_builtinapache:/etc/init.d/httpd status 1>/dev/null && /etc/init.d/httpd restart 1>/dev/null}
+        %{!?_without_builtinapache:/sbin/service httpd status 1>/dev/null && /sbin/service httpd restart 1>/dev/null}
 	fi
 %endif
 %if "%{_vendor}" == "suse"
     if [ "$1" = 0 ] ; then
-        %{!?_without_builtinapache:/etc/init.d/apache2 status 1>/dev/null && /etc/init.d/apache2 restart 1>/dev/null}
+        %{!?_without_builtinapache:/sbin/service apache2 status 1>/dev/null && /sbin/service apache2 restart 1>/dev/null}
     fi
 %endif
 exit 0
@@ -84,7 +84,7 @@ cd /
 %files -f rpm.filelist
 %defattr(-,root,root,-)
 %dir %{_sysconfdir}/shibboleth-ds
-%config %{_sysconfdir}/shibboleth-ds/*.txt
+%{_sysconfdir}/shibboleth-ds/*.txt
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/index.html
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect.css
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect_config.js
@@ -92,8 +92,9 @@ cd /
 %config %{_sysconfdir}/shibboleth-ds/shibboleth-ds.conf
 
 %changelog
-* Sun Jan 11 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1.0-1
+* Wed Apr 29 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1.0-1
 - Update version
+- Stop marking text files as configs
 
 * Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
 - First version.
