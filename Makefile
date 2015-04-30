@@ -21,7 +21,7 @@ kit:	clean
 	mkdir ${TARGET}
 	mkdir ${TARGET}/nonminimised
 	cat src/javascript/idpselect_languages.js src/javascript/typeahead.js src/javascript/idpselect.js | ${JAVA} -jar build/yuicompressor-2.4.8.jar -o ${TARGET}/idpselect.js --type js
-	cp Makefile shibboleth-embedded-ds.spec LICENSE.txt doc/*.txt src/resources/index.html src/resources/idpselect.css src/javascript/idpselect_config.js src/apache/*.conf ${TARGET}
+	cp Makefile shibboleth-embedded-ds.spec LICENSE.txt doc/*.txt src/resources/index.html src/resources/idpselect.css src/resources/Blank.gif src/javascript/idpselect_config.js src/apache/*.conf ${TARGET}
 	cp src/javascript/*.js ${TARGET}/nonminimised
 
 dist:	kit
