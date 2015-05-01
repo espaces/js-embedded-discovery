@@ -7,7 +7,7 @@ function IdPSelectUIParms(){
     this.alwaysShow = true;          // If true, this will show results as soon as you start typing
     this.dataSource = '/Shibboleth.sso/DiscoFeed';   // Where to get the data from
     this.defaultLanguage = 'en';     // Language to use if the browser local doesnt have a bundle
-    this.defaultLogo = 'Blank.gif';  // Replace with your own logo
+    this.defaultLogo = 'blank.gif';  // Replace with your own logo
     this.defaultLogoWidth = 1;
     this.defaultLogoHeight = 1 ;
     this.defaultReturn = null;       // If non null, then the default place to send users who are not
