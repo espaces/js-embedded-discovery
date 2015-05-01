@@ -12,7 +12,7 @@ all:
 
 install:	index.html
 	${INSTALL} -d $(DESTDIR)${sysconfdir}/shibboleth-ds
-	${INSTALL} -m 644 *.txt *.html *.css *.js *.conf $(DESTDIR)${sysconfdir}/shibboleth-ds
+	${INSTALL} -m 644 *.txt *.html *.css *.gif *.js *.conf $(DESTDIR)${sysconfdir}/shibboleth-ds
 
 clean:
 	rm -rf ${TARGET}

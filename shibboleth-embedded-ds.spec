@@ -85,6 +85,7 @@ cd /
 %defattr(-,root,root,-)
 %dir %{_sysconfdir}/shibboleth-ds
 %{_sysconfdir}/shibboleth-ds/*.txt
+%{_sysconfdir}/shibboleth-ds/*.gif
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/index.html
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect.css
 %config(noreplace) %{_sysconfdir}/shibboleth-ds/idpselect_config.js
@@ -95,6 +96,7 @@ cd /
 * Wed Apr 29 2015  Scott Cantor  <cantor.2@osu.edu>  - 1.1.0-1
 - Update version
 - Stop marking text files as configs
+- Add gif to package
 
 * Mon Apr 11 2011  Scott Cantor  <cantor.2@osu.edu>  - 1.0-1
 - First version.
