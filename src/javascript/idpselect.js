@@ -149,10 +149,10 @@ function IdPSelectUI() {
         maxWidth = paramsSupplied.maxWidth;
         maxHeight = paramsSupplied.maxHeight;
         bestRatio = paramsSupplied.bestRatio;
-        if (paramsSupplied.doNotCollapse) { 
-            doNotCollapse = paramsSupplied.doNotCollapse;
+        if (null == paramsSupplied.doNotCollapse) { 
+            doNotCollapse = true;
         } else {
-            doNotCollapse = false;
+            doNotCollapse = paramsSupplied.doNotCollapse;
         }
             
         maxIdPCharsButton = paramsSupplied.maxIdPCharsButton;
