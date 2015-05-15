@@ -18,6 +18,7 @@ function IdPSelectUI() {
     var maxWidth;
     var maxHeight;
     var bestRatio;
+    var doNotCollapse;
 
     //
     // Parameters passed into our closure
@@ -148,6 +149,12 @@ function IdPSelectUI() {
         maxWidth = paramsSupplied.maxWidth;
         maxHeight = paramsSupplied.maxHeight;
         bestRatio = paramsSupplied.bestRatio;
+        if (paramsSupplied.doNotCollapse) { 
+            doNotCollapse = paramsSupplied.doNotCollapse;
+        } else {
+            doNotCollapse = false;
+        }
+            
         maxIdPCharsButton = paramsSupplied.maxIdPCharsButton;
         maxIdPCharsDropDown = paramsSupplied.maxIdPCharsDropDown;
         maxIdPCharsAltTxt = paramsSupplied.maxIdPCharsAltTxt;
@@ -704,7 +711,7 @@ function IdPSelectUI() {
             return false;
         }
 
-        var atLeastOneImg = false;
+        var atLeastOneImg = doNotCollapse;
         for(var i = 0 ; i < maxPreferredIdPs && i < preferredIdPs.length; i++){
             if (preferredIdPs[i] && getImageForIdP(preferredIdPs[i], false)) {
                 atLeastOneImg = true;
