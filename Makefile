@@ -4,6 +4,7 @@
 INSTALL=/usr/bin/install
 JAVA=java
 TAR=tar
+ZIP=zip
 TARGET=shibboleth-embedded-ds-1.1.0
 prefix=
 sysconfdir=${prefix}/etc
@@ -25,4 +26,6 @@ kit:	clean
 	cp src/javascript/*.js ${TARGET}/nonminimised
 
 dist:	kit
-	${TAR} czf ${TARGET}.tar.gz ${TARGET}/*; rm -rf ${TARGET}
+	${TAR} czf ${TARGET}.tar.gz ${TARGET}/*
+	${ZIP} ${TARGET}.zip ${TARGET}/*
+	rm -rf ${TARGET}
